@@ -29,6 +29,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@anthropic-ai/sdk": "^0.24.1",
 		"@biomejs/biome": "^1.8.2",
 		"@tailwindcss/postcss": "4.0.0-alpha.16",
 		"@tailwindcss/vite": "0.0.0-development.1",

@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@anthropic-ai/sdk':
+    specifier: ^0.24.1
+    version: 0.24.1
   '@biomejs/biome':
     specifier: ^1.8.2
     version: 1.8.2
@@ -209,6 +212,21 @@ packages:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
+
+  /@anthropic-ai/sdk@0.24.1:
+    resolution: {integrity: sha512-AwzskUDpqDLHxAPtsJH7KAH66tKWJkYwO+ZHj82DIMkjEASMWCmjgTkQRwwpdbhv6CVH7sNMN2MCZGCJTR6gog==}
+    dependencies:
+      '@types/node': 18.19.39
+      '@types/node-fetch': 2.6.11
+      abort-controller: 3.0.0
+      agentkeepalive: 4.5.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0
+      web-streams-polyfill: 3.3.3
+    transitivePeerDependencies:
+      - encoding
+    dev: false
 
   /@babel/helper-string-parser@7.24.7:
     resolution: {integrity: sha512-7MbVt6xrwFQbunH2DNQsAP5sTGxfqQtErvBIvIMi6EQnbgUOuVYanvREcmFrOPhoXBrTtjhhP+lW+o5UfK+tDg==}
