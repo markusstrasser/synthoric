@@ -1,47 +1,43 @@
-"use server";
-import { generateObject } from "ai";
-import { z } from "zod";
-import { logger } from "@/lib/logger";
-import { EventEmitter } from "node:events";
-import { InferencePrompt } from "@/lib/prompts/static";
-import {
-  ApplicationGoalTemplate,
-  ContextExplainerTemplate,
-} from "@/lib/prompts/snippets";
-import { InferenceSchema } from "@/lib/zodSchemas/";
-import { YAMLify } from "@/lib/utils";
-import Handlebars from "handlebars";
-import { SubmissionReviewSchema } from "@/lib/zodSchemas";
-import { getContext } from "@/lib/utils";
-import * as dotenv from "dotenv";
-import { createOpenAI } from "@ai-sdk/openai";
+'use server'
+import { generateObject } from 'ai'
+import { z } from 'zod'
+import { logger } from '@/lib/logger'
+import { EventEmitter } from 'node:events'
+import { InferencePrompt } from '@/lib/prompts/static'
+import { ApplicationGoalTemplate, ContextExplainerTemplate } from '@/lib/prompts/snippets'
+import { InferenceSchema } from '@/lib/zodSchemas/'
+import { YAMLify } from '@/lib/utils'
+import Handlebars from 'handlebars'
+import { SubmissionReviewSchema } from '@/lib/zodSchemas'
+import { getContext } from '@/lib/utils'
+import * as dotenv from 'dotenv'
+import { createOpenAI } from '@ai-sdk/openai'
 
-dotenv.config();
+dotenv.config()
 
-const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
-const emitter = new EventEmitter();
+const emitter = new EventEmitter()
 
-emitter.on("update:UserAction", (userAction) => {
-  logger.info("update:UserAction", userAction);
-});
-emitter.on("generateElement", ({ typeKey }) => {
-  logger.info(`generateElement: ${typeKey}`);
-});
-emitter.on("generateInferences", (inferences) => {
-  logger.info(`generateInferences: ${inferences}`);
-});
+emitter.on('update:UserAction', userAction => {
+  logger.info('update:UserAction', userAction)
+})
+emitter.on('generateElement', ({ typeKey }) => {
+  logger.info(`generateElement: ${typeKey}`)
+})
+emitter.on('generateInferences', inferences => {
+  logger.info(`generateInferences: ${inferences}`)
+})
 
-const mock = false;
-
+const mock = false
 
 //? runs after any interaction. Make sure to AWAIT the DB update in client
-export const generateInferences = async (config) => {
+export const generateInferences = async config => {
   //TODO: maybe use getsince?
   //TODO: get interactions since last update (this should've been just before the call to this function)
-  const CONTEXT = await getContext();
+  const CONTEXT = await getContext()
   //2 run inference prompt
-  console.log("generating inferences now", CONTEXT);
+  console.log('generating inferences now', CONTEXT)
   const { object } = await generateObject({
     prompt: `${ApplicationGoalTemplate}
     ** You will be given Context from userdata with which you have to produce Inferences about the user's knowledge/skills [instructions follow]. If the information is not relevant or meaningless, just return an empty array. 
@@ -49,20 +45,20 @@ export const generateInferences = async (config) => {
     **
     ${Handlebars.compile(ContextExplainerTemplate)(CONTEXT)}
     ${InferencePrompt}`,
-    model: openai("gpt-4o"),
+    model: openai('gpt-4o'),
     schema: z.object({ content: z.array(InferenceSchema) }),
-  });
+  })
 
-  const inferences = object.content;
+  const inferences = object.content
   //@ts-ignore
-  console.log("generated inferences: result", inferences);
-  emitter.emit("generateInferences. Result:", inferences);
-  return inferences;
+  console.log('generated inferences: result', inferences)
+  emitter.emit('generateInferences. Result:', inferences)
+  return inferences
   //3 -> DB create inference
   //4 return inference
-};
+}
 
-export const generateSubmissionReview = async (interaction) => {
+export const generateSubmissionReview = async interaction => {
   const prompt = `The following is a task/exercise the user just completed. You're given the solution, the actions the user took (including the final input).
     Please evaluate the user's submission and rate it.
     Give short, targeted, technical feedback.
@@ -72,18 +68,15 @@ export const generateSubmissionReview = async (interaction) => {
     The INTERACTION:::
     ${YAMLify(interaction)}
     :::
-    `;
+    `
   const { object } = await generateObject({
     prompt,
-    model: openai("gpt-4o"),
+    model: openai('gpt-4o'),
     schema: SubmissionReviewSchema,
-  });
-  console.log("Submission Review::", object);
-  return object;
-};
-
-
-
+  })
+  console.log('Submission Review::', object)
+  return object
+}
 
 // export const gen = async (config) => {
 //   "use server";

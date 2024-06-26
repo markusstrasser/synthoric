@@ -1,5 +1,37 @@
 # Synth
 
+## TODO
+
+Today:
+
+- [] Fix the dotenv issues with importing api keys (provider.ts)
+- [] Fix prefixes $lib etc.
+- [] Sketch out svelte store + routing
+- []
+
+- [ ] Unify /tools to have consistent API. Decide what is a tool (exercise, multipleChoice) and what not (hints, solution?)
+- [ ] Update UI with current progress inside a agentChain (ie. show the task without having to wait for the rest of the task->solution chain to finish)
+- [ ] use Abstractions like https://docs.copilotkit.ai/reference/hooks/useCopilotReadable?
+- [x] Just basic routing /seq/id/idx
+- [] More routing: back, next, home buttons. Redirect to beginning of page wrong path
+- [] Run a fetch and display in Component
+- [] Svelte store (zustand copy)
+- [] svelte html actions use:captureAction ? --> write to store? Can it add the {type:freeformtextinput}, spec:{freeformtextinput: {reducer: fn(bydefault: pickLatest), description, validation, isFinal?, isStep?, shouldInference--or use central point system??, or use AI to decide?}} etc?
+- [] persist partial store (redirects/visited)
+- [] api calls with example data (useObject)
+- [] at login, or leave app: cleanUnseenInteractions?
+- [] Convex integration
+- [] what to do about multiple generated UIs on a page and interspersed forms? SPAs?
+- [] think about /explore /read /paper /research and how these abstraction work there
+- [] createForm function '<form>...' as claude prefill
+  **tool calling**
+
+- [] handle generating and posting sequentially page/index++ vs. at once ([1,2,3][3,4,5][5,3,2]) for displaying on a single page
+- [] pass down ultraspecific topic/difficulty prompts ... not params? configuration. This allows parallel generation without issues with interference/duplication of content
+- [] tool dispatcher has all needed context? Will pass subset to each tool? Or intermediaries that sample more ?
+  - the tools stay "dumb" in that they only receive a full prompt, no params? maybe. The full prompt = prompt + context +slots
+- []
+
 ## Overview
 
 The goal is to make an AI-driven STEM learning platform that adapts content and interaction types to individual users, capturing and analyzing user actions to optimize the content and representations through generative UI.
@@ -122,28 +154,3 @@ A: The system includes:
 ## Thinking about:
 
 - using https://github.com/transitive-bullshit/agentic tools
-
-## TODO
-
-- [ ] Unify /tools to have consistent API. Decide what is a tool (exercise, multipleChoice) and what not (hints, solution?)
-- [ ] Update UI with current progress inside a agentChain (ie. show the task without having to wait for the rest of the task->solution chain to finish)
-- [ ] use Abstractions like https://docs.copilotkit.ai/reference/hooks/useCopilotReadable?
-- [] Just basic routing /seq/id/idx
-- [] More routing: back, next, home buttons. Redirect to beginning of page wrong path
-- [] Run a fetch and display in Component
-- [] Svelte store (zustand copy)
-- [] svelte html actions use:captureAction ? --> write to store? Can it add the {type:freeformtextinput}, spec:{freeformtextinput: {reducer: fn(bydefault: pickLatest), description, validation, isFinal?, isStep?, shouldInference--or use central point system??, or use AI to decide?}} etc?
-- [] persist partial store (redirects/visited)
-- [] api calls with example data (useObject)
-- [] at login, or leave app: cleanUnseenInteractions?
-- [] Convex integration
-- [] what to do about multiple generated UIs on a page and interspersed forms? SPAs?
-- [] think about /explore /read /paper /research and how these abstraction work there
-- [] createForm function '<form>...' as claude prefill
-  **tool calling**
-
-- [] handle generating and posting sequentially page/index++ vs. at once ([1,2,3][3,4,5][5,3,2]) for displaying on a single page
-- [] pass down ultraspecific topic/difficulty prompts ... not params? configuration. This allows parallel generation without issues with interference/duplication of content
-- [] tool dispatcher has all needed context? Will pass subset to each tool? Or intermediaries that sample more ?
-  - the tools stay "dumb" in that they only receive a full prompt, no params? maybe. The full prompt = prompt + context +slots
-- []
