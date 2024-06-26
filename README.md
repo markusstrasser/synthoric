@@ -11,6 +11,8 @@ Get a convex api key for local development
 
 Today:
 
+- [] DEV: How to implement consisent mocking (MSW?) and route testing declaratively as a middleware
+- [] Newer Svelte-Debug solutions? (like in Nuxt)
 - [] Fix the dotenv issues with importing api keys (provider.ts)
 - [] Fix prefixes $lib etc.
 - [] Sketch out svelte store + routing

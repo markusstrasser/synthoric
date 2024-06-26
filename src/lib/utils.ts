@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api.js";
 import * as dotenv from "dotenv";
-import { createOpenAI } from "";
+// import {createOpenAI} from 'ai-'
 
 dotenv.config({ path: ".env.local" });
 
