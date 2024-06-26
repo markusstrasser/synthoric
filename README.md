@@ -9,14 +9,18 @@ Get a convex api key for local development
 
 ## TODO
 
+- [] READ https://svelte-5-preview.vercel.app/docs/breaking-changes
+- [] READ https://svelte.dev/blog/runes
+
 Today:
 
 - [] DEV: How to implement consisent mocking (MSW?) and route testing declaratively as a middleware
+- [] Decide on https://flaming.codes/en/posts/msw-in-sveltekit-for-local-development/ MSW
 - [] Newer Svelte-Debug solutions? (like in Nuxt)
 - [] Fix the dotenv issues with importing api keys (provider.ts)
 - [] Fix prefixes $lib etc.
 - [] Sketch out svelte store + routing
-- []
+- [] Copy in your always used svelte actions
 
 - [ ] Unify /tools to have consistent API. Decide what is a tool (exercise, multipleChoice) and what not (hints, solution?)
 - [ ] Update UI with current progress inside a agentChain (ie. show the task without having to wait for the rest of the task->solution chain to finish)

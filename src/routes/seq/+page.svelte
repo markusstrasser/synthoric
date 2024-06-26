@@ -1,26 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import type { PageData } from './$types'
-
-  let interactions: any
+  import Interaction from './Interaction.svelte'
+  let interactions = []
   onMount(async () => {
     const res = await fetch('/api/interactions')
-    interactions = await res.json()
+    interactions = (await res.json()).data
     console.log('interactions', interactions)
   })
 </script>
-<!-- 
-{#each interactions as interaction}
-  <div>
-    {interaction.tagline}
-  </div>
-  <div>
-    {#each interaction.content as item}
-      <div>
-        {item.question}
-      </div>
-    {/each}
-  </div>
-  <!-- {JSON.stringify(interaction)} -->
-  <!-- Render interaction data -->
-{/each} -->
+
+{#each interactions as { tagline, content }}
+  <Interaction data={{ tagline, content }} />
+{/each}
+<a href="/seq/1">Go to first sequence</a>

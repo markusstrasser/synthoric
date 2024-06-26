@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { page } from '$app/stores';
-  
-  $: ({ id   } = $page.params);
+  import { page } from '$app/stores'
+
+  $: ({ seqId } = $page.params)
 </script>
-  
-  <h1>ID: {id}</h1>
-  <p>TODO: sequence summary and sequence card (interaction summaries/cards expand on click)</p>
-    
+
+<div>Sequence Overview: {seqId}</div>
+
+<a href="/seq/1/1">Go to first interaction</a>
+
+<p>TODO: sequence summary and sequence card (interaction summaries/cards expand on click)</p>

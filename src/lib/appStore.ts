@@ -33,10 +33,21 @@ const initialState: AppState = {
 	hasBeenRedirected: false,
 };
 
+const actionSchemas = {
+	freetext_input: {
+		//reducer: "pickLast", is default and we don't specify
+	},
+};
+const action = {
+	type: "freetext_input",
+	value: any,
+	isFinal: false,
+};
 export const useStore = create<AppState & AppActions>()(
 	persist(
 		mutative((set) => ({
 			...initialState,
+			//? get wiped
 			addUserAction: (action) =>
 				set((state) => {
 					state.userActions.push({ ...action, timeStamp: Date.now() });
