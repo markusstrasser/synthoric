@@ -1,5 +1,12 @@
 # Synth
 
+## Setup
+
+`pnpm install && pnpm dev`
+
+Get a convex api key for local development
+`pnpm convex dev`
+
 ## TODO
 
 Today:
