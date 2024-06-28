@@ -11,10 +11,13 @@ Get a convex api key for local development
 
 - [] READ https://svelte-5-preview.vercel.app/docs/breaking-changes
 - [] READ https://svelte.dev/blog/runes
-
-Today:
+- [] USE https://svelte-svg-icons.codewithshin.com/
+- [] Model interactionSeq as chat with pluggable extra info before returning the object (streamObject or parallel tool calls??)
 
 - [] DEV: How to implement consisent mocking (MSW?) and route testing declaratively as a middleware
+
+* maybe a mock/_ route. The middleware redirect /_ -> mock/\* and the return is pattern matched
+
 - [] Decide on https://flaming.codes/en/posts/msw-in-sveltekit-for-local-development/ MSW
 - [] Newer Svelte-Debug solutions? (like in Nuxt)
 - [] Fix the dotenv issues with importing api keys (provider.ts)
@@ -44,6 +47,16 @@ Today:
 - [] tool dispatcher has all needed context? Will pass subset to each tool? Or intermediaries that sample more ?
   - the tools stay "dumb" in that they only receive a full prompt, no params? maybe. The full prompt = prompt + context +slots
 - []
+
+## Tools/Plugins todo. Libs
+
+- [] Make into tool: https://tympanus.net/codrops/2024/06/12/shape-lens-blur-effect-with-sdfs-and-webgl/
+- [] Mathematica
+- [] editorJS https://editorjs.io/
+- [] https://svelte-ux.techniq.dev/docs/components/Table
+- [] https://action-archive.vercel.app/actions/click-outside
+- [] https://action-archive.vercel.app/actions/resize
+- [] https://svelte-svg-icons.codewithshin.com/
 
 ## Overview
 
