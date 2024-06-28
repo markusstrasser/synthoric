@@ -1,15 +1,15 @@
 import { EventEmitter } from "node:events";
 
 enum ParserState {
-	WaitingForKey,
-	InKey,
-	WaitingForColon,
-	WaitingForValue,
-	InStringValue,
-	InNumberValue,
-	InBooleanValue,
-	InNullValue,
-	InArrayValue,
+	WaitingForKey = 0,
+	InKey = 1,
+	WaitingForColon = 2,
+	WaitingForValue = 3,
+	InStringValue = 4,
+	InNumberValue = 5,
+	InBooleanValue = 6,
+	InNullValue = 7,
+	InArrayValue = 8,
 }
 
 export default class StreamingJSONParser extends EventEmitter {
@@ -22,7 +22,7 @@ export default class StreamingJSONParser extends EventEmitter {
 	private stack: Array<Record<string, any> | any[]> = [];
 	private arrayDepth = 0;
 
-	constructor(prefill: string = "") {
+	constructor(prefill = "") {
 		super();
 		this.accumulatedJson = prefill;
 		this.initializePrefill();
@@ -165,7 +165,7 @@ export default class StreamingJSONParser extends EventEmitter {
 				value = this.currentValue;
 				break;
 			case ParserState.InNumberValue:
-				value = parseFloat(this.currentValue);
+				value = Number.parseFloat(this.currentValue);
 				break;
 			case ParserState.InBooleanValue:
 				value = this.currentValue === "true";
