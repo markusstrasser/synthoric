@@ -1,11 +1,11 @@
 import { z } from 'zod'
-import { MarkdownFormattingPrompt } from '../prompts/static'
+import { MarkdownFormattingPrompt } from '../src/lib/prompts/static'
 import {
   ApplicationGoalTemplate,
   ContextExplainerTemplate,
   ContentGuidelinePrompt,
   SelfTagPrompt,
-} from '../prompts/snippets'
+} from '../src/lib/prompts/snippets'
 import Handlebars from 'handlebars'
 
 export const TaskTemplate: string = `
@@ -30,12 +30,9 @@ const _templateOutdated = ({ interactions, inferences }) =>
 export default function task(prompt: string) {
   return {
     type: 'task',
-    description:
-      'Use when you want to display a task or the next exercise to the user',
+    description: 'Use when you want to display a task or the next exercise to the user',
     prompt,
-    schema: z
-      .string()
-      .describe(`${MarkdownFormattingPrompt}. Should be under 30 words`),
+    schema: z.string().describe(`${MarkdownFormattingPrompt}. Should be under 30 words`),
     example:
       'A car of mass 1200 kg is traveling at a constant speed of 20 m/sec. It suddenly applies brakes and comes to a stop in 10 seconds. What is the force exerted by the brakes on the car? ',
   }

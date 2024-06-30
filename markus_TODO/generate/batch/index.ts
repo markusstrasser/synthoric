@@ -1,13 +1,11 @@
-import {
-  ApplicationGoalTemplate,
-  ContextExplainerTemplate,
-} from '@/lib/prompts/snippets'
+import { ApplicationGoalTemplate, ContextExplainerTemplate } from '@/lib/prompts/snippets'
 import { multipleChoice, task, solution } from '@/lib/tools'
 import { getContext } from '@/lib/utils'
 import { openai } from '@/lib/providers'
 import { z } from 'zod'
 import { generateObject } from 'ai'
 
+//! this should be handled by [prompts] => [{exercise}, {exercise}]
 export const generateTextInputExercises = async ({ count = 1 }) => {
   //TODO:
   const { interactions, inferences } = await getContext()
@@ -26,7 +24,7 @@ export const generateTextInputExercises = async ({ count = 1 }) => {
 
   //2. generate Solution
   const solutions = await Promise.all(
-    tasks.map(async (task) => {
+    tasks.map(async task => {
       const { object } = await generateObject({
         //! handlbars is a bad solution since it's untyped and unclear what property goes into the template
         prompt: solution.promptTemplate({ task }),
@@ -34,16 +32,13 @@ export const generateTextInputExercises = async ({ count = 1 }) => {
         model: openai('gpt-4o'),
       })
       return object.content
-    }),
+    })
   )
   const exercises = tasks.map((task, i) => ({ task, solution: solutions[i] }))
   return exercises
 }
 
-export const generateMultipleChoiceTasks = async ({
-  count = 2,
-  numChoices = 2,
-}) => {
+export const generateMultipleChoiceTasks = async ({ count = 2, numChoices = 2 }) => {
   const configuration = {
     hasImmediateFeedback: false,
   }

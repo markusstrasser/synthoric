@@ -12,8 +12,8 @@ dependencies:
     specifier: ^0.0.33
     version: 0.0.33(zod@3.23.8)
   '@anthropic-ai/sdk':
-    specifier: ^0.24.1
-    version: 0.24.1
+    specifier: ^0.24.2
+    version: 0.24.2
   '@biomejs/biome':
     specifier: ^1.8.3
     version: 1.8.3
@@ -22,7 +22,7 @@ dependencies:
     version: 0.0.21
   '@tailwindcss/postcss':
     specifier: 4.0.0-alpha.16
-    version: 4.0.0-alpha.16(postcss@8.4.38)
+    version: 4.0.0-alpha.16(postcss@8.4.39)
   '@tailwindcss/vite':
     specifier: 0.0.0-development.1
     version: 0.0.0-development.1
@@ -34,7 +34,10 @@ dependencies:
     version: 0.165.0
   ai:
     specifier: ^3.2.15
-    version: 3.2.15(openai@4.52.1)(react@18.3.1)(svelte@5.0.0-next.166)(vue@3.4.31)(zod@3.23.8)
+    version: 3.2.15(openai@4.52.2)(react@18.3.1)(svelte@5.0.0-next.166)(vue@3.4.31)(zod@3.23.8)
+  clsx:
+    specifier: ^2.1.1
+    version: 2.1.1
   convex:
     specifier: ^1.12.2
     version: 1.12.2(react@18.3.1)
@@ -63,8 +66,8 @@ dependencies:
     specifier: ^5.0.7
     version: 5.0.7
   openai:
-    specifier: ^4.52.1
-    version: 4.52.1
+    specifier: ^4.52.2
+    version: 4.52.2
   pino:
     specifier: ^9.2.0
     version: 9.2.0
@@ -108,10 +111,10 @@ devDependencies:
     version: 1.45.0
   '@sveltejs/adapter-auto':
     specifier: ^3.2.2
-    version: 3.2.2(@sveltejs/kit@2.5.17)
+    version: 3.2.2(@sveltejs/kit@2.5.18)
   '@sveltejs/kit':
-    specifier: ^2.5.17
-    version: 2.5.17(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@5.0.0-next.166)(vite@5.3.2)
+    specifier: ^2.5.18
+    version: 2.5.18(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@5.0.0-next.166)(vite@5.3.2)
   '@sveltejs/vite-plugin-svelte':
     specifier: ^3.1.1
     version: 3.1.1(svelte@5.0.0-next.166)(vite@5.3.2)
@@ -129,7 +132,7 @@ devDependencies:
     version: 5.0.0-next.166
   svelte-check:
     specifier: ^3.8.4
-    version: 3.8.4(postcss@8.4.38)(svelte@5.0.0-next.166)
+    version: 3.8.4(postcss@8.4.39)(svelte@5.0.0-next.166)
   tslib:
     specifier: ^2.6.3
     version: 2.6.3
@@ -300,8 +303,8 @@ packages:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  /@anthropic-ai/sdk@0.24.1:
-    resolution: {integrity: sha512-AwzskUDpqDLHxAPtsJH7KAH66tKWJkYwO+ZHj82DIMkjEASMWCmjgTkQRwwpdbhv6CVH7sNMN2MCZGCJTR6gog==}
+  /@anthropic-ai/sdk@0.24.2:
+    resolution: {integrity: sha512-JVfQFfquMiRpnuCg/SdQC27B2XoYJOJPItPWKBcX7z8a/dxV2Pdk1Hz3bQTwPaJyMplsIlHKGyC3mf1BK2jWJw==}
     dependencies:
       '@types/node': 18.19.39
       '@types/node-fetch': 2.6.11
@@ -1030,17 +1033,17 @@ packages:
     resolution: {integrity: sha512-v+49JBiG1kmc/9Ug79Lz9wyKaRocBgCnpRaLpdy7p0d3ICKtOAfc/H/Epa1j3F6YdnzjnZKKrnJ8xnh/v1P8Aw==}
     dev: false
 
-  /@sveltejs/adapter-auto@3.2.2(@sveltejs/kit@2.5.17):
+  /@sveltejs/adapter-auto@3.2.2(@sveltejs/kit@2.5.18):
     resolution: {integrity: sha512-Mso5xPCA8zgcKrv+QioVlqMZkyUQ5MjDJiEPuG/Z7cV/5tmwV7LmcVWk5tZ+H0NCOV1x12AsoSpt/CwFwuVXMA==}
     peerDependencies:
       '@sveltejs/kit': ^2.0.0
     dependencies:
-      '@sveltejs/kit': 2.5.17(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@5.0.0-next.166)(vite@5.3.2)
+      '@sveltejs/kit': 2.5.18(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@5.0.0-next.166)(vite@5.3.2)
       import-meta-resolve: 4.1.0
     dev: true
 
-  /@sveltejs/kit@2.5.17(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@5.0.0-next.166)(vite@5.3.2):
-    resolution: {integrity: sha512-wiADwq7VreR3ctOyxilAZOfPz3Jiy2IIp2C8gfafhTdQaVuGIHllfqQm8dXZKADymKr3uShxzgLZFT+a+CM4kA==}
+  /@sveltejs/kit@2.5.18(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@5.0.0-next.166)(vite@5.3.2):
+    resolution: {integrity: sha512-+g06hvpVAnH7b4CDjhnTDgFWBKBiQJpuSmQeGYOuzbO3SC3tdYjRNlDCrafvDtKbGiT2uxY5Dn9qdEUGVZdWOQ==}
     engines: {node: '>=18.13'}
     hasBin: true
     requiresBuild: true
@@ -1224,12 +1227,12 @@ packages:
       '@tailwindcss/oxide-win32-x64-msvc': 4.0.0-alpha.16
     dev: false
 
-  /@tailwindcss/postcss@4.0.0-alpha.16(postcss@8.4.38):
+  /@tailwindcss/postcss@4.0.0-alpha.16(postcss@8.4.39):
     resolution: {integrity: sha512-bKrTLR9ns02pusPsBaJ687hjmzeIazBEqoyudRPpYRgLpXtwRNhs1XwA0+sOghfVn+sJlY63Fj+QAvqTQO1nZA==}
     dependencies:
       '@tailwindcss/oxide': 4.0.0-alpha.16
       lightningcss: 1.25.1
-      postcss-import: 16.1.0(postcss@8.4.38)
+      postcss-import: 16.1.0(postcss@8.4.39)
       tailwindcss: 4.0.0-alpha.16
     transitivePeerDependencies:
       - postcss
@@ -1351,7 +1354,7 @@ packages:
     dependencies:
       '@tweenjs/tween.js': 23.1.2
       '@types/stats.js': 0.17.3
-      '@types/webxr': 0.5.18
+      '@types/webxr': 0.5.19
       fflate: 0.8.2
       meshoptimizer: 0.18.1
     dev: false
@@ -1360,8 +1363,8 @@ packages:
     resolution: {integrity: sha512-dqId9J8K/vGi5Zr7oo212BGii5m3q5Hxlkwy3WpYuKPklmBEvsbMYYyLxAQpSffdLl/gdW0XUpKWFvYmyoWCoQ==}
     dev: false
 
-  /@types/webxr@0.5.18:
-    resolution: {integrity: sha512-EM8P5wtYMPUlFbDgKfNoPc5PyhgZvwXz0Wf9gYBfJOpTI8AtPzoLJlvw/D9TmIW/LPLTmwMxWI0axBs3hjLSLg==}
+  /@types/webxr@0.5.19:
+    resolution: {integrity: sha512-4hxA+NwohSgImdTSlPXEqDqqFktNgmTXQ05ff1uWam05tNGroCMp4G+4XVl6qWm1p7GQ/9oD41kAYsSssF6Mzw==}
     dev: false
 
   /@vitest/expect@1.6.0:
@@ -1430,7 +1433,7 @@ packages:
       '@vue/shared': 3.4.31
       estree-walker: 2.0.2
       magic-string: 0.30.10
-      postcss: 8.4.38
+      postcss: 8.4.39
       source-map-js: 1.2.0
     dev: false
 
@@ -1510,7 +1513,7 @@ packages:
       humanize-ms: 1.2.1
     dev: false
 
-  /ai@3.2.15(openai@4.52.1)(react@18.3.1)(svelte@5.0.0-next.166)(vue@3.4.31)(zod@3.23.8):
+  /ai@3.2.15(openai@4.52.2)(react@18.3.1)(svelte@5.0.0-next.166)(vue@3.4.31)(zod@3.23.8):
     resolution: {integrity: sha512-8xBW8jGTbw/eD54jetw32h6/AzzaM0qsgMVPGbpsnSAOW6AVxohQXFWVGBjyi3NNluzRmpaqg8yrBgCeEI+v8A==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -1539,7 +1542,7 @@ packages:
       json-schema: 0.4.0
       jsondiffpatch: 0.6.0
       nanoid: 3.3.6
-      openai: 4.52.1
+      openai: 4.52.2
       react: 18.3.1
       secure-json-parse: 2.7.0
       sswr: 2.1.0(svelte@5.0.0-next.166)
@@ -1691,6 +1694,11 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
+
+  /clsx@2.1.1:
+    resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
+    engines: {node: '>=6'}
+    dev: false
 
   /colorette@2.0.20:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
@@ -3041,8 +3049,8 @@ packages:
       mimic-fn: 4.0.0
     dev: true
 
-  /openai@4.52.1:
-    resolution: {integrity: sha512-kv2hevAWZZ3I/vd2t8znGO2rd8wkowncsfcYpo8i+wU9ML+JEcdqiViANXXjWWGjIhajFNixE6gOY1fEgqILAg==}
+  /openai@4.52.2:
+    resolution: {integrity: sha512-mMc0XgFuVSkcm0lRIi8zaw++otC82ZlfkCur1qguXYWPETr/+ZwL9A/vvp3YahX+shpaT6j03dwsmUyLAfmEfg==}
     hasBin: true
     dependencies:
       '@types/node': 18.19.39
@@ -3061,7 +3069,7 @@ packages:
     resolution: {integrity: sha512-/Eaoq+QyLSiXQ4lyYV23f14mZRQcXnxfHrN0vCai+ak9G0pp9iEQukIIZq5NccEvwRB8PUnZT0KsOoDCINS1qQ==}
     engines: {node: '>=18'}
     dependencies:
-      yocto-queue: 1.0.0
+      yocto-queue: 1.1.1
     dev: true
 
   /parse5@7.1.2:
@@ -3189,13 +3197,13 @@ packages:
       path-key: 4.0.0
     dev: true
 
-  /postcss-import@16.1.0(postcss@8.4.38):
+  /postcss-import@16.1.0(postcss@8.4.39):
     resolution: {integrity: sha512-7hsAZ4xGXl4MW+OKEWCnF6T5jqBw80/EE9aXg1r2yyn1RsVEU8EtKXbijEODa+rg7iih4bKf7vlvTGYR4CnPNg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       postcss: ^8.0.0
     dependencies:
-      postcss: 8.4.38
+      postcss: 8.4.39
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.8
@@ -3205,8 +3213,8 @@ packages:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
     dev: false
 
-  /postcss@8.4.38:
-    resolution: {integrity: sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==}
+  /postcss@8.4.39:
+    resolution: {integrity: sha512-0vzE+lAiG7hZl1/9I8yzKLx3aR9Xbof3fBHKunvMfOCYAtMhrsnccJY2iTURb9EZd5+pLuiNV9/c/GZJOHsgIw==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.7
@@ -3563,7 +3571,7 @@ packages:
     engines: {node: '>= 0.4'}
     dev: false
 
-  /svelte-check@3.8.4(postcss@8.4.38)(svelte@5.0.0-next.166):
+  /svelte-check@3.8.4(postcss@8.4.39)(svelte@5.0.0-next.166):
     resolution: {integrity: sha512-61aHMkdinWyH8BkkTX9jPLYxYzaAAz/FK/VQqdr2FiCQQ/q04WCwDlpGbHff1GdrMYTmW8chlTFvRWL9k0A8vg==}
     hasBin: true
     peerDependencies:
@@ -3574,7 +3582,7 @@ packages:
       picocolors: 1.0.1
       sade: 1.8.1
       svelte: 5.0.0-next.166
-      svelte-preprocess: 5.1.4(postcss@8.4.38)(svelte@5.0.0-next.166)(typescript@5.5.2)
+      svelte-preprocess: 5.1.4(postcss@8.4.39)(svelte@5.0.0-next.166)(typescript@5.5.2)
       typescript: 5.5.2
     transitivePeerDependencies:
       - '@babel/core'
@@ -3597,7 +3605,7 @@ packages:
       svelte: 5.0.0-next.166
     dev: true
 
-  /svelte-preprocess@5.1.4(postcss@8.4.38)(svelte@5.0.0-next.166)(typescript@5.5.2):
+  /svelte-preprocess@5.1.4(postcss@8.4.39)(svelte@5.0.0-next.166)(typescript@5.5.2):
     resolution: {integrity: sha512-IvnbQ6D6Ao3Gg6ftiM5tdbR6aAETwjhHV+UKGf5bHGYR69RQvF1ho0JKPcbUON4vy4R7zom13jPjgdOWCQ5hDA==}
     engines: {node: '>= 16.0.0'}
     requiresBuild: true
@@ -3638,7 +3646,7 @@ packages:
       '@types/pug': 2.0.10
       detect-indent: 6.1.0
       magic-string: 0.30.10
-      postcss: 8.4.38
+      postcss: 8.4.39
       sorcery: 0.11.1
       strip-indent: 3.0.0
       svelte: 5.0.0-next.166
@@ -3999,7 +4007,7 @@ packages:
         optional: true
     dependencies:
       esbuild: 0.21.5
-      postcss: 8.4.38
+      postcss: 8.4.39
       rollup: 4.18.0
     optionalDependencies:
       fsevents: 2.3.3
@@ -4140,8 +4148,8 @@ packages:
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  /yocto-queue@1.0.0:
-    resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
+  /yocto-queue@1.1.1:
+    resolution: {integrity: sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==}
     engines: {node: '>=12.20'}
     dev: true
 

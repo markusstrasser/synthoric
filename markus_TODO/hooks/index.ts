@@ -3,7 +3,7 @@ import type { UserAction } from '@/lib/tsStructs'
 import { useMutation } from 'convex/react'
 import { useEffect, useRef, useState } from 'react'
 import { useMutative } from 'use-mutative'
-import { filterUserActions } from '../utils'
+import { filterUserActions } from '../../src/lib/utils'
 import { generateInferences, generateSubmissionReview } from '@/app/actions'
 
 export function useInput() {
@@ -25,7 +25,7 @@ export function usePatchInteraction() {
     try {
       //? We only take the last value of the textinput for example (ie. "abc" would be "a", "ab", "abc" otherwise)
       const filteredActions = filterUserActions(userActions).filter(
-        (action): action is UserAction => action !== undefined,
+        (action): action is UserAction => action !== undefined
       )
 
       await patchUserActions({

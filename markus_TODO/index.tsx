@@ -31,10 +31,20 @@ emitter.on('generateInferences', inferences => {
 
 const mock = false
 
+const generateNextInteraction = async () => {
+  //?get interactions since last update
+  const CONTEXT = await getContext()
+  //? run promptDispatcher
+  
+  
+  const
+}
+
+
 //? runs after any interaction. Make sure to AWAIT the DB update in client
 export const generateInferences = async config => {
-  //TODO: maybe use getsince?
-  //TODO: get interactions since last update (this should've been just before the call to this function)
+  //TODO: use getsince?
+  //TODO: get interactions since last update
   const CONTEXT = await getContext()
   //2 run inference prompt
   console.log('generating inferences now', CONTEXT)

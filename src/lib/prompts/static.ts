@@ -1,18 +1,3 @@
-//${inference.schema.map()}
-export const InferencePrompt = `
-From the Context provided, generate a list of knowledge components that are as specific and fine-grained as possible. These components should cover the various skills, concepts, and problem-solving techniques required to answer the question correctly. Examples of such components include:
-
-- Specific mathematical operations or algebraic manipulations
-- Understanding and applying particular scientific laws or principles
-- Ability to interpret and analyze graphs or diagrams
-- Recognizing and applying problem-solving strategies
-- Recalling and using domain-specific facts or formulas
-
-The generated knowledge components should be detailed enough to capture the nuances of the problem and the user's demonstrated abilities. Multiple components may be required to fully characterize a single interaction.
-
-Do not assume that the user's ability to answer one question implies a broad understanding of the topic. Instead, focus on the specific skills and knowledge directly applied in answering that particular question.
-`
-
 export const knowledgeComponentExamples = `
 """Example of specific Knowledge Components:"""
 [
@@ -87,4 +72,20 @@ $$
 $$
 --
 Use Markdown features to format your response and lower the time and mental effort for the user to understand the problem
+`
+//${inference.schema.map()}
+export const InferencePrompt = `
+From the Context provided, generate a list of knowledge components that are as specific and fine-grained as possible. These components should cover the various skills, concepts, and problem-solving techniques required to answer the question correctly. Examples of such components include:
+
+- Specific mathematical operations or algebraic manipulations
+- Understanding and applying particular scientific laws or principles
+- Ability to interpret and analyze graphs or diagrams
+- Recognizing and applying problem-solving strategies
+- Recalling and using domain-specific facts or formulas
+
+The generated knowledge components should be detailed enough to capture the nuances of the problem and the user's demonstrated abilities. Multiple components may be required to fully characterize a single interaction.
+
+${knowledgeComponentExamples}
+
+Do not assume that the user's ability to answer one question implies a broad understanding of the topic. Instead, focus on the specific skills and knowledge directly applied in answering that particular question.
 `

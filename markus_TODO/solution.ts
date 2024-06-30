@@ -6,7 +6,7 @@ export const solutionSchema = z
       .string()
       .describe(
         'A concise overview of the key steps and strategies needed to solve the problem. ' +
-          "This should provide a bird's eye view of the solution approach without going into too much detail.",
+          "This should provide a bird's eye view of the solution approach without going into too much detail."
       ),
     // conceptualExplanation: z
     //   .string()
@@ -17,27 +17,23 @@ export const solutionSchema = z
     stepsNested: z
       .array(
         z.object({
-          step: z
-            .string()
-            .describe(
-              'A high-level step or phase in the overall solution process.',
-            ),
+          step: z.string().describe('A high-level step or phase in the overall solution process.'),
           subSteps: z.array(
             z.object({
               title: z
                 .string()
                 .describe(
                   'A specific sub-step, calculation, or detail that falls under the corresponding high-level step. ' +
-                    'This helps break down each main step into more manageable and understandable pieces.',
+                    'This helps break down each main step into more manageable and understandable pieces.'
                 ),
-            }),
+            })
           ),
-        }),
+        })
       )
       .describe(
         'A nested structure that concisely outlines the step-by-step solution process.  ' +
           'The outer level represents the main phases or milestones, while the inner level represents the more granular sub-steps or calculations within each phase. ' +
-          'This should provide a clear roadmap for solving the problem from start to finish. Avoid repetition.',
+          'This should provide a clear roadmap for solving the problem from start to finish. Avoid repetition.'
       ),
     // commonMisconceptions: z
     //   .array(z.string())
@@ -60,14 +56,17 @@ export const solutionSchema = z
   ) */
   })
   .describe(
-    'All strings and content is rendered inside a github flavored markdown component that has rehypeKatex enabled for latex expressions. When using math formulas in your content use the appropriate formatting',
+    'All strings and content is rendered inside a github flavored markdown component that has rehypeKatex enabled for latex expressions. When using math formulas in your content use the appropriate formatting'
   )
 
 export default {
   type: 'SOLUTION',
-  toolContext:
-    'Use when you want to display a task or the next exercise to the user',
-  promptTemplate: ({ task }: { task: string }) => `You are responding with a solution and review for the following Exercise or Task:
+  toolContext: 'Use when you want to display a task or the next exercise to the user',
+  promptTemplate: ({
+    task,
+  }: {
+    task: string
+  }) => `You are responding with a solution and review for the following Exercise or Task:
   ${task}
   `,
   schema: solutionSchema,
