@@ -9,54 +9,54 @@ Get a convex api key for local development
 
 ## TODO
 
-- [] READ https://svelte-5-preview.vercel.app/docs/breaking-changes
-- [] READ https://svelte.dev/blog/runes
-- [] USE https://svelte-svg-icons.codewithshin.com/
-- [] Model interactionSeq as chat with pluggable extra info before returning the object (streamObject or parallel tool calls??)
+- [ ] READ https://svelte-5-preview.vercel.app/docs/breaking-changes
+- [ ] READ https://svelte.dev/blog/runes
+- [ ] USE https://svelte-svg-icons.codewithshin.com/
+- [ ] Model interactionSeq as chat with pluggable extra info before returning the object (streamObject or parallel tool calls??)
 
-- [] DEV: How to implement consisent mocking (MSW?) and route testing declaratively as a middleware
+- [ ] DEV: How to implement consistent mocking (MSW?) and route testing declaratively as a middleware
 
-* maybe a mock/_ route. The middleware redirect /_ -> mock/\* and the return is pattern matched
+  - maybe a mock/_ route. The middleware redirect /_ -> mock/\* and the return is pattern matched
 
-- [] Decide on https://flaming.codes/en/posts/msw-in-sveltekit-for-local-development/ MSW
-- [] Newer Svelte-Debug solutions? (like in Nuxt)
-- [] Fix the dotenv issues with importing api keys (provider.ts)
-- [] Fix prefixes $lib etc.
-- [] Sketch out svelte store + routing
-- [] Copy in your always used svelte actions
+- [ ] Decide on https://flaming.codes/en/posts/msw-in-sveltekit-for-local-development/ MSW
+- [ ] Newer Svelte-Debug solutions? (like in Nuxt)
+- [ ] Fix the dotenv issues with importing api keys (provider.ts)
+- [ ] Fix prefixes $lib etc.
+- [ ] Sketch out svelte store + routing
+- [ ] Copy in your always used svelte actions
 
 - [ ] Unify /tools to have consistent API. Decide what is a tool (exercise, multipleChoice) and what not (hints, solution?)
 - [ ] Update UI with current progress inside a agentChain (ie. show the task without having to wait for the rest of the task->solution chain to finish)
 - [ ] use Abstractions like https://docs.copilotkit.ai/reference/hooks/useCopilotReadable?
 - [x] Just basic routing /seq/id/idx
-- [] More routing: back, next, home buttons. Redirect to beginning of page wrong path
-- [] Run a fetch and display in Component
-- [] Svelte store (zustand copy)
-- [] svelte html actions use:captureAction ? --> write to store? Can it add the {type:freeformtextinput}, spec:{freeformtextinput: {reducer: fn(bydefault: pickLatest), description, validation, isFinal?, isStep?, shouldInference--or use central point system??, or use AI to decide?}} etc?
-- [] persist partial store (redirects/visited)
-- [] api calls with example data (useObject)
-- [] at login, or leave app: cleanUnseenInteractions?
-- [] Convex integration
-- [] what to do about multiple generated UIs on a page and interspersed forms? SPAs?
-- [] think about /explore /read /paper /research and how these abstraction work there
-- [] createForm function '<form>...' as claude prefill
-  **tool calling**
+- [ ] More routing: back, next, home buttons. Redirect to beginning of page wrong path
+- [ ] Run a fetch and display in Component
+- [ ] Svelte store (zustand copy)
+- [ ] svelte html actions use:captureAction ? --> write to store? Can it add the {type:freeformtextinput}, spec:{freeformtextinput: {reducer: fn(bydefault: pickLatest), description, validation, isFinal?, isStep?, shouldInference--or use central point system??, or use AI to decide?}} etc?
+- [ ] persist partial store (redirects/visited)
+- [ ] api calls with example data (useObject)
+- [ ] at login, or leave app: cleanUnseenInteractions?
+- [ ] Convex integration
+- [ ] what to do about multiple generated UIs on a page and interspersed forms? SPAs?
+- [ ] think about /explore /read /paper /research and how these abstraction work there
+- [ ] createForm function '<form>...' as claude prefill
 
-- [] handle generating and posting sequentially page/index++ vs. at once ([1,2,3][3,4,5][5,3,2]) for displaying on a single page
-- [] pass down ultraspecific topic/difficulty prompts ... not params? configuration. This allows parallel generation without issues with interference/duplication of content
-- [] tool dispatcher has all needed context? Will pass subset to each tool? Or intermediaries that sample more ?
+**tool calling**
+
+- [ ] handle generating and posting sequentially page/index++ vs. at once ([1,2,3][3,4,5][5,3,2]) for displaying on a single page
+- [ ] pass down ultraspecific topic/difficulty prompts ... not params? configuration. This allows parallel generation without issues with interference/duplication of content
+- [ ] tool dispatcher has all needed context? Will pass subset to each tool? Or intermediaries that sample more ?
   - the tools stay "dumb" in that they only receive a full prompt, no params? maybe. The full prompt = prompt + context +slots
-- []
 
 ## Tools/Plugins todo. Libs
 
-- [] Make into tool: https://tympanus.net/codrops/2024/06/12/shape-lens-blur-effect-with-sdfs-and-webgl/
-- [] Mathematica
-- [] editorJS https://editorjs.io/
-- [] https://svelte-ux.techniq.dev/docs/components/Table
-- [] https://action-archive.vercel.app/actions/click-outside
-- [] https://action-archive.vercel.app/actions/resize
-- [] https://svelte-svg-icons.codewithshin.com/
+- [ ] Make into tool: https://tympanus.net/codrops/2024/06/12/shape-lens-blur-effect-with-sdfs-and-webgl/
+- [ ] Mathematica
+- [ ] editorJS https://editorjs.io/
+- [ ] https://svelte-ux.techniq.dev/docs/components/Table
+- [ ] https://action-archive.vercel.app/actions/click-outside
+- [ ] https://action-archive.vercel.app/actions/resize
+- [ ] https://svelte-svg-icons.codewithshin.com/
 
 ## Overview
 
