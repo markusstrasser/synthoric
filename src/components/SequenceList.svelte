@@ -4,7 +4,7 @@
   import type { SequencePreviewSchema } from '$lib/zodSchemas'
   import type { z } from 'zod'
   import { useConvexClient } from 'convex-svelte'
-  import { api } from '../convex/_generated/api.js'
+  import { api } from '$convex/_generated/api.js'
   import { goto } from '$app/navigation'
 
   const client = useConvexClient()

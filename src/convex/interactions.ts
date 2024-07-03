@@ -1,5 +1,8 @@
+// @ts-nocheck
+
 import { Id } from './_generated/dataModel'
-import { query, mutation } from './_generated/server'
+import { query, mutation, action, internalMutation, internalQuery } from './_generated/server'
+import { internal } from './_generated/api'
 import { v } from 'convex/values'
 import { z } from 'zod'
 import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
@@ -23,15 +26,33 @@ const zMutation = zCustomMutation(
 )
 
 // // Mutations
+
+//@ts-ignore
+const generateNextInteraction = async (ctx, seqIndex) => {
+  const context = ctx.db //TODO: get context
+  const interaction = await { content: { test: 'test Inter', seqIndex } } //TODO: internalAction -> generateObject
+  return interaction
+}
+
+const addInteractionIdToSeq = async (ctx, interactionId, seqIndex) => {
+  const context = ctx.db //TODO: get context
+  const seq = await ctx.runQuery(internal.sequences.getSequenceByIndex, { index: seqIndex })
+  seq.interactions.push(interactionId)
+  return await ctx.db.patch(seq._id, seq)
+}
 //!Failed to analyze interactions.js: Uncaught Error: Unknown zod type: ZodDate
 export const create = zMutation({
   args: {
     userActions: z.array(UserActionSchema).optional(), //? don't use z.date
-    seqId: z.string(),
-    content: z.any(),
-    index: z.number(),
+    seqIndex: z.number(),
+    // content: z.any(),
+    // index: z.number(),
   },
-  handler: async (ctx, args) => ctx.db.insert('interactions', args),
+  handler: async (ctx, args) => {
+    const interaction = await generateNextInteraction(ctx, args.seqIndex)
+    const interactionId = await ctx.db.insert('interactions', interaction)
+    return await addInteractionIdToSeq(ctx, interactionId, args.seqIndex)
+  },
 })
 
 export const patchUserActions = zMutation({
