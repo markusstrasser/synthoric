@@ -7,7 +7,7 @@ import { v } from 'convex/values'
 import { z } from 'zod'
 import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
 import { zCustomQuery, zCustomMutation, zid } from 'convex-helpers/server/zod'
-import { UserActionSchema, SubmissionReviewSchema } from '../lib/zodSchemas'
+import { UserActionSchema, SubmissionReviewSchema } from '../lib/schemas'
 
 // Helper functions
 //@ts-ignore

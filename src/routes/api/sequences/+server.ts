@@ -3,7 +3,7 @@ import { anthropic } from '$lib/providers'
 import { generateObject } from 'ai'
 import { z } from 'zod'
 import { ApplicationExplainer, ContextExplainerTemplate } from '$lib/prompts/snippets'
-import { SequencePreviewSchema } from '$lib/zodSchemas'
+import { SequencePreviewSchema } from '$lib/schemas'
 
 const topic = 'physics'
 

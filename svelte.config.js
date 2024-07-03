@@ -18,10 +18,9 @@ const config = {
       $components: 'src/components',
       $utils: 'src/utils',
       $convex: 'src/convex',
+      $schemas: 'src/lib/schemas',
     },
   },
-
-  //? not working
   plugins: [tailwindcss()],
   css: {
     transformer: 'lightningcss',
