@@ -123,6 +123,9 @@ importers:
       '@threlte/core':
         specifier: 8.0.0-next.7
         version: 8.0.0-next.7(svelte@5.0.0-next.166)(three@0.165.0)
+      javascript-state-machine:
+        specifier: ^3.1.0
+        version: 3.1.0
       prettier:
         specifier: ^3.3.2
         version: 3.3.2
@@ -1581,6 +1584,9 @@ packages:
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+
+  javascript-state-machine@3.1.0:
+    resolution: {integrity: sha512-BwhYxQ1OPenBPXC735RgfB+ZUG8H3kjsx8hrYTgWnoy6TPipEy4fiicyhT2lxRKAXq9pG7CfFT8a2HLr6Hmwxg==}
 
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -3967,6 +3973,8 @@ snapshots:
   is-stream@3.0.0: {}
 
   isexe@2.0.0: {}
+
+  javascript-state-machine@3.1.0: {}
 
   joycon@3.1.1: {}
 

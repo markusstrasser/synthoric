@@ -1,13 +1,5 @@
-<!-- TODO: 
-  Check sessionStorage for sequencses 
-  Button: VNew Varaiiants! ! 
-  Sequence .svelte :
-  * Onclick -> Db.createSequence( {seqIndex: collect().length})
-  * -> action: () interactions[0:x] = genIxs(newSeqInteractionPrompt) go to /seq/seqIndex 
-
--->
-
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { localStore } from '$lib/stores/localStore.svelte'
 
   interface Sequence {
@@ -16,18 +8,57 @@
   }
 
   const sequences = localStore<Sequence[]>('sequences', [])
+  let isLoading = $state(false)
+
+  const fetchSequences = async () => {
+    isLoading = true
+    try {
+      const res = await fetch('/api/sequences')
+      sequences.value = await res.json()
+    } catch (error) {
+      console.error('Failed to fetch sequences:', error)
+    } finally {
+      isLoading = false
+    }
+  }
+
+  const addSequence = () => {
+    sequences.value = [...sequences.value, { tagline: 'New Sequence', title: 'Untitled' }]
+  }
+
+  onMount(() => {
+    if (sequences.value.length === 0) {
+      fetchSequences()
+    }
+  })
 </script>
 
-<button on:click={() => sequences.value.push({ tagline: 'abc' })}> Add Seq </button>
-<div>
-  {JSON.stringify(sequences.value)}
+<div class="p-4">
+  <h2 class="text-2xl font-bold mb-4">Sequences</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {#each sequences.value as sequence}
+      <div class="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <h3 class="text-xl font-semibold mb-2">{sequence.title}</h3>
+        <p class="text-gray-600">{sequence.tagline}</p>
+      </div>
+    {/each}
+  </div>
+
+  <div class="mt-4 flex space-x-2">
+    <button
+      on:click={addSequence}
+      class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+      disabled={isLoading}
+    >
+      Add Sequence
+    </button>
+    <button
+      on:click={fetchSequences}
+      class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded disabled:opacity-50"
+      disabled={isLoading}
+    >
+      {isLoading ? 'Loading...' : 'Refresh Sequences'}
+    </button>
+  </div>
 </div>
-<button
-  on:click={async () => {
-    const res = await fetch('/api/sequences')
-    const data = await res.json()
-    console.log(data)
-  }}
->
-  Fetch Sequences
-</button>
