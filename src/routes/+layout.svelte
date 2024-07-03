@@ -1,6 +1,10 @@
 <script>
   import Header from './Header.svelte'
   import '../app.css'
+  import { PUBLIC_CONVEX_URL } from '$env/static/public'
+  import { setupConvex } from 'convex-svelte'
+
+  setupConvex(PUBLIC_CONVEX_URL)
 </script>
 
 <div class="flex flex-col min-h-screen">

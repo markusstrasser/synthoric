@@ -3,6 +3,7 @@ import { anthropic } from '$lib/providers'
 import { generateObject } from 'ai'
 import { z } from 'zod'
 import { ApplicationExplainer, ContextExplainerTemplate } from '$lib/prompts/snippets'
+import { SequencePreviewSchema } from '$lib/zodSchemas'
 
 const topic = 'physics'
 
@@ -27,23 +28,7 @@ export const GET: RequestHandler = async () => {
 
     model: anthropic('claude-3-5-sonnet-20240620'),
     schema: z.object({
-      content: z
-        .array(
-          z.object({
-            title: z.string().describe('A short title, maximally 7 words'),
-            tagline: z
-              .string()
-              .describe(
-                'A short tagline that gives a "trailer" or "sneak peak" of the possible learnings within the sequence, if chosen. Maximally 30 words'
-              ),
-            prerequisites: z
-              .array(z.string())
-              .describe(
-                'A list of specific subtopics that a user should know before taking this sequence. If the user already knows these topics, the sequence can be skipped.'
-              ),
-          })
-        )
-        .length(3),
+      content: z.array(SequencePreviewSchema).length(3),
     }),
   })
   return json(object.content)
