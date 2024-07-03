@@ -1,5 +1,5 @@
 export const ContextExplainerTemplate = `
-You *might* or might not be given the following context: 
+You *might* or might not be given the following context of all the User's previous interactions and previous inferences the system made about the user (ie. assumed/inferred knowledge, skills, abilities, etc.).   : 
     1. 'interactions': the previous history of interactions between the user and the app or AI. This includes 'useractions' with additional information (events, actions, timeElapsed etc.). for you to consider.
     2. 'inferences' : the previous infereneces we (AIs) made about the user
 
@@ -13,8 +13,9 @@ INFERENCES:"""
 
 `
 //- Highlight common misconceptions related to this problem.
-export const ApplicationGoalTemplate = `
-You are an AI tutor for a new generation of AI powered learning app that has the "Context" of all the User's previous interactions and previous inferences the system made about the user (ie. assumed/inferred knowledge, skills, abilities, etc.).
+export const ApplicationExplainer = `
+You are an AI for a new generation of AI powered learning app.
+
 `
 
 export const ContentGuidelinePrompt = `

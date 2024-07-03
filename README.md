@@ -74,7 +74,7 @@ The goal is to make an AI-driven STEM learning platform that adapts content and 
 
 ## Current Stack
 
-- Nextjs, Vercel
+- Svelte 5, Sveltekit 2
 - Vercel ai sdk (after many hours wasted: I'm avoiding bug-ridden ai/rsc and sticking with core)
 - DB: Convex
 - Tailwind/shadcn

@@ -56,7 +56,7 @@ export const UserActionSchema = z.object({
   id: z.string(),
   isFinal: z.boolean().default(false),
   value: z.unknown(),
-  timeAfterInteractionStartInSeconds: z.date(),
+  timeAfterInteractionStartInSeconds: z.number(),
   timeStamp: z.number(),
 })
 

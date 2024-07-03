@@ -1,7 +1,7 @@
 <script lang="ts">
   //TODO: show if illegal visit: show "go back to seq or the last interaction index of the sequence that exist in DB"
   import { page } from '$app/stores'
-  import { addUserAction } from '$lib/store'
+  import { addUserAction } from '$lib/stores'
 
   let params: Record<string, string> = {}
   $: params = $page.params

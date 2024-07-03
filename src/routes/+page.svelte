@@ -1,4 +1,5 @@
 <script>
+  import SequenceList from '../components/SequenceList.svelte'
 </script>
 
 <svelte:head>
@@ -9,4 +10,5 @@
 <section>
   <h1>Synth</h1>
   <p>TODO: Avaiable Sequences: [...]</p>
+  <SequenceList />
 </section>

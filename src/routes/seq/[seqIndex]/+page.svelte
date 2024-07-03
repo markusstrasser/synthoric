@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from '$app/stores'
 
-  $: ({ seqId } = $page.params)
+  $: ({ seqIndex } = $page.params)
 </script>
 
-<div>Sequence Overview: {seqId}</div>
+<div>Sequence Overview: {seqIndex}</div>
 
 <a href="/seq/1/1">Go to first interaction</a>
 
