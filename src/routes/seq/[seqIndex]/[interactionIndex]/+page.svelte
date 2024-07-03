@@ -2,23 +2,35 @@
   import { page } from '$app/stores'
   import { addUserAction } from '$lib/stores'
   import { api } from '$convex/_generated/api'
-  import { useConvexClient } from 'convex-svelte'
+  import { useConvexClient, useQuery } from 'convex-svelte'
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
 
   const client = useConvexClient()
 
-  $: ({ seqIndex, interactionIndex } = $page.params)
+  const { seqIndex, interactionIndex } = $page.params
 
   let sequence: any = null
   let lastValidIndex: number | null = null
   let showRedirectButton = false
   let redirectUrl = '/'
 
+  let interaction = $state([])
+  // const interactionQuery = useQuery(api.interactions.getByIndices, {
+  //   seqIndex: Number.parseInt(seqIndex),
+  //   interactionIndex: Number.parseInt(interactionIndex),
+  // })
+
   onMount(async () => {
     sequence = await client.query(api.sequences.getByIndex, {
       index: Number.parseInt(seqIndex),
     })
+
+    interaction = await client.query(api.interactions.getByIndices, {
+      seqIndex: Number.parseInt(seqIndex),
+      interactionIndex: Number.parseInt(interactionIndex),
+    })
+    console.log('interaction', interaction)
 
     if (!sequence) {
       showRedirectButton = true
@@ -38,7 +50,7 @@
       // Create new interaction
       await client.mutation(api.interactions.create, {
         seqIndex: Number.parseInt(seqIndex),
-        // interactionIndex: currentIndex,
+        interactionIndex: Number.parseInt(interactionIndex),
       })
     }
   })
@@ -85,19 +97,10 @@
     InteractionIndex: {interactionIndex}
   </div>
 
-  <!-- If on first index : go back to /seq -->
-  <!-- If on n index: go back to seq/n-1 -->
-  <!-- -->
+  <h2>Interaction Details:</h2>
+  <pre>{JSON.stringify(interaction, null, 2)}</pre>
 
-  <!-- const actions = {
-    onclick,
-    onSelectedText: text to store,
-    onDrag,
-  } -->
-
-  <!-- <div use:captureUserActions("onSelectText", {value: "selectedText"})>TASK: DO A</div> -->
   <div>SOLUTION (**hidden** until review-flow is done)</div>
-  <!-- <button onclick={submitAnswer}> SUBMIT ANSWER </button> -->
   <button use:pushFinal>Submit</button>
   <div>Review, Remediation (wait for AI to review Submission)</div>
   <a href="">Go back</a>

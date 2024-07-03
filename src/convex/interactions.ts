@@ -28,23 +28,36 @@ const zMutation = zCustomMutation(
 // // Mutations
 
 //@ts-ignore
-const generateNextInteraction = async (ctx, seqIndex) => {
+const generateNextInteraction = async ctx => {
   const context = ctx.db //TODO: get context
-  const interaction = await { content: { test: 'test Inter', seqIndex } } //TODO: internalAction -> generateObject
+  const interaction = await { content: { test: 'test Inter' } } //TODO: internalAction -> generateObject
   return interaction
 }
-
+export const getByIndices = query({
+  args: { seqIndex: v.number(), interactionIndex: v.number() },
+  handler: async ({ db }, { seqIndex, interactionIndex }) =>
+    await db
+      .query('interactions')
+      .filter(q => q.eq(q.field('seqIndex'), seqIndex))
+      .filter(q => q.eq(q.field('interactionIndex'), interactionIndex))
+      .first(),
+})
 //!Failed to analyze interactions.js: Uncaught Error: Unknown zod type: ZodDate
 export const create = zMutation({
   args: {
     userActions: z.array(UserActionSchema).optional(), //? don't use z.date
     seqIndex: z.number(),
+    interactionIndex: z.number(),
     // content: z.any(),
     // index: z.number(),
   },
-  handler: async (ctx, { seqIndex }) => {
+  handler: async (ctx, { seqIndex, interactionIndex }) => {
     const interaction = await generateNextInteraction(ctx, seqIndex)
-    const interactionId = await ctx.db.insert('interactions', interaction)
+    const interactionId = await ctx.db.insert('interactions', {
+      ...interaction,
+      seqIndex,
+      interactionIndex,
+    })
 
     const seq = await ctx.db
       .query('sequences')
