@@ -14,9 +14,6 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as inferences from "../inferences.js";
-import type * as interactions from "../interactions.js";
-import type * as sequences from "../sequences.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,11 +23,7 @@ import type * as sequences from "../sequences.js";
  * const myFunctionReference = api.myModule.myFunction;
  * ```
  */
-declare const fullApi: ApiFromModules<{
-  inferences: typeof inferences;
-  interactions: typeof interactions;
-  sequences: typeof sequences;
-}>;
+declare const fullApi: ApiFromModules<{}>;
 export declare const api: FilterApi<
   typeof fullApi,
   FunctionReference<any, "public">
