@@ -34,12 +34,6 @@ const generateNextInteraction = async (ctx, seqIndex) => {
   return interaction
 }
 
-const addInteractionIdToSeq = async (ctx, interactionId, seqIndex) => {
-  const context = ctx.db //TODO: get context
-  const seq = await ctx.runQuery(internal.sequences.getSequenceByIndex, { index: seqIndex })
-  seq.interactions.push(interactionId)
-  return await ctx.db.patch(seq._id, seq)
-}
 //!Failed to analyze interactions.js: Uncaught Error: Unknown zod type: ZodDate
 export const create = zMutation({
   args: {
@@ -48,10 +42,17 @@ export const create = zMutation({
     // content: z.any(),
     // index: z.number(),
   },
-  handler: async (ctx, args) => {
-    const interaction = await generateNextInteraction(ctx, args.seqIndex)
+  handler: async (ctx, { seqIndex }) => {
+    const interaction = await generateNextInteraction(ctx, seqIndex)
     const interactionId = await ctx.db.insert('interactions', interaction)
-    return await addInteractionIdToSeq(ctx, interactionId, args.seqIndex)
+
+    const seq = await ctx.db
+      .query('sequences')
+      .filter(q => q.eq(q.field('index'), seqIndex))
+      .first()
+    seq.interactions.push(interactionId)
+    await ctx.db.patch(seq._id, seq)
+    return true
   },
 })
 

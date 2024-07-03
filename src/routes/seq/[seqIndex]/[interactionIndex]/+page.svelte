@@ -38,7 +38,7 @@
       // Create new interaction
       await client.mutation(api.interactions.create, {
         seqIndex: Number.parseInt(seqIndex),
-        interactionIndex: currentIndex,
+        // interactionIndex: currentIndex,
       })
     }
   })

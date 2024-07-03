@@ -20,18 +20,15 @@ export const create = mutation({
     return seq
   },
 })
-
-export const getSequenceByIndex = internalQuery({
+export const getLatestK = query({
   args: {
-    index: v.number(),
+    k: v.number(),
   },
-  handler: async (ctx, { index }) => {
-    return await ctx.db
-      .query('sequences')
-      .filter(q => q.eq(q.field('index'), index))
-      .first()
+  handler: async (ctx, { k }) => {
+    return await ctx.db.query('sequences').order('desc').take(k)
   },
 })
+
 export const getByIndex = query({
   args: {
     index: v.number(),
