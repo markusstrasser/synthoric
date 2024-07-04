@@ -2,7 +2,7 @@ import { type RequestHandler, json } from '@sveltejs/kit'
 import { anthropic } from '$lib/providers'
 import { generateObject } from 'ai'
 import { z } from 'zod'
-import { ApplicationExplainer, ContextExplainerTemplate } from '$lib/prompts/snippets'
+import { ApplicationExplainer } from '$lib/prompts'
 import { SequencePreviewSchema } from '$lib/schemas'
 
 const topic = 'physics'

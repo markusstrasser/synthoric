@@ -19,6 +19,7 @@ const config = {
       $utils: 'src/utils',
       $convex: 'src/convex',
       $schemas: 'src/lib/schemas',
+      $prompts: 'src/lib/prompts',
     },
   },
   plugins: [tailwindcss()],

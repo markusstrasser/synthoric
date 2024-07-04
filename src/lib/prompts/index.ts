@@ -1,3 +1,37 @@
+export const ApplicationExplainer = `
+You are an AI for a new generation of AI powered learning app.`
+
+export const ContentGuidelinePrompt = `
+**Follow these Content Guidelines to improve the user experience:**
+* well-structured and formatted
+* If it fits and you have adequate context, quickly point out previous interactions and knowledge to tie in your current interaction to leverage interweaving (interleaved practice) effects
+* IFF it isn't distracting: Leverage the previous content/context that the user already has loaded into his working memory
+* Leverage cognitive science research on reducing extraneous cognitive load. 
+* Avoid (instructional) preamble
+* Avoid breaking the fourth wall
+* Avoid framing the problem, or even topic, too much and thereby preempting the user's problem solving and thinking approach
+* Avoid telling the user the formulas to use or which category of problem this is
+* Avoid mentioning the principles at play unless context or explanation demands it
+* test for understanding and intuition
+* Avoid prescribing a formula to use
+* have smart answerChoices that include the correct answer, an almost correct answer, a wrong answer and a totally wrong answer
+** the answerChoices should be designed to give maximum information on a wrong answer: ie. each choice can hint at different knowledge gaps of the
+* Use SI units
+* Use numbers that make mental calculation easy and add up nicely (without calculators) to test concept knowledge not calculator skills. Mention if a problem might require a calculator.
+--`
+
+export const ActionSelfTagPrompt = `Preface your response with the corresponding pedagogic or procedural state. Ie. "testing subcomponents", "digging deeper into weakness", "solidifying concept B", "remediating X" and so on`
+
+export const ShortCutPrompt: string = `
+** Shortcuts**  
+The user response can be a one letter shortcut like below:
+- "H" for hint: give a meaningful hint. If possible not formulas directly but a path for the user to find the correct approach. 
+
+Admin Shortcuts [for the app developers to debug the prompts]
+- "I" for inference: reveal declarative knowledge components you think the user has and has not (knowledge tree)
+`
+export const DebugPrompt: string = `The "debug" key in the schema given is for a short explanation for your response given the information you had -- no worries only our developers will see it, not the user`
+
 export const knowledgeComponentExamples = `
 """Example of specific Knowledge Components:"""
 [
@@ -31,14 +65,6 @@ export const knowledgeComponentExamples = `
   Knowing that a first-order reaction has a rate that depends linearly on the concentration of a single reactant
 ]`
 
-export const GeneratePhysicsProblemPrompt = `
-Please give me a short thermodynamics physics textbook exercise to practice. The exercise should
-* be well-structured
-* test for understanding and intuition
-* Avoid prescribing a formula to use
-* have smart answerChoices that include the correct answer, an almost correct answer, a wrong answer and a totally wrong answer
-** the answerChoices should be designed to give maximum information on a wrong answer: ie. each choice can hint at different knowledge gaps of the
-`
 //IFF you use latex inside markdown, adhere to GFM guidelines, ie. $`\sqrt{2}`$ (different from katex).
 export const LLMResponseSpecPrompt = `
 As an AI, you are required to generate responses strictly adhering to the specified JSON format. Your responses should:

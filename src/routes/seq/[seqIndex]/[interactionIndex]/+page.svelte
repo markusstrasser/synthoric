@@ -6,9 +6,10 @@
 
   const client = useConvexClient()
 
-  const seqIndex = $state(parseInt($page.params.seqIndex))
-  const interactionIndex = $state(parseInt($page.params.interactionIndex))
+  const seqIndex = $state(Number.parseInt($page.params.seqIndex))
+  const interactionIndex = $state(Number.parseInt($page.params.interactionIndex))
 
+  //TODO: put this logic and routing into own class/file?
   const sequence = useQuery(api.sequences.getByIndex, { index: seqIndex })
   const interaction = useQuery(api.interactions.getByIndices, { seqIndex, interactionIndex })
 
