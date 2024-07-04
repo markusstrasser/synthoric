@@ -55,7 +55,7 @@ export const getInteractionByIndex = query({
       throw new Error('Sequence not found')
     }
     if (interactionIndex >= seq.interactions.length) {
-      return null
+      return 'hi'
     }
 
     return seq.interactions[interactionIndex]

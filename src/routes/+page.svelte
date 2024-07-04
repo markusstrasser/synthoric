@@ -10,18 +10,6 @@
   const query = useQuery(api.sequences.getLatestK, { k: 3 })
 
   let isGenerating = $state(false)
-  // let isLoading = $derived(sequences?.isLoading)
-
-  // onMount(async () => {
-  //   // isLoading = true
-  //   try {
-  //     sequences = await client.query(api.sequences.getLatestK, { k: 3 })
-  //   } catch (error) {
-  //     console.error('Failed to fetch initial sequences:', error)
-  //   } finally {
-  //     isLoading = false
-  //   }
-  // })
 
   const generateSequences = async () => {
     isGenerating = true

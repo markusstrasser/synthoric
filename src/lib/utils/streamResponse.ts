@@ -1,6 +1,6 @@
 import { Anthropic } from '@anthropic-ai/sdk'
 import StreamingJSONParser from './StreamingJSONParser'
-import toolDispatcher from '../../../markus_TODO/toolDispatcher'
+import toolDispatcher from '../../../.scratches/markus_TODO/toolDispatcher'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,

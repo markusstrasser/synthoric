@@ -5,59 +5,48 @@
   import { useConvexClient, useQuery } from 'convex-svelte'
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
+  import { redirect } from '@sveltejs/kit'
 
   const client = useConvexClient()
 
   const { seqIndex, interactionIndex } = $page.params
 
-  let sequence: any = null
-  let lastValidIndex: number | null = null
-  let showRedirectButton = false
+  let sequence: any = $state([])
+  let generateInteractionAtIndex: number | null = null
+  let showRedirectButton = $state(false)
   let redirectUrl = '/'
-
-  let interaction = $state([])
-  // const interactionQuery = useQuery(api.interactions.getByIndices, {
-  //   seqIndex: Number.parseInt(seqIndex),
-  //   interactionIndex: Number.parseInt(interactionIndex),
-  // })
+  const interactionQuery = useQuery(api.interactions.getByIndices, {
+    seqIndex: Number.parseInt(seqIndex),
+    interactionIndex: Number.parseInt(interactionIndex),
+  })
 
   onMount(async () => {
     sequence = await client.query(api.sequences.getByIndex, {
       index: Number.parseInt(seqIndex),
     })
 
-    interaction = await client.query(api.interactions.getByIndices, {
-      seqIndex: Number.parseInt(seqIndex),
-      interactionIndex: Number.parseInt(interactionIndex),
-    })
-    console.log('interaction', interaction)
-
     if (!sequence) {
       showRedirectButton = true
       return
     }
 
-    lastValidIndex = sequence.interactions.findLastIndex(interaction => interaction != null)
+    const generateInteractionAtIndex = sequence.interactions.length || 0
 
     const currentIndex = Number.parseInt(interactionIndex)
-    if (!lastValidIndex) {
-      lastValidIndex = -1
-    }
-    if (currentIndex > lastValidIndex + 1 || currentIndex < 0) {
+
+    console.log('genat', generateInteractionAtIndex, 'currentindex', currentIndex)
+    if (currentIndex > generateInteractionAtIndex || currentIndex < 0) {
       showRedirectButton = true
-      redirectUrl = lastValidIndex ?? -1 >= 0 ? `/seq/${seqIndex}/${lastValidIndex}` : '/'
-    } else if (currentIndex === lastValidIndex + 1) {
+      redirectUrl = `/seq/${seqIndex}/${generateInteractionAtIndex}`
+    } else if (currentIndex === generateInteractionAtIndex) {
       // Create new interaction
+      console.log('CREATING NEW INTERACTION')
       await client.mutation(api.interactions.create, {
         seqIndex: Number.parseInt(seqIndex),
         interactionIndex: Number.parseInt(interactionIndex),
       })
     }
   })
-
-  const handleRedirect = () => {
-    goto(redirectUrl)
-  }
 
   const pushFinal = (node: HTMLElement) => {
     const handleClick = () => {
@@ -81,13 +70,18 @@
   <div>
     {#if sequence}
       <p>
-        This interaction doesn't exist yet. The last valid interaction is at index {lastValidIndex}.
+        This interaction doesn't exist yet. The last valid interaction is at index {generateInteractionAtIndex}.
       </p>
     {:else}
       <p>This sequence doesn't exist.</p>
     {/if}
-    <button on:click={handleRedirect}>
-      {sequence ? 'Go to last valid interaction' : 'Go to homepage'}
+    <button
+      onclick={() =>
+        goto(redirectUrl, { replaceState: true }).then(() => {
+          location.reload()
+        })}
+    >
+      {sequence ? 'Go to last interaction in sequence' : 'Go to homepage'}
     </button>
   </div>
 {:else}
@@ -97,8 +91,16 @@
     InteractionIndex: {interactionIndex}
   </div>
 
-  <h2>Interaction Details:</h2>
-  <pre>{JSON.stringify(interaction, null, 2)}</pre>
+  {#if interactionQuery.isLoading}
+    <p>Loading interaction data...</p>
+  {:else if interactionQuery.error}
+    <p>Error loading interaction: {interactionQuery.error.toString()}</p>
+  {:else if interactionQuery.data}
+    <h2>Interaction Details:</h2>
+    <pre>{JSON.stringify(interactionQuery.data, null, 2)}</pre>
+  {:else}
+    <p>No interaction data available.</p>
+  {/if}
 
   <div>SOLUTION (**hidden** until review-flow is done)</div>
   <button use:pushFinal>Submit</button>
