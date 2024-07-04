@@ -3,7 +3,6 @@
   import { useConvexClient, useQuery } from 'convex-svelte'
   import { api } from '$convex/_generated/api.js'
   import { goto } from '$app/navigation'
-  import SequencePreviewCard from '$components/SequencePreviewCard.svelte'
 
   // const client = useConvexClient()
   // const query = useQuery(api.sequences.getLatestK, { k: 3 })
