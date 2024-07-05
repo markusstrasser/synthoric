@@ -7,7 +7,7 @@ import jsyaml from 'js-yaml'
 import { compressInteractionsforLLM, omit } from '../lib/utils'
 import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
 import { zCustomQuery, zCustomMutation, zid } from 'convex-helpers/server/zod'
-import { UserActionSchema, SubmissionReviewSchema } from '../lib/schemas'
+import * as s from '../lib/schemas'
 import { generateObject } from 'ai'
 import {
   ContentGuidelinePrompt,
@@ -15,6 +15,9 @@ import {
   DebugPrompt,
   ApplicationExplainer,
 } from '../lib/prompts'
+import { anthropic, openai } from '../lib/providers'
+import Tools from '../lib/tools'
+
 // Helper functions
 //@ts-ignore
 const getCurrentInteraction = async db => {
@@ -34,7 +37,7 @@ const zMutation = zCustomMutation(
 
 // // Mutations
 
-const createInteractionPrompt = ({ interactions, inferences, seqId }) => {
+const createContextPrompt = ({ interactions, inferences, seqId }) => {
   //TODO: filter interaction keys and summarize. use partition func
   const currentSequenceInteractions = compressInteractionsforLLM(
     interactions.filter(i => i.seqId === seqId).map(i => omit(['_id'], i))
@@ -66,7 +69,6 @@ const createInteractionPrompt = ({ interactions, inferences, seqId }) => {
 
       ${infs}
       </inferences>
-
 `
 }
 
@@ -91,22 +93,23 @@ const generateNextInteraction = async ({ ctx, tagline, seqId }) => {
   </LearningSequenceTopic>
   ## Context: User History and Inferences
   <Context>
-  ${createInteractionPrompt({ interactions, inferences, seqId })}
+  ${createContextPrompt({ interactions, inferences, seqId })}
   </Context>
   `
 
   const { object } = await generateObject({
     prompt: OrchestratorPrompt,
     schema: z.object({
+      interactionType: z.enum(['exercise', 'multipleChoice', 'binaryChoice']), //TODO: infer from interactionTypes schema ... or types..
       prompts: z.array(
+        //TODO: could be params?
         z.string().describe(
           `a specific LLM prompt for the next AI to use. The prompt has to detail the subtopic, what skill/concept should be tested and so on. 
         * Consult the previous student history to generate a fitting, personalized instruction (interactions and system inferences about the student). 
         * In the prompt, list any context (interactions, inferences) to best inform the tool AI and personalize the UI and interaction.`
         )
       ),
-      interactionType: z.enum(['exercise', 'multipleChoice', 'binaryChoice']), //TODO: infer from interactionTypes schema ... or types..
-      config: z.object({
+      runConfig: z.object({
         count: z
           .number()
           .min(1)
@@ -114,25 +117,13 @@ const generateNextInteraction = async ({ ctx, tagline, seqId }) => {
           .describe('The number of consequtive interactions to generate'),
       }), //TODO: infer from interactionTypes schema ... or types..
     }),
-    model: anthropic('sonnet'),
+    model: anthropic('claude-3-5-sonnet-20240620'),
   })
 
-  const { prompts, interactionType, config } = object
-
-  const suffix = `
-  Be careful to adhere to these principles:
-  <ContentGuideLines>
-  ${ContentGuidelinePrompt}
-  </ContentGuideLines>
-  `
-  // const type2Action = {
-  //   exercise: () => generateInteraction,
-  //   multipleChoice: generateMultipleChoice,
-  //   binaryChoice: generateMultipleChoice,
-  // }
+  const { prompts, interactionType, runConfig } = object
 
   prompts.map(p =>
-    type2Action[interactionType](
+    Tools[interactionType](
       `${p} 
   ${suffix}
   `
@@ -181,7 +172,7 @@ export const create = zMutation({
 
 export const patchUserActions = zMutation({
   args: {
-    userActions: z.array(UserActionSchema),
+    userActions: z.array(s.UserAction),
     interactionId: zid('interactions'),
   },
   handler: async ({ db }, { userActions, interactionId }) =>
@@ -190,7 +181,7 @@ export const patchUserActions = zMutation({
 
 export const patchSystemFeedback = zMutation({
   args: {
-    systemFeedback: SubmissionReviewSchema,
+    systemFeedback: Tools.SubmissionReview.schema,
     interactionId: zid('interactions'),
   },
   handler: async ({ db }, { systemFeedback, interactionId }) =>

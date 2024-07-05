@@ -7,13 +7,29 @@
 Get a convex api key for local development
 `pnpm convex dev`
 
+## Abstractions
+
+- Orchestrator/Dispatcher takes in context and puts out params for the next interaction
+- UI tools (multichoice, exercise) still have their own prompts and guidelines but the params (tone, topic, sequenceInfo, DB-context, misconceptions) are passed in as suffix
+- This then gives the "tools" abstraction in that they have their own prompt, description, schema and description, a generate/execute - taking params - function for the orchestrator, examples
+- Agent:Multistep, Tool: SingleStep
+
 ## TODO
+
+**Markus**
+
+- [x] generateObject should only live inside tools and have the LLM fallbacks abstract the model: value and defaults
+- [ ] UseTool hook
+- [ ] in "dev-mode" there should be a debug tagged to each schema
+- [ ] .example outputs part of tools output (incl orchestrator... high quality params output)
+- [ ] Model interactionSeq as chat with pluggable extra info before returning the object (streamObject or parallel tool calls??)
+- [ ] solution/hint as a plugin?
+
+---
 
 - [ ] READ https://svelte-5-preview.vercel.app/docs/breaking-changes
 - [ ] READ https://svelte.dev/blog/runes
 - [ ] USE https://svelte-svg-icons.codewithshin.com/
-- [ ] Model interactionSeq as chat with pluggable extra info before returning the object (streamObject or parallel tool calls??)
-
 - [ ] DEV: How to implement consistent mocking (MSW?) and route testing declaratively as a middleware
 
   - maybe a mock/_ route. The middleware redirect /_ -> mock/\* and the return is pattern matched

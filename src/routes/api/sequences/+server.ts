@@ -3,7 +3,7 @@ import { anthropic } from '$lib/providers'
 import { generateObject } from 'ai'
 import { z } from 'zod'
 import { ApplicationExplainer } from '$lib/prompts'
-import { SequencePreviewSchema } from '$lib/schemas'
+import SequencePreview from '$lib/tools/AIToolConfigs/SequencePreview'
 
 const topic = 'physics'
 
@@ -12,6 +12,8 @@ export const GET: RequestHandler = async () => {
   //   messages: [{ role: 'user', content: 'Hello!' }],
   // })
   console.log('Fetching new Sequence Previews')
+
+  //TODO: sequencePreview.executeBatch()
   const { object } = await generateObject({
     //${ContextExplainerTemplate}
     prompt: `${ApplicationExplainer}
@@ -28,7 +30,7 @@ export const GET: RequestHandler = async () => {
 
     model: anthropic('claude-3-5-sonnet-20240620'),
     schema: z.object({
-      content: z.array(SequencePreviewSchema).length(3),
+      content: z.array(SequencePreview.schema).length(3),
     }),
   })
   return json(object.content)

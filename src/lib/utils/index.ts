@@ -2,37 +2,10 @@ import { type ClassValue, clsx } from 'clsx'
 import * as jsyaml from 'js-yaml'
 import { twMerge } from 'tailwind-merge'
 import { formatDistanceToNow } from 'date-fns'
+import type { z } from 'zod'
+import type { UserAction } from '$lib/types'
 
-import { ConvexHttpClient } from 'convex/browser'
-// import { api } from '@/convex/_generated/api.js'
-import * as dotenv from 'dotenv'
-// import {createOpenAI} from 'ai-'
-
-// dotenv.config({ path: '.env.local' })
-
-// // biome-ignore lint/style/noNonNullAssertion: <explanation>
-// const client = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
-
-// // const groq = createOpenAI({
-// // 	baseURL: "https://api.groq.com/openai/v1",
-// // 	apiKey: process.env.GROQ_API_KEY,
-// // });
-// // const llama70b = groq("llama3-70b-8192");
-// export const getContext = async () => {
-//   const pathToQuery = {
-//     interaction: api.interactions.getLast,
-//   }
-//   // emitter.emit("getContext", key);
-//   const interactions = await client.query(api.interactions.getAll)
-//   const previousInferences = await client.query(api.inferences.get)
-
-//   const CONTEXT = {
-//     interactions: YAMLify(interactions),
-//     inferences: YAMLify(previousInferences),
-//   }
-//   return CONTEXT
-// }
-
+//! TODO -- new architecture
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -75,6 +48,16 @@ export const summarizeInteraction = ({ _creationTime, content, userActions = [] 
   content,
   userActions,
 })
+
+export const schema2dict = (zodSchema: z.ZodObject<any>) =>
+  Object.fromEntries(
+    Object.entries(zodSchema.shape).map(([key, value]) => [
+      key,
+      //@ts-ignore
+      value.description || 'No description',
+    ])
+  )
+
 const mockInteractions = [
   {
     _creationTime: 1720031075337.9485,
