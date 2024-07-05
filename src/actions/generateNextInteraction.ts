@@ -47,6 +47,8 @@ const mockMulitpleChoice = {
   },
 }
 
+import Tools from '$lib/tools/'
+
 const mocks = [mockExercise, mockMulitpleChoice]
 
 export const interactionMock = async () =>

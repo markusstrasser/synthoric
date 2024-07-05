@@ -19,11 +19,16 @@ Get a convex api key for local development
 **Markus**
 
 - [x] generateObject should only live inside tools and have the LLM fallbacks abstract the model: value and defaults
+- [ ] Should params -> prompt be passed in by the caller? then only non-prompt params are passed in effectively (aka dependencies?)
+
+* Prompt Suffix / Prefix / slots?
+
 - [ ] UseTool hook
 - [ ] in "dev-mode" there should be a debug tagged to each schema
 - [ ] .example outputs part of tools output (incl orchestrator... high quality params output)
 - [ ] Model interactionSeq as chat with pluggable extra info before returning the object (streamObject or parallel tool calls??)
 - [ ] solution/hint as a plugin?
+- [ ] Vite plugin for generating tool types
 
 ---
 

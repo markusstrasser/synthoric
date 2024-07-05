@@ -36,6 +36,7 @@ const enhanceSchema = (schema: ReturnType<typeof getJsonSchema>) => ({
 export default <T extends keyof typeof AIToolConfigs>(config: (typeof AIToolConfigs)[T]) => {
   const enhancedSchema = enhanceSchema(getJsonSchema(config.schema))
 
+  //TODO: add configs or prompt variation / injection methods
   const defaultExecute = async (
     prompt: string,
     options = {}
