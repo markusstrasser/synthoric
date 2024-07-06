@@ -14,6 +14,10 @@ Get a convex api key for local development
 - This then gives the "tools" abstraction in that they have their own prompt, description, schema and description, a generate/execute - taking params - function for the orchestrator, examples
 - Agent:Multistep, Tool: SingleStep
 
+## Gotchas
+
+Do not import anything into the /convex files that has dependencies like dotenv and so on.
+
 ## TODO
 
 **Markus**

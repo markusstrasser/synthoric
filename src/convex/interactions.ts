@@ -1,12 +1,11 @@
-import { query, mutation, internalMutation } from './_generated/server'
-import { internal } from './_generated/api'
+import { query, mutation } from './_generated/server'
 import { v } from 'convex/values'
 import { z } from 'zod'
 import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
 import { zCustomQuery, zCustomMutation, zid } from 'convex-helpers/server/zod'
 import * as s from '../lib/schemas'
-import Tools from '../lib/tools'
-import createContextPrompt from '../lib/createContextPrompt'
+import { SubmissionReview } from '../lib/tools/AIToolConfigs'
+import { UserAction } from '../lib/schemas'
 // Types based on your schema
 import type { Id } from './_generated/dataModel'
 
@@ -27,12 +26,9 @@ const zMutation = zCustomMutation(
   })
 )
 
-export const triggerAIGenerationAction = mutation({
-  //? running this instead of the action because of convex timeouts and best practices
+export const getContext = query({
   args: { seqIndex: v.number(), interactionIndex: v.number() },
   handler: async (ctx, { seqIndex, interactionIndex }) => {
-    await ctx.db.insert('cache', { status: 'Interaction Generation: Gathering Context' })
-
     const [interactions, inferences, seq] = await Promise.all([
       ctx.db.query('interactions').collect(),
       ctx.db.query('inferences').collect(),
@@ -41,21 +37,7 @@ export const triggerAIGenerationAction = mutation({
         .filter(q => q.eq(q.field('index'), seqIndex))
         .first(),
     ])
-
-    if (!seq) throw new Error(`Sequence with index ${seqIndex} not found`)
-
-    const contextStr = createContextPrompt({
-      interactions,
-      inferences,
-      seqIndex,
-      tagline: seq.tagline,
-    })
-    await ctx.scheduler.runAfter(0, internal.interactionAction.create, {
-      seqIndex,
-      interactionIndex,
-      contextStr,
-      seq,
-    })
+    return { interactions, inferences, seq }
   },
 })
 
@@ -73,19 +55,20 @@ export const upsertLastVisited = zMutation({
   },
   handler: async (ctx, { seqIndex, interactionIndex }) => {
     const interaction = await getByIndices(ctx, { seqIndex, interactionIndex })
+    const time = 'testtime' // new Date(Date.now())
     if (!interaction) {
       ctx.db.insert('interactions', {
         seqIndex,
         interactionIndex,
-        lastVisited: Date.now(),
+        lastVisited: time,
       })
     } else {
-      return await ctx.db.patch(interaction._id, { lastVisited: Date.now() })
+      return await ctx.db.patch(interaction._id, { lastVisited: time })
     }
   },
 })
 
-export const insertInteractionAndLinkToSequence = internalMutation({
+export const insertInteractionAndLinkToSequence = mutation({
   args: {
     content: v.any(),
     seqIndex: v.number(),
@@ -99,10 +82,11 @@ export const insertInteractionAndLinkToSequence = internalMutation({
       interactionIndex,
     })
 
-    await ctx.db.patch(seqId, {
-      interactions: (prev: Id<'interactions'>[]) => [...prev, interactionId],
-      lastUpdated: new Date().toISOString(),
-    })
+    const seq = await ctx.db.get(seqId)
+    seq.interactions.push(interactionId)
+    seq.lastUpdated = Date.now()
+
+    await ctx.db.patch(seqId, seq)
 
     return interactionId
   },
@@ -120,7 +104,7 @@ export const getByIndices = query({
 
 export const patchUserActions = zMutation({
   args: {
-    userActions: z.array(s.UserAction),
+    userActions: z.array(UserAction),
     interactionId: zid('interactions'),
   },
   handler: async ({ db }, { userActions, interactionId }) =>
@@ -129,7 +113,7 @@ export const patchUserActions = zMutation({
 
 export const patchSystemFeedback = zMutation({
   args: {
-    systemFeedback: Tools.SubmissionReview.schema,
+    systemFeedback: SubmissionReview.schema,
     interactionId: zid('interactions'),
   },
   handler: async ({ db }, { systemFeedback, interactionId }) =>

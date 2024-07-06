@@ -1,4 +1,6 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
+import { api } from '$convex/_generated/api.js'
+import { convexClient } from '$lib/providers'
 
 const interactionExamples = [
   {
@@ -18,6 +20,7 @@ const interactionExamples = [
   },
   // Add more examples as needed
 ]
+console.log(await convexClient.query(api.interactions.getAll))
 
 export const GET: RequestHandler = async () => {
   return json({
