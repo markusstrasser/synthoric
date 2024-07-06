@@ -14,13 +14,18 @@
   const interaction = useQuery(api.interactions.getByIndices, { seqIndex, interactionIndex })
 
   $effect(() => {
+    if (interaction.data) {
+      console.log('interaction.data', interaction.data)
+    }
     if (!sequence.data) return
 
     const lastValidIndex = sequence.data.interactions.length
     if (interactionIndex > lastValidIndex || interactionIndex < 0) {
       goto(`/seq/${seqIndex}/${lastValidIndex}`, { replaceState: true })
     } else if (interactionIndex === lastValidIndex) {
-      client.mutation(api.interactions.triggerAIGenerationAction, { seqIndex, interactionIndex })
+      fetch(
+        `/api/generateNextInteraction?seqIndex=${seqIndex}&interactionIndex=${interactionIndex}`
+      )
     }
   })
 
@@ -68,8 +73,8 @@
     <p>Error loading interaction: {interaction.error.toString()}</p>
   {:else if interaction.data}
     <h2>Interaction Details:</h2>
-    {#if interaction.data.content.length > 0}
-      <pre>{JSON.stringify(interaction.data.content, null, 2)}</pre>
+    {#if interaction.data.content}
+      <pre>{JSON.stringify(interaction.data.content, null, 2)} Hei</pre>
     {:else}
       <pre>... 👾 Creating Interaction Content</pre>
     {/if}

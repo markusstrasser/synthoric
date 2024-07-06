@@ -85,12 +85,15 @@ const generateNextInteraction = async (seqIndex: number, interactionIndex: numbe
   }
 }
 
-export const GET: RequestHandler = async () => {
-  const res = await generateNextInteraction(0, 1)
-  return json({
-    success: true,
-    data: res,
-  })
+export const GET: RequestHandler = async ({ url }) => {
+  const seqIndex = Number(url.searchParams.get('seqIndex'))
+  const interactionIndex = Number(url.searchParams.get('interactionIndex'))
+
+  if (!seqIndex || !interactionIndex) {
+    throw new Error('Invalid seqIndex or interactionIndex in uRL params')
+  }
+  const res = await generateNextInteraction(seqIndex, interactionIndex)
+  return json({ success: true, data: res })
 }
 // export const POST: RequestHandler = async ({ request }) => {
 //   const { seqIndex, interactionIndex } = await request.json()
