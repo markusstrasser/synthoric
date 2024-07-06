@@ -1,22 +1,14 @@
-import { Id } from './_generated/dataModel'
-import { query, mutation, action, internalMutation, internalQuery } from './_generated/server'
+import { query, mutation, internalMutation } from './_generated/server'
 import { internal } from './_generated/api'
 import { v } from 'convex/values'
 import { z } from 'zod'
-import jsyaml from 'js-yaml'
-import { compressInteractionsforLLM, omit } from '../lib/utils'
 import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
 import { zCustomQuery, zCustomMutation, zid } from 'convex-helpers/server/zod'
 import * as s from '../lib/schemas'
-import { generateObject } from 'ai'
-import {
-  ContentGuidelinePrompt,
-  ActionSelfTagPrompt,
-  DebugPrompt,
-  ApplicationExplainer,
-} from '../lib/prompts'
-import { anthropic, openai } from '../lib/providers'
 import Tools from '../lib/tools'
+import createContextPrompt from '../lib/createContextPrompt'
+// Types based on your schema
+import type { Id } from './_generated/dataModel'
 
 // Helper functions
 //@ts-ignore
@@ -35,103 +27,86 @@ const zMutation = zCustomMutation(
   })
 )
 
-// // Mutations
+export const triggerAIGenerationAction = mutation({
+  //? running this instead of the action because of convex timeouts and best practices
+  args: { seqIndex: v.number(), interactionIndex: v.number() },
+  handler: async (ctx, { seqIndex, interactionIndex }) => {
+    await ctx.db.insert('cache', { status: 'Interaction Generation: Gathering Context' })
 
-const createContextPrompt = ({ interactions, inferences, seqId }) => {
-  //TODO: filter interaction keys and summarize. use partition func
-  const currentSequenceInteractions = compressInteractionsforLLM(
-    interactions.filter(i => i.seqId === seqId).map(i => omit(['_id'], i))
-  )
-  const otherSequencesInteractions = compressInteractionsforLLM(
-    interactions.filter(i => i.seqId !== seqId).map(i => omit(['_id'], i))
-  )
-  const infs = jsyaml.dump(omit(['_id', '_creationTime', 'sources'], inferences), {
-    skipInvalid: true,
-  })
+    const [interactions, inferences, seq] = await Promise.all([
+      ctx.db.query('interactions').collect(),
+      ctx.db.query('inferences').collect(),
+      ctx.db
+        .query('sequences')
+        .filter(q => q.eq(q.field('index'), seqIndex))
+        .first(),
+    ])
 
-  return `
-  You are given the following history and user insights:
-    1. 'interactions': the previous history of interactions the user engaged with within our App. This includes the actions taken within a dynamic UI component (key 'useractions'), often with additional information (timeElapsed etc.). for you to consider.
-    2. 'inferences' : the previous inferences and learning insights another AI System made about the user ie. assumed/inferred knowledge, skills, abilities, etc.)
+    if (!seq) throw new Error(`Sequence with index ${seqIndex} not found`)
 
-      <interactions>
-      <from-current-learning-sequence>
-      ${currentSequenceInteractions}
-      </from-current-learning-sequence>
+    const contextStr = createContextPrompt({
+      interactions,
+      inferences,
+      seqIndex,
+      tagline: seq.tagline,
+    })
+    await ctx.scheduler.runAfter(0, internal.interactionAction.create, {
+      seqIndex,
+      interactionIndex,
+      contextStr,
+      seq,
+    })
+  },
+})
 
-      <from-other-sequences>
-      ${otherSequencesInteractions}
-      </from-other-sequences>
+export const listScheduledMessages = query({
+  args: {},
+  handler: async (ctx, args) => {
+    return await ctx.db.system.query('_scheduled_functions').collect()
+  },
+})
 
-      </interactions>
+export const upsertLastVisited = zMutation({
+  args: {
+    seqIndex: z.number(),
+    interactionIndex: z.number(),
+  },
+  handler: async (ctx, { seqIndex, interactionIndex }) => {
+    const interaction = await getByIndices(ctx, { seqIndex, interactionIndex })
+    if (!interaction) {
+      ctx.db.insert('interactions', {
+        seqIndex,
+        interactionIndex,
+        lastVisited: Date.now(),
+      })
+    } else {
+      return await ctx.db.patch(interaction._id, { lastVisited: Date.now() })
+    }
+  },
+})
 
-      <inferences>
+export const insertInteractionAndLinkToSequence = internalMutation({
+  args: {
+    content: v.any(),
+    seqIndex: v.number(),
+    interactionIndex: v.number(),
+    seqId: v.id('sequences'),
+  },
+  handler: async (ctx, { content, seqIndex, interactionIndex, seqId }) => {
+    const interactionId = await ctx.db.insert('interactions', {
+      content,
+      seqIndex,
+      interactionIndex,
+    })
 
-      ${infs}
-      </inferences>
-`
-}
+    await ctx.db.patch(seqId, {
+      interactions: (prev: Id<'interactions'>[]) => [...prev, interactionId],
+      lastUpdated: new Date().toISOString(),
+    })
 
-//@ts-ignore
-const generateNextInteraction = async ({ ctx, tagline, seqId }) => {
-  const [interactions, inferences] = await Promise.all([
-    ctx.db.query('interactions').collect(),
-    ctx.db.query('inferences').collect(),
-  ])
-
-  //TODO: explain what a sequence is and the effort/time limit
-  const OrchestratorPrompt = `
-  ## Application Explainer
-  ${ApplicationExplainer}
-  
-  Your task is to ** generate the next interaction that the user will see. **.
-
-  ## Current Course Sequence
-  The topic/tagline of the current learning Sequence is: 
-  <LearningSequenceTopic>
-  ${tagline}
-  </LearningSequenceTopic>
-  ## Context: User History and Inferences
-  <Context>
-  ${createContextPrompt({ interactions, inferences, seqId })}
-  </Context>
-  `
-
-  const { object } = await generateObject({
-    prompt: OrchestratorPrompt,
-    schema: z.object({
-      interactionType: z.enum(['exercise', 'multipleChoice', 'binaryChoice']), //TODO: infer from interactionTypes schema ... or types..
-      prompts: z.array(
-        //TODO: could be params?
-        z.string().describe(
-          `a specific LLM prompt for the next AI to use. The prompt has to detail the subtopic, what skill/concept should be tested and so on. 
-        * Consult the previous student history to generate a fitting, personalized instruction (interactions and system inferences about the student). 
-        * In the prompt, list any context (interactions, inferences) to best inform the tool AI and personalize the UI and interaction.`
-        )
-      ),
-      runConfig: z.object({
-        count: z
-          .number()
-          .min(1)
-          .max(5)
-          .describe('The number of consequtive interactions to generate'),
-      }), //TODO: infer from interactionTypes schema ... or types..
-    }),
-    model: anthropic('claude-3-5-sonnet-20240620'),
-  })
-
-  const { prompts, interactionType, runConfig } = object
-
-  prompts.map(p =>
-    Tools[interactionType](
-      `${p} 
-  ${suffix}
-  `
-    ).then(interaction => ctx.db.insert('interactions', interaction))
-  )
-  const interaction = await { content: { test: 'test Inter' } } //TODO: internalAction -> generateObject
-  return interaction
-}
+    return interactionId
+  },
+})
 
 export const getByIndices = query({
   args: { seqIndex: v.number(), interactionIndex: v.number() },
@@ -141,33 +116,6 @@ export const getByIndices = query({
       .filter(q => q.eq(q.field('seqIndex'), seqIndex))
       .filter(q => q.eq(q.field('interactionIndex'), interactionIndex))
       .first(),
-})
-
-export const create = zMutation({
-  args: {
-    //? don't use z.date
-    seqIndex: z.number(),
-    interactionIndex: z.number(),
-    // content: z.any(),
-    // index: z.number(),
-  },
-  handler: async (ctx, { seqIndex, interactionIndex }) => {
-    const seq = await ctx.db
-      .query('sequences')
-      .filter(q => q.eq(q.field('index'), seqIndex))
-      .first()
-
-    const interaction = await generateNextInteraction({ ctx, ...seq })
-    const interactionId = await ctx.db.insert('interactions', {
-      ...interaction,
-      seqIndex,
-      interactionIndex,
-    })
-
-    seq.interactions.push(interactionId)
-    await ctx.db.patch(seq._id, seq)
-    return true
-  },
 })
 
 export const patchUserActions = zMutation({

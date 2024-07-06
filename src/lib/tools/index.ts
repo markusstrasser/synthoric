@@ -1,5 +1,5 @@
 import * as AIToolConfigs from './AIToolConfigs'
-import createEnhancedAITool from './createEnhancedAITool'
+import createEnhancedAITool from './createAITool'
 
 const Tools = Object.fromEntries(
   Object.entries(AIToolConfigs).map(([name, config]) => [name, createEnhancedAITool(config)])

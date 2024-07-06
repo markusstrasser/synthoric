@@ -39,7 +39,7 @@ const sourceSchema = z.object({
   whyRelevant: z.string().describe('Why is this source relevant to the inference?'),
   weight: z.number().min(0).max(1).describe('The weight of the source in the inference'),
 })
-import type { AIToolConfig } from '../createEnhancedAITool'
+
 export default {
   description: 'Generate Insights from the users interaction history and previous insights',
   prompt: `

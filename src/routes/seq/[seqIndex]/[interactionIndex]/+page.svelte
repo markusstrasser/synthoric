@@ -20,7 +20,7 @@
     if (interactionIndex > lastValidIndex || interactionIndex < 0) {
       goto(`/seq/${seqIndex}/${lastValidIndex}`, { replaceState: true })
     } else if (interactionIndex === lastValidIndex) {
-      client.mutation(api.interactions.create, { seqIndex, interactionIndex })
+      client.mutation(api.interactions.triggerAIGenerationAction, { seqIndex, interactionIndex })
     }
   })
 
@@ -68,9 +68,13 @@
     <p>Error loading interaction: {interaction.error.toString()}</p>
   {:else if interaction.data}
     <h2>Interaction Details:</h2>
-    <pre>{JSON.stringify(interaction.data, null, 2)}</pre>
+    {#if interaction.data.content.length > 0}
+      <pre>{JSON.stringify(interaction.data.content, null, 2)}</pre>
+    {:else}
+      <pre>... 👾 Creating Interaction Content</pre>
+    {/if}
   {:else}
-    <p>No interaction data available.</p>
+    <p>No interaction at all at this index.</p>
   {/if}
 
   <div>SOLUTION (**hidden** until review-flow is done)</div>

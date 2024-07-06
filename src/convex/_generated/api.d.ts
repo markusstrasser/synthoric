@@ -14,7 +14,9 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as cache from "../cache.js";
 import type * as inferences from "../inferences.js";
+import type * as interactionAction from "../interactionAction.js";
 import type * as interactions from "../interactions.js";
 import type * as sequences from "../sequences.js";
 
@@ -27,7 +29,9 @@ import type * as sequences from "../sequences.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  cache: typeof cache;
   inferences: typeof inferences;
+  interactionAction: typeof interactionAction;
   interactions: typeof interactions;
   sequences: typeof sequences;
 }>;

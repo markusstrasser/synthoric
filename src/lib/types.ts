@@ -2,14 +2,13 @@ import type { z } from 'zod'
 import type { UserAction as UserActionSchema } from '$schemas'
 import type * as AIToolConfigs from './tools/AIToolConfigs'
 
-export type UserAction = z.infer<typeof UserActionSchema>
-
 // Create and export individual types for each AI tool
 export type AITypes = {
   [K in keyof typeof AIToolConfigs]: z.infer<(typeof AIToolConfigs)[K]['schema']>
 }
 
 //TODO: this kinda repetition bothers me
+export type UserAction = z.infer<typeof UserActionSchema>
 export type Hint = AITypes['Hint']
 export type MultipleChoiceTask = AITypes['MultipleChoiceTask']
 export type UserInsight = AITypes['UserInsight']

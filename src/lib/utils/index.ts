@@ -3,7 +3,6 @@ import * as jsyaml from 'js-yaml'
 import { twMerge } from 'tailwind-merge'
 import { formatDistanceToNow } from 'date-fns'
 import type { z } from 'zod'
-import type { UserAction } from '$lib/types'
 
 //! TODO -- new architecture
 export function cn(...inputs: ClassValue[]) {
@@ -20,41 +19,44 @@ export const isObjectEmpty = (obj: Record<string, unknown>): boolean =>
 
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-const getLatestAction = (specType: string) => (actions: UserAction[]) =>
-  actions
-    .filter(action => action.fromSpec === specType)
-    .sort((a, b) => b.timeStamp - a.timeStamp)[0]
+// const getLatestAction = (specType: string) => (actions: UserAction[]) =>
+//   actions
+//     .filter(action => action.fromSpec === specType)
+//     .sort((a, b) => b.timeStamp - a.timeStamp)[0]
 
-export const filterUserActions = (userActions: UserAction[]) => {
-  //TODO: this is hacky
-  const getLatest = getLatestAction('SOLUTION')(userActions)
-  const getText = getLatestAction('TextInput')(userActions)
-  return [
-    getLatest,
-    getText,
-    ...userActions.filter(action => !['SOLUTION', 'TextInput'].includes(action.fromSpec)),
-  ]
-}
-export const omit = (keys: string[], obj: any) =>
+// export const filterUserActions = (userActions: UserAction[]) => {
+//   //TODO: this is hacky
+//   const getLatest = getLatestAction('SOLUTION')(userActions)
+//   const getText = getLatestAction('TextInput')(userActions)
+//   return [
+//     getLatest,
+//     getText,
+//     ...userActions.filter(action => !['SOLUTION', 'TextInput'].includes(action.fromSpec)),
+//   ]
+// }
+
+//@ts-ignore
+export const omit = (keys: string[], obj) =>
   Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k)))
 
 //TODO:
+//@ts-ignore
 export const compressInteractionsforLLM = (interactions: Interaction[]) => {
   return interactions.map(summarizeInteraction)
 }
 
+//@ts-ignore
 export const summarizeInteraction = ({ _creationTime, content, userActions = [] }) => ({
   interactedLast: formatTimeAgo(_creationTime),
   content,
   userActions,
 })
 
-export const schema2dict = (zodSchema: z.ZodObject<any>) =>
+export const schema2dict = (zodSchema: z.ZodObject<z.ZodRawShape>) =>
   Object.fromEntries(
     Object.entries(zodSchema.shape).map(([key, value]) => [
       key,
-      //@ts-ignore
-      value.description || 'No description',
+      (value as z.ZodTypeAny).description || 'No description',
     ])
   )
 

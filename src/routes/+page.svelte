@@ -53,11 +53,11 @@
   {/if}
   <div class="mt-4 flex space-x-2">
     <button
-      on:click={generateSequences}
+      onclick={generateSequences}
       class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded disabled:opacity-50"
       disabled={query.isLoading}
     >
-      {query.isLoading ? 'Generating...' : 'Generate New Sequences'}
+      {query.isLoading ? 'Loading...' : isGenerating ? 'Generating...' : 'Generate New Sequences'}
     </button>
   </div>
 </section>
