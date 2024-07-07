@@ -3,13 +3,12 @@ import SolutionReview from '$components/SolutionReview.svelte'
 import SubmitButton from '$components/SubmitButton.svelte'
 import TextInput from '$components/TextInput.svelte'
 import MultipleChoice from '$components/MultipleChoice.svelte'
-import store from '$stores'
 
 type ComponentKey = keyof typeof componentMap
 type ComponentConfig<T = any> = {
   component: ComponentType
   mapProps: (value: T) => any
-  condition?: (store: typeof store) => boolean
+  condition?: (hasSubmitted: boolean) => boolean
   inputComponents?: ComponentType[]
 }
 const componentMap: Record<string, ComponentConfig> = {
@@ -21,7 +20,7 @@ const componentMap: Record<string, ComponentConfig> = {
   solution: {
     component: SolutionReview,
     mapProps: props => props,
-    condition: store => store.hasSubmitted,
+    condition: hasSubmitted => hasSubmitted,
   },
   multipleChoiceTask: {
     component: MultipleChoice,
@@ -31,7 +30,7 @@ const componentMap: Record<string, ComponentConfig> = {
   systemFeedback: {
     component: Markdown,
     mapProps: props => ({ source: props }),
-    condition: store => store.hasSubmitted,
+    condition: hasSubmitted => hasSubmitted,
   },
   'text-input': {
     component: TextInput,
@@ -44,9 +43,9 @@ const componentMap: Record<string, ComponentConfig> = {
 }
 export default componentMap
 
-export const getInteractionContent = (interaction: any, store) => {
+export const getInteractionContent = (interaction: any, hasSubmitted: boolean) => {
   return Object.entries(interaction.content)
     .filter(([key]) => key in componentMap)
     .map(([key, value]) => ({ key, value, config: componentMap[key] }))
-    .filter(({ config }) => !config.condition || config.condition(store))
+    .filter(({ config }) => !config.condition || config.condition(hasSubmitted))
 }

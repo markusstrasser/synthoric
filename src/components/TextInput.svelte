@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { addUserAction } from '$lib/stores/index'
+  import { addUserAction } from '$stores/index.svelte.ts'
 
-  const { id = '', placeholder = '' } = $props()
-  let value = $state('')
+  //TODO: derive input value from store1.filteredUserActions?
+  let { id = '', placeholder = '', value = '' } = $props()
 
   function handleInput(event: Event) {
     value = (event.target as HTMLInputElement).value

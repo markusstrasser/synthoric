@@ -210,3 +210,5 @@ A: The system includes:
 
 - using https://github.com/transitive-bullshit/agentic tools
 - using https://aceternity.sveltekit.io/components/
+- https://runed.dev/docs/ : state-history and FSM claass
+- https://github.com/svecosystem/svelte-interactions

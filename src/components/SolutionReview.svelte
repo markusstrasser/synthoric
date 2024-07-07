@@ -1,7 +1,7 @@
 <script lang="ts">
   import { nanoid } from 'nanoid'
   import SvelteMarkdown from 'svelte-markdown'
-  import { addUserAction } from '$stores'
+  import { addUserAction } from '$stores/index.svelte'
 
   interface SubStep {
     title: string

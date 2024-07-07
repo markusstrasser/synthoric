@@ -1,5 +1,5 @@
 // actions.ts
-import { addUserAction } from '$lib/stores'
+import { addUserAction } from '$stores/index.svelte'
 
 export function userAction(node: HTMLElement, { type, id }: { type: string; id: string }) {
   const handleAction = (event: Event) => {

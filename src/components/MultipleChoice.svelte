@@ -1,6 +1,6 @@
 <script lang="ts">
   import { nanoid } from 'nanoid'
-  import { addUserAction } from '$stores'
+  import { addUserAction } from '$stores/index.svelte.ts'
 
   const { interaction, isReadOnly = false } = $props()
 

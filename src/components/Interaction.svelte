@@ -1,10 +1,14 @@
 <script lang="ts">
   import { mockInteraction } from '$lib/mocks'
   import { getInteractionContent } from '$lib/componentMap'
-  import store from '$stores'
+  import actions from '$stores/index.svelte'
 
   const { interactionConfig } = $props()
-  const interactionContent = $derived(getInteractionContent(interactionConfig, $store))
+
+  console.log(actions.hasSubmitted, 'hasSubmitted')
+  const interactionContent = $derived(
+    getInteractionContent(interactionConfig, actions.hasSubmitted)
+  )
 
   console.log(interactionConfig, 'content')
 </script>
