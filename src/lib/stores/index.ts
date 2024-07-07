@@ -4,6 +4,7 @@ export type UserAction = {
   type: string
   id: string
   value: any
+  displayIndex?: number //? this is mostly for the AI to see where things were on the screen and to discern between multiple inputs from the same element
   timestamp?: number
   isSubmit?: boolean
   // Add any other properties that might be in the payload

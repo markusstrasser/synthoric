@@ -17,20 +17,4 @@
   })
 </script>
 
-<progress value={0.7} />
-<SvelteMarkdown source={task} />
-<TextInput id="1" {readOnly} />
-<slot></slot>
-
-{#if systemFeedback?.length > 0}
-  <h3>YOUR SUBMISSION: {userActions[0]?.value}</h3>
-  <div>{JSON.stringify(systemFeedback)}</div>
-{/if}
-
-{#if !hasSubmitted}
-  <div>-.*submit to see solution.*.-</div>
-{:else}
-  <SolutionReview {...solution} />
-{/if}
-
 <hr />
