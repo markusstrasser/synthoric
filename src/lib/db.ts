@@ -5,7 +5,7 @@ import { convexClient } from './providers'
 import { api } from '$convex/_generated/api'
 import type { Id } from '$convex/_generated/dataModel'
 
-export class ConvexDB {
+export class DB {
   private client
 
   constructor(client = convexClient) {
