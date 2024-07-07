@@ -1,39 +1,36 @@
-'use client'
-import Markdown from "./Markdown";
-import { TextInput } from "./TextInput";
-import { isEmpty } from "lodash";
-import SolutionReview from "./SolutionReview";
-import { useStore } from "@/app/appStore";
+<script lang="ts">
+  import SvelteMarkdown from 'svelte-markdown'
+  import TextInput from './TextInput.svelte'
+  import SolutionReview from './SolutionReview.svelte'
+  import store from '$lib/stores'
+  import type { UserAction } from '$stores'
+  const { interaction, readOnly = false } = $props()
 
+  const { task, solution, systemFeedback } = interaction
 
-import dynamic from 'next/dynamic';
+  let hasSubmitted = $state(false)
+  let userActions: UserAction[] = $state([])
 
-export default function ({
-  interaction,
-  readOnly = false,
-  children = null,
-}) {
-  const { task, solution, systemFeedback } = interaction;
-  const { finalActionTriggered } = useStore();
-  return (
-    <>
-      <progress key="progress" value={0.7} />
-      <Markdown>{task}</Markdown>
-      <TextInput id={"1"} />
-      {children} //? answersubmit button etc //? once archived all inputs are
-      disabled
-      {!isEmpty(systemFeedback) && (
-        <>
-          <h3>YOUR SUBMISSION: {interaction.userActions[0].value}</h3>
-          <div>{JSON.stringify(systemFeedback)}</div>
-        </>
-      )}
-      {!finalActionTriggered ? (
-        <div>-.*submit to see solution.*.-</div>
-      ) : (
-        <SolutionReview {...solution} />
-      )}
-      <hr />
-    </>
-  );
-}
+  store.subscribe(state => {
+    hasSubmitted = state.hasSubmitted
+    userActions = state.userActions
+  })
+</script>
+
+<progress value={0.7} />
+<SvelteMarkdown source={task} />
+<TextInput id="1" {readOnly} />
+<slot></slot>
+
+{#if systemFeedback?.length > 0}
+  <h3>YOUR SUBMISSION: {userActions[0]?.value}</h3>
+  <div>{JSON.stringify(systemFeedback)}</div>
+{/if}
+
+{#if !hasSubmitted}
+  <div>-.*submit to see solution.*.-</div>
+{:else}
+  <SolutionReview {...solution} />
+{/if}
+
+<hr />

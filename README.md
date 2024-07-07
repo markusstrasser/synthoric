@@ -20,22 +20,8 @@ Do not import anything into the /convex files that has dependencies like dotenv 
 
 ## TODO
 
-**Markus**
-
-- [x] generateObject should only live inside tools and have the LLM fallbacks abstract the model: value and defaults
-- [ ] Should params -> prompt be passed in by the caller? then only non-prompt params are passed in effectively (aka dependencies?)
-
-* Prompt Suffix / Prefix / slots?
-
-- [ ] UseTool hook
-- [ ] in "dev-mode" there should be a debug tagged to each schema
-- [ ] .example outputs part of tools output (incl orchestrator... high quality params output)
-- [ ] Model interactionSeq as chat with pluggable extra info before returning the object (streamObject or parallel tool calls??)
-- [ ] solution/hint as a plugin?
-- [ ] Vite plugin for generating tool types
-
----
-
+- [ ] Unified state management synced local, session and db
+- [ ] Custom svelte UserAction
 - [ ] READ https://svelte-5-preview.vercel.app/docs/breaking-changes
 - [ ] READ https://svelte.dev/blog/runes
 - [ ] USE https://svelte-svg-icons.codewithshin.com/
@@ -66,11 +52,28 @@ Do not import anything into the /convex files that has dependencies like dotenv 
 - [ ] think about /explore /read /paper /research and how these abstraction work there
 - [ ] createForm function '<form>...' as claude prefill
 
+TODO **Markus**
+
+- [x] generateObject should only live inside tools and have the LLM fallbacks abstract the model: value and defaults
+- [x] Should params -> prompt be passed in by the caller? then only non-prompt params are passed in effectively (aka dependencies?)
+- [ ] hasSubmitted: boolean. Make the solution:unhide etc work for multiple components with multiple "interactions" on screen, ie.a multiple choice + freeform input but one solution unhides on mc-submit the other one freeform-submit. How to bind declaratively?
+
+* Prompt Suffix / Prefix / slots?
+
+- [ ] UseTool hook
+- [ ] in "dev-mode" there should be a debug tagged to each schema
+- [ ] .example outputs part of tools output (incl orchestrator... high quality params output)
+- [ ] Model interactionSeq as chat with pluggable extra info before returning the object (streamObject or parallel tool calls??)
+- [ ] solution/hint as a plugin?
+- [ ] Vite plugin for generating tool types
+
+---
+
 **tool calling**
 
-- [ ] handle generating and posting sequentially page/index++ vs. at once ([1,2,3][3,4,5][5,3,2]) for displaying on a single page
-- [ ] pass down ultraspecific topic/difficulty prompts ... not params? configuration. This allows parallel generation without issues with interference/duplication of content
-- [ ] tool dispatcher has all needed context? Will pass subset to each tool? Or intermediaries that sample more ?
+- [x] handle generating and posting sequentially page/index++ vs. at once ([1,2,3][3,4,5][5,3,2]) for displaying on a single page
+- [x] pass down ultraspecific topic/difficulty prompts ... not params? configuration. This allows parallel generation without issues with interference/duplication of content
+- [x] tool dispatcher has all needed context? Will pass subset to each tool? Or intermediaries that sample more ?
   - the tools stay "dumb" in that they only receive a full prompt, no params? maybe. The full prompt = prompt + context +slots
 
 ## Tools/Plugins todo. Libs
@@ -96,13 +99,14 @@ The goal is to make an AI-driven STEM learning platform that adapts content and 
 - Real-time content generation and selection
 - Focus on reducing extraneous cognitive load
 - Designed for self-learners
+- Metacognitive support
 
 ## Current Stack
 
 - Svelte 5, Sveltekit 2
 - Vercel ai sdk (after many hours wasted: I'm avoiding bug-ridden ai/rsc and sticking with core)
 - DB: Convex
-- Tailwind/shadcn
+- Tailwind 4 Alpha
 - Sentry, Posthog, Clerk
 
 ## States and Events

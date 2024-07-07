@@ -7,8 +7,8 @@
     addUserAction({
       type: 'button-click',
       id,
-      timestamp: Date.now(),
-      isFinal: true, // This marks it as a final action
+      isSubmit: true,
+      value: 'submit',
     })
   }
 </script>
