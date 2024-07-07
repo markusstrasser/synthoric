@@ -1,4 +1,4 @@
-export const mockExercise = {
+export const mockInteraction = {
   content: {
     task: { content: 'Square a circle' },
     systemFeedback: 'What the ai would say if you submitted',

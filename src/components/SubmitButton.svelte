@@ -7,7 +7,7 @@
     addUserAction({
       type: 'button-click',
       id,
-      isSubmit: true,
+      hasSubmitted: true,
       value: 'submit',
     })
 </script>

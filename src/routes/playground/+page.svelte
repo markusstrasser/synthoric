@@ -4,52 +4,63 @@
   import SubmitButton from '$components/SubmitButton.svelte'
   import TextInput from '$components/TextInput.svelte'
   import MultipleChoice from '$components/MultipleChoice.svelte'
-  import { mockExercise } from '$lib/mocks'
+  import { mockInteraction } from '$lib/mocks'
   import store from '$stores'
 
-  export const mapProps = (props: Record<string, any>, propMap?: Record<string, string>) => {
-    if (!propMap) return props
-    return Object.entries(props).reduce((acc, [key, value]) => {
-      const mappedKey = propMap[key] || key
-      acc[mappedKey] = value
-      return acc
-    }, {})
+  let hasSubmitted = $derived($store.hasSubmitted)
+
+  // Subscribe to the store
+  store.subscribe($store => {
+    console.log('hey', $store, hasSubmitted)
+    // hasSubmitted = $store.hasSubmitted
+  })
+
+  const componentMap = {
+    task: {
+      component: Markdown,
+      mapProps: props => ({ source: props.content }),
+      inputComponents: [TextInput, SubmitButton],
+    },
+    solution: {
+      component: SolutionReview,
+      mapProps: props => props,
+      condition: () => hasSubmitted,
+    },
+    multipleChoiceTask: {
+      component: MultipleChoice,
+      mapProps: props => props,
+      inputComponents: [MultipleChoice],
+    },
+    'text-input': {
+      component: TextInput,
+      mapProps: props => props,
+    },
+    'submit-button': {
+      component: SubmitButton,
+      mapProps: props => props,
+    },
   }
-  $: ({ hasSubmitted, userActions } = $store)
 
-  const componentConfig = {
-    task: { component: Markdown, propMap: { content: 'source' } },
-    solution: { component: SolutionReview },
-    multipleChoiceTask: { component: MultipleChoice },
-    'text-input': { component: TextInput },
-    'submit-button': { component: SubmitButton },
-  } as const
+  console.log(hasSubmitted, 'submitted')
+  type ComponentKey = keyof typeof componentMap
 
-  type ComponentKey = keyof typeof componentConfig
+  //! this derived runes are kinda hard to work with sometimes,
+  let exerciseContent = $derived(
+    Object.entries(mockInteraction.content)
+      .filter((entry): entry is [ComponentKey, any] => entry[0] in componentMap)
+      .map(([key, value]) => ({ key, value, config: componentMap[key] }))
+      .filter(({ config }) => !config.condition || config.condition())
+  )
 
-  const inputBindings = {
-    task: ['text-input', 'submit-button'],
-    multipleChoiceTask: ['multipleChoiceOptions'],
-  }
-
-  console.log(mockExercise, 'content')
+  console.log(mockInteraction, 'content')
 </script>
 
-{#each Object.entries(mockExercise.content) as [key, value]}
-  {#if key in componentConfig}
-    <div>
-      <svelte:component
-        this={componentConfig[key as ComponentKey].component}
-        {...mapProps(value, componentConfig[key as ComponentKey].propMap)}
-      />
-      {#if key in inputBindings}
-        {#each inputBindings[key] as input}
-          <svelte:component
-            this={componentConfig[input].component}
-            {...mapProps(value, componentConfig[input].propMap)}
-          />
-        {/each}
-      {/if}
-    </div>
-  {/if}
+<!-- {@debug hasSubmitted} -->
+{#each exerciseContent as { key, value, config }}
+  <div>
+    <svelte:component this={config.component} {...config.mapProps(value)} />
+    {#each config.inputComponents || [] as InputComponent}
+      <InputComponent {...config.mapProps(value)} />
+    {/each}
+  </div>
 {/each}

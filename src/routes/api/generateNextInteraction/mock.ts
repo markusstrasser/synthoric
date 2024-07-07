@@ -1,9 +1,9 @@
 //TODO: add mocks
-import { mockExercise, mockMulitpleChoice } from '$lib/mocks'
+import { mockInteraction, mockMulitpleChoice } from '$lib/mocks'
 
 import Tools from '$lib/tools/'
 
-const mocks = [mockExercise, mockMulitpleChoice]
+const mocks = [mockInteraction, mockMulitpleChoice]
 
 export const interactionMock = async () =>
   await new Promise(resolve =>

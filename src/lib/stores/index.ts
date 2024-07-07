@@ -6,7 +6,7 @@ export type UserAction = {
   value: any
   displayIndex?: number //? this is mostly for the AI to see where things were on the screen and to discern between multiple inputs from the same element
   timestamp?: number
-  isSubmit?: boolean
+  hasSubmitted?: boolean
   // Add any other properties that might be in the payload
 }
 
@@ -28,7 +28,7 @@ export const addUserAction = (action: UserAction) => {
   console.log('Action added:', action)
 
   // If it's a final action, you might want to trigger some logic here
-  if (action.isSubmit) {
+  if (action.hasSubmitted) {
     //? in both cases we want to trigger an update ...
     store.update(state => ({ ...state, hasSubmitted: true }))
     console.log('Submit action received:', action)
