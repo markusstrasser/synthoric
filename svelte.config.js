@@ -20,6 +20,7 @@ const config = {
       $convex: 'src/convex',
       $schemas: 'src/lib/schemas',
       $prompts: 'src/lib/prompts',
+      $stores: 'src/lib/stores',
     },
   },
   plugins: [tailwindcss()],
