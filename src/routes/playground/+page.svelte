@@ -7,13 +7,9 @@
   import { mockInteraction } from '$lib/mocks'
   import store from '$stores'
 
-  let hasSubmitted = $derived($store.hasSubmitted)
+  $: hasSubmitted = $store.hasSubmitted
 
-  // Subscribe to the store
-  store.subscribe($store => {
-    console.log('hey', $store, hasSubmitted)
-    // hasSubmitted = $store.hasSubmitted
-  })
+  // Remove the store subscription, as it's no longer needed with runes
 
   const componentMap = {
     task: {
@@ -24,7 +20,7 @@
     solution: {
       component: SolutionReview,
       mapProps: props => props,
-      condition: () => hasSubmitted,
+      condition: store => store.hasSubmitted,
     },
     multipleChoiceTask: {
       component: MultipleChoice,
@@ -44,13 +40,11 @@
   console.log(hasSubmitted, 'submitted')
   type ComponentKey = keyof typeof componentMap
 
-  //! this derived runes are kinda hard to work with sometimes,
-  let exerciseContent = $derived(
-    Object.entries(mockInteraction.content)
-      .filter((entry): entry is [ComponentKey, any] => entry[0] in componentMap)
-      .map(([key, value]) => ({ key, value, config: componentMap[key] }))
-      .filter(({ config }) => !config.condition || config.condition())
-  )
+  // Simplify the derived content using the $ rune
+  $: exerciseContent = Object.entries(mockInteraction.content)
+    .filter((entry): entry is [ComponentKey, any] => entry[0] in componentMap)
+    .map(([key, value]) => ({ key, value, config: componentMap[key] }))
+    .filter(({ config }) => !config.condition || config.condition($store))
 
   console.log(mockInteraction, 'content')
 </script>
