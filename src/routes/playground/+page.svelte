@@ -1,23 +1,24 @@
-<script>
-  import { T, Canvas } from '@threlte/core'
-  import { interactivity } from '@threlte/extras'
-  import { spring } from 'svelte/motion'
+<script lang="ts">
+  import { onDestroy } from 'svelte'
+  import TextInput from '$components/TextInput.svelte'
+  import Button from '$components/SubmitButton.svelte'
+  import store from '$lib/stores'
 
-  // interactivity()
-  // const scale = spring(1)
+  let userActions: any[] = []
+
+  const unsubscribe = store.subscribe(({ userActions: actions }) => {
+    userActions = actions
+  })
+
+  onDestroy(unsubscribe)
 </script>
 
-<Canvas>
-  <T.PerspectiveCamera
-    makeDefault
-    position={[10, 10, 10]}
-    oncreate={({ ref }) => {
-      ref.lookAt(0, 1, 0)
-    }}
-  />
+<div>
+  <TextInput id="example-input" placeholder="Enter text here" />
+  <Button id="submit-button" />
+</div>
 
-  <T.Mesh position.y={1}>
-    <T.BoxGeometry args={[1, 2, 1]} />
-    <T.MeshBasicMaterial color="hotpink" />
-  </T.Mesh>
-</Canvas>
+<div>
+  <h3>Current Actions:</h3>
+  <pre>{JSON.stringify(userActions, null, 2)}</pre>
+</div>
