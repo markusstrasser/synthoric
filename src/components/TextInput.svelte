@@ -1,7 +1,7 @@
 <script lang="ts">
   import { addUserAction } from '$lib/stores/index'
 
-  let { id = '', placeholder = '' } = $props()
+  const { id = '', placeholder = '' } = $props()
   let value = $state('')
 
   function handleInput(event: Event) {
@@ -10,7 +10,6 @@
       type: 'text-input',
       id,
       value,
-      timestamp: Date.now(),
     })
   }
 </script>

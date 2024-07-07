@@ -3,6 +3,7 @@
   import TextInput from '$components/TextInput.svelte'
   import Button from '$components/SubmitButton.svelte'
   import store from '$lib/stores'
+  import Test from '$components/Test.svelte'
 
   let userActions: any[] = []
 
@@ -13,12 +14,4 @@
   onDestroy(unsubscribe)
 </script>
 
-<div>
-  <TextInput id="example-input" placeholder="Enter text here" />
-  <Button id="submit-button" />
-</div>
-
-<div>
-  <h3>Current Actions:</h3>
-  <pre>{JSON.stringify(userActions, null, 2)}</pre>
-</div>
+<Test />

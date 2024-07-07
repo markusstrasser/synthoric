@@ -1,7 +1,7 @@
 <script lang="ts">
   import { addUserAction } from '$lib/stores/index'
 
-  let { id = '' } = $props()
+  const { id = '' } = $props()
 
   function handleSubmit() {
     addUserAction({

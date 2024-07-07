@@ -1,10 +1,10 @@
 import { writable, get } from 'svelte/store'
 
-type UserAction = {
+export type UserAction = {
   type: string
   id: string
   value?: any
-  timestamp: number
+  timestamp?: number
   isFinal?: boolean
   // Add any other properties that might be in the payload
 }
@@ -18,7 +18,7 @@ const store = writable<{
 export const addUserAction = (action: UserAction) => {
   store.update(state => ({
     ...state,
-    userActions: [...state.userActions, action],
+    userActions: [...state.userActions, { ...action, timestamp: Date.now() }],
   }))
 
   // Log the action

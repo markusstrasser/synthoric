@@ -205,3 +205,4 @@ A: The system includes:
 ## Thinking about:
 
 - using https://github.com/transitive-bullshit/agentic tools
+- using https://aceternity.sveltekit.io/components/

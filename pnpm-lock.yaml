@@ -92,6 +92,9 @@ importers:
       remark-math:
         specifier: ^6.0.0
         version: 6.0.0
+      svelte-markdown:
+        specifier: ^0.4.1
+        version: 0.4.1(svelte@5.0.0-next.166)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -920,6 +923,9 @@ packages:
   '@types/katex@0.16.7':
     resolution: {integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==}
 
+  '@types/marked@5.0.2':
+    resolution: {integrity: sha512-OucS4KMHhFzhz27KxmWg7J+kIYqyqoW5kdIEI319hqARQQUTqhao3M/F+uFnDXD0Rg72iDDZxZNxq5gvctmLlg==}
+
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
 
@@ -1746,17 +1752,22 @@ packages:
   loupe@2.3.7:
     resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
 
-  maath@0.10.7:
-    resolution: {integrity: sha512-zQ2xd7dNOIVTjAS+hj22fyj1EFYmOJX6tzKjZ92r6WDoq8hyFxjuGA2q950tmR4iC/EKXoMQdSipkaJVuUHDTg==}
+  maath@0.10.8:
+    resolution: {integrity: sha512-tRvbDF0Pgqz+9XUa4jjfgAQ8/aPKmQdWXilFu2tMy4GWj4NOsx99HlULO4IeREfbO3a0sA145DZYyvXPkybm0g==}
     peerDependencies:
-      '@types/three': '>=0.144.0'
-      three: '>=0.144.0'
+      '@types/three': '>=0.134.0'
+      three: '>=0.134.0'
 
   magic-string@0.30.10:
     resolution: {integrity: sha512-iIRwTIf0QKV3UAnYK4PU8uiEc4SRh5jX0mwpIwETPpHdhVM4f53RSwS/vXvN1JhGX+Cs7B8qIq3d6AH49O5fAQ==}
 
   markdown-table@3.0.3:
     resolution: {integrity: sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==}
+
+  marked@5.1.2:
+    resolution: {integrity: sha512-ahRPGXJpjMjwSOlBoTMZAK7ATXkli5qCPxZ21TG44rx1KEo44bii4ekgTDQPNRQ4Kh7JMb9Ub1PVk1NxRSsorg==}
+    engines: {node: '>= 16'}
+    hasBin: true
 
   mdast-util-find-and-replace@3.0.1:
     resolution: {integrity: sha512-SG21kZHGC3XRTSUhtofZkBzZTJNM5ecCi0SK2IMKmSXR8vO3peL+kb1O0z7Zl83jKtutG4k5Wv/W7V3/YHvzPA==}
@@ -2322,6 +2333,11 @@ packages:
     engines: {node: ^12.20 || ^14.13.1 || >= 16}
     peerDependencies:
       svelte: ^3.19.0 || ^4.0.0
+
+  svelte-markdown@0.4.1:
+    resolution: {integrity: sha512-pOlLY6EruKJaWI9my/2bKX8PdTeP5CM0s4VMmwmC2prlOkjAf+AOmTM4wW/l19Y6WZ87YmP8+ZCJCCwBChWjYw==}
+    peerDependencies:
+      svelte: ^4.0.0
 
   svelte-preprocess@5.1.4:
     resolution: {integrity: sha512-IvnbQ6D6Ao3Gg6ftiM5tdbR6aAETwjhHV+UKGf5bHGYR69RQvF1ho0JKPcbUON4vy4R7zom13jPjgdOWCQ5hDA==}
@@ -3211,7 +3227,7 @@ snapshots:
     dependencies:
       diet-sprite: 0.0.1
       earcut: 2.2.4
-      maath: 0.10.7(@types/three@0.165.0)(three@0.165.0)
+      maath: 0.10.8(@types/three@0.165.0)(three@0.165.0)
       three: 0.165.0
       three-instanced-uniforms-mesh: 0.49.1(three@0.165.0)
       troika-three-utils: 0.49.0(three@0.165.0)
@@ -3254,6 +3270,8 @@ snapshots:
   '@types/js-yaml@4.0.9': {}
 
   '@types/katex@0.16.7': {}
+
+  '@types/marked@5.0.2': {}
 
   '@types/mdast@4.0.4':
     dependencies:
@@ -4128,7 +4146,7 @@ snapshots:
     dependencies:
       get-func-name: 2.0.2
 
-  maath@0.10.7(@types/three@0.165.0)(three@0.165.0):
+  maath@0.10.8(@types/three@0.165.0)(three@0.165.0):
     dependencies:
       '@types/three': 0.165.0
       three: 0.165.0
@@ -4138,6 +4156,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.4.15
 
   markdown-table@3.0.3: {}
+
+  marked@5.1.2: {}
 
   mdast-util-find-and-replace@3.0.1:
     dependencies:
@@ -4915,6 +4935,12 @@ snapshots:
 
   svelte-hmr@0.16.0(svelte@5.0.0-next.166):
     dependencies:
+      svelte: 5.0.0-next.166
+
+  svelte-markdown@0.4.1(svelte@5.0.0-next.166):
+    dependencies:
+      '@types/marked': 5.0.2
+      marked: 5.1.2
       svelte: 5.0.0-next.166
 
   svelte-preprocess@5.1.4(postcss@8.4.39)(svelte@5.0.0-next.166)(typescript@5.5.3):
