@@ -5,7 +5,7 @@
   const { interaction, isReadOnly = false } = $props()
 
   const id = nanoid(4)
-  const { choices, isCorrect } = interaction
+  const { choices, isCorrect, task } = interaction
 
   function handleChoice(choice: string, index: number) {
     addUserAction({
@@ -17,6 +17,7 @@
 </script>
 
 <div class="grid grid-cols-1 gap-4">
+  <p>{task}</p>
   {#each choices as choice, index (choice)}
     <button
       class="w-full py-2 px-4 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
