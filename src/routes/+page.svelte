@@ -11,6 +11,8 @@
 
   let isGenerating = $state(false)
 
+  $inspect(query.data)
+
   const generateSequences = async () => {
     isGenerating = true
     try {
@@ -47,7 +49,7 @@
   {:else}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {#each query.data as sequence}
-        <SequencePreviewCard {sequence} onClick={() => handleSequenceClick(sequence)} />
+        <SequencePreviewCard {...sequence} onClick={() => handleSequenceClick(sequence)} />
       {/each}
     </div>
   {/if}
