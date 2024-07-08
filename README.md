@@ -9,14 +9,24 @@ Get a convex api key for local development
 
 ## Abstractions
 
+**AI**
+
 - Orchestrator/Dispatcher takes in context and puts out params for the next interaction
 - UI tools (multichoice, exercise) still have their own prompts and guidelines but the params (tone, topic, sequenceInfo, DB-context, misconceptions) are passed in as suffix
 - This then gives the "tools" abstraction in that they have their own prompt, description, schema and description, a generate/execute - taking params - function for the orchestrator, examples
 - Agent:Multistep, Tool: SingleStep
 
+  **UI**
+
+- Interaction UI and componentMap: an interactionConfig gets mapped into the respective components (task->Markdown, solution-> solutionReview etc.) based on the [key]. Including possibilities for conditional logic (hide/unhide given 'userActions' state).
+
 ## Gotchas
 
-Do not import anything into the /convex files that has dependencies like dotenv and so on.
+- Do not import anything into the /convex files that has dependencies like dotenv and so on. Convex has its own runtime.
+- Svelte runes:
+  1.  You can't export $derived(x) values directly
+  2.  Either use a class, function or an object with get() and set() methods. The later you can't destructure because it won't be reactive. You can do {x} = $derived(storeJSObj) ... that would work but the reactivity won't be fine-grained I think
+  3.  Good channel: https://www.youtube.com/watch?v=HnNgkwHZIII&t=601s
 
 ## TODO
 
@@ -29,31 +39,23 @@ Do not import anything into the /convex files that has dependencies like dotenv 
 
   - maybe a mock/_ route. The middleware redirect /_ -> mock/\* and the return is pattern matched
 
-- [ ] Decide on https://flaming.codes/en/posts/msw-in-sveltekit-for-local-development/ MSW
-- [ ] Newer Svelte-Debug solutions? (like in Nuxt)
-- [ ] Fix the dotenv issues with importing api keys (provider.ts)
-- [ ] Fix prefixes $lib etc.
-- [ ] Sketch out svelte store + routing
-- [ ] Copy in your always used svelte actions
-
-- [ ] Unify /tools to have consistent API. Decide what is a tool (exercise, multipleChoice) and what not (hints, solution?)
-- [ ] Update UI with current progress inside a agentChain (ie. show the task without having to wait for the rest of the task->solution chain to finish)
-- [ ] use Abstractions like https://docs.copilotkit.ai/reference/hooks/useCopilotReadable?
-- [x] Just basic routing /seq/id/idx
 - [ ] More routing: back, next, home buttons. Redirect to beginning of page wrong path
-- [ ] Run a fetch and display in Component
+- [ ] Decide on https://flaming.codes/en/posts/msw-in-sveltekit-for-local-development/ MSW
+- [ ] Copy in your always used svelte actions
+- [ ] use Abstractions like https://docs.copilotkit.ai/reference/hooks/useCopilotReadable?
 - [ ] Svelte store (zustand copy)
-- [ ] svelte html actions use:captureAction ? --> write to store? Can it add the {type:freeformtextinput}, spec:{freeformtextinput: {reducer: fn(bydefault: pickLatest), description, validation, isFinal?, isStep?, shouldInference--or use central point system??, or use AI to decide?}} etc?
 - [ ] persist partial store (redirects/visited)
-- [ ] api calls with example data (useObject)
 - [ ] at login, or leave app: cleanUnseenInteractions?
-- [ ] Convex integration
-- [ ] what to do about multiple generated UIs on a page and interspersed forms? SPAs?
-- [ ] think about /explore /read /paper /research and how these abstraction work there
-- [ ] createForm function '<form>...' as claude prefill
+- [x] Fix the dotenv issues with importing api keys (provider.ts)
+- [x] Fix prefixes $lib etc.
+- [x] Just basic routing /seq/id/idx
 
 TODO **Markus**
 
+- [ ] svelte html actions use:captureAction ? --> write to store? Can it add the {type:freeformtextinput}, spec:{freeformtextinput: {reducer: fn(bydefault: pickLatest), description, validation, isFinal?, isStep?, shouldInference--or use central point system??, or use AI to decide?}} etc?
+- [ ] what to do about multiple generated UIs on a page and interspersed forms? SPAs?
+- [ ] think about /explore /read /paper /research and how these abstraction work there
+- [ ] createForm function '<form>...' as claude prefill
 - [x] generateObject should only live inside tools and have the LLM fallbacks abstract the model: value and defaults
 - [x] Should params -> prompt be passed in by the caller? then only non-prompt params are passed in effectively (aka dependencies?)
 - [ ] hasSubmitted: boolean. Make the solution:unhide etc work for multiple components with multiple "interactions" on screen, ie.a multiple choice + freeform input but one solution unhides on mc-submit the other one freeform-submit. How to bind declaratively?
