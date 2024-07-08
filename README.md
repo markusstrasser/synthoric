@@ -50,7 +50,7 @@ Get a convex api key for local development
 - [x] Fix prefixes $lib etc.
 - [x] Just basic routing /seq/id/idx
 
-TODO **Markus**
+### TODO / think about @**Markus**
 
 - [ ] svelte html actions use:captureAction ? --> write to store? Can it add the {type:freeformtextinput}, spec:{freeformtextinput: {reducer: fn(bydefault: pickLatest), description, validation, isFinal?, isStep?, shouldInference--or use central point system??, or use AI to decide?}} etc?
 - [ ] what to do about multiple generated UIs on a page and interspersed forms? SPAs?
@@ -78,7 +78,7 @@ TODO **Markus**
 - [x] tool dispatcher has all needed context? Will pass subset to each tool? Or intermediaries that sample more ?
   - the tools stay "dumb" in that they only receive a full prompt, no params? maybe. The full prompt = prompt + context +slots
 
-## Tools/Plugins todo. Libs
+**Tools/Plugins todo. Libs**
 
 - [ ] Make into tool: https://tympanus.net/codrops/2024/06/12/shape-lens-blur-effect-with-sdfs-and-webgl/
 - [ ] Mathematica
@@ -101,15 +101,15 @@ The goal is to make an AI-driven STEM learning platform that adapts content and 
 - Real-time content generation and selection
 - Focus on reducing extraneous cognitive load
 - Designed for self-learners
-- Metacognitive support
+- Adaptive Metacognitive support and scaffolding
 
 ## Current Stack
 
 - Svelte 5, Sveltekit 2
+- Tailwind 4 Alpha
 - Vercel ai sdk (after many hours wasted: I'm avoiding bug-ridden ai/rsc and sticking with core)
 - DB: Convex
-- Tailwind 4 Alpha
-- Sentry, Posthog, Clerk
+- Maybe soon : Sentry, Posthog, Clerk via Convex integration
 
 ## States and Events
 
