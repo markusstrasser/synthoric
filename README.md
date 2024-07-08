@@ -214,3 +214,5 @@ A: The system includes:
 - using https://aceternity.sveltekit.io/components/
 - https://runed.dev/docs/ : state-history and FSM claass
 - https://github.com/svecosystem/svelte-interactions
+- https://animation-svelte.vercel.app/
+- https://animation-svelte.vercel.app/magic/marquee
