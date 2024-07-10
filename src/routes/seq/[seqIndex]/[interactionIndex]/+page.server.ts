@@ -28,11 +28,14 @@ export const load: PageServerLoad = async ({ params }) => {
     }),
   ])
 
-  if (!post) {
-    throw error(404, 'Post not found')
-  }
+  const interactionCount = sequence?.interactions?.length ?? 0
+  const lastExistingInteractionIndex = sequence ? Math.max(interactionCount - 1, 0) : -1
 
-  return { post, sequence, interaction }
+  // if (!post) {
+  //   throw error(404, 'Post not found')
+  // }
+
+  return { post, sequence, interaction, lastExistingInteractionIndex }
 }
 
 import { fail } from '@sveltejs/kit'
