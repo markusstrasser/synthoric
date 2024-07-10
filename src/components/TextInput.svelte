@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { addUserAction } from '$stores/index.svelte.ts'
+  import { addUserAction } from '$stores/index.svelte'
 
   //TODO: derive input value from store1.filteredUserActions?
   let { id = '', placeholder = '', value = '' } = $props()
