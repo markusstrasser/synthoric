@@ -62,11 +62,14 @@
   {:else if interactionState.type === 'INTERACTION_OUT_OF_BOUNDS'}
     <div>
       <p>This interaction is out of bounds.</p>
-      <a href="/seq/{sequence?.index}/{lastExistingInteractionIndex}">Go to latest interaction</a>
+      <a href="/seq/{sequence?.index}/{Math.max(lastExistingInteractionIndex, 0)}"
+        >Go to latest interaction</a
+      >
     </div>
   {:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
     <div>
-      <p>This interaction should exist but doesn't. This might be a bug.</p>
+      <p>Wrong route buddy.</p>
+      <a href="/">Go back home</a>
     </div>
   {/if}
 </div>

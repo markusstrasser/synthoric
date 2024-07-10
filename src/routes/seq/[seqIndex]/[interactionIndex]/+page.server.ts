@@ -1,6 +1,8 @@
 import { error, redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
-
+import { fail } from '@sveltejs/kit'
+import { api } from '$convex/_generated/api'
+import { convexClient } from '$lib/providers'
 const mockPosts = [
   { slug: '0', title: 'Post 0', content: 'hello' },
   { slug: '1', title: 'Post 1', content: 'hello' },
@@ -36,13 +38,11 @@ export const load: PageServerLoad = async ({ params }) => {
   ])
 
   let interactionState: InteractionState = { type: 'OK' }
-
+  const interactionCount = sequence?.interactions?.length ?? 0
+  const lastExistingInteractionIndex = interactionCount - 1
   if (!sequence) {
     interactionState = { type: 'SEQUENCE_NOT_FOUND' }
   } else {
-    const interactionCount = sequence.interactions?.length ?? 0
-    const lastExistingInteractionIndex = interactionCount - 1
-
     if (interactionIndex > lastExistingInteractionIndex + 1) {
       interactionState = {
         type: 'INTERACTION_OUT_OF_BOUNDS',
@@ -60,15 +60,9 @@ export const load: PageServerLoad = async ({ params }) => {
     interaction,
     interactionState,
     currentInteractionIndex: interactionIndex,
-    lastExistingInteractionIndex: sequence
-      ? Math.max((sequence.interactions?.length ?? 0) - 1, 0)
-      : -1,
+    lastExistingInteractionIndex,
   }
 }
-
-import { fail } from '@sveltejs/kit'
-import { api } from '$convex/_generated/api'
-import { convexClient } from '$lib/providers'
 
 export const actions: Actions = {
   next: async ({ params, url, setHeaders, request }) => {
