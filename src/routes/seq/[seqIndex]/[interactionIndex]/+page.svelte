@@ -1,78 +1,72 @@
-<script>
-  import { useQuery } from 'convex-svelte'
-  import { api } from '$convex/_generated/api'
-  import { page, navigating } from '$app/stores'
-  import { fly, slide } from 'svelte/transition'
+<script lang="ts">
+  import { page } from '$app/stores'
+  import type { PageData } from './$types'
 
-  const { data } = $props()
+  export let data: PageData
 
-  let sequence = $derived(data.sequence)
-  let interaction = $derived(data.interaction)
-  let lastExistingInteractionIndex = $derived(data.lastExistingInteractionIndex)
-
-  const currentInteractionIndex = $derived(Number.parseInt($page.params.interactionIndex))
-  const nextPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex + 1}`)
-  const previousPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex - 1}`)
-  const lastExistingInteractionUrl = $derived(
-    `/seq/${sequence?.index}/${lastExistingInteractionIndex}`
-  )
-
-  $inspect(
-    'sequence',
+  $: ({
     sequence,
-    'interaction',
     interaction,
-    'lastExistingInteractionIndex',
-    lastExistingInteractionIndex
-  )
-  const isFirstInteraction = $derived(currentInteractionIndex === 0)
-  const isExistingInteraction = $derived(
-    lastExistingInteractionIndex >= currentInteractionIndex && currentInteractionIndex > -1
-  )
+    interactionState,
+    currentInteractionIndex,
+    lastExistingInteractionIndex,
+  } = data)
+  $: nextPageUrl = `/seq/${sequence?.index}/${currentInteractionIndex + 1}`
+  $: previousPageUrl = `/seq/${sequence?.index}/${currentInteractionIndex - 1}`
+  $: isFirstInteraction = currentInteractionIndex === 0
 
-  const shouldGenerateNewInteraction = $derived(
-    sequence && currentInteractionIndex === lastExistingInteractionIndex + 1
-  )
-
-  const shouldGoToLastExistingInteraction = $derived(
-    sequence && currentInteractionIndex === lastExistingInteractionIndex + 2
-  )
-
-  $inspect('shouldGenerateNewInteraction', shouldGenerateNewInteraction)
-  $inspect('shouldGoToLastExistingInteraction', shouldGoToLastExistingInteraction)
-  $inspect('isValidSequence', !!sequence)
-  $inspect('isExistingInteraction', isExistingInteraction)
-  //Cases
-  //-> {seqIndex} doesn't exist -> Go to /
-  //-> {seqIndex} exists but {interactionIndex} doesn't -> Go to last existing interactionIndex
-  //-> {seqIndex} exists and {interactionIndex} exists -> Show interaction
+  function getStateMessage(state: typeof interactionState) {
+    switch (state.type) {
+      case 'OK':
+        return 'Everything is fine.'
+      case 'SEQUENCE_NOT_FOUND':
+        return 'This sequence does not exist.'
+      case 'INTERACTION_OUT_OF_BOUNDS':
+        return `Interaction index too high. Last available: ${state.lastAvailable}`
+      case 'NEW_INTERACTION':
+        return 'This is a new interaction that needs to be generated.'
+      case 'INTERACTION_NOT_FOUND':
+        return 'This interaction does not exist, but it should.'
+    }
+  }
 </script>
 
 <div>
-  <div>{JSON.stringify(data)}</div>
-  {#if !sequence}
-    <div>This sequence doesn't even exist yet</div>
-    <a href="/">Go back home</a>
-  {:else if shouldGoToLastExistingInteraction}
-    <div>Interaction doesn't exist yet. Go back to last available one:</div>
-    <a href={lastExistingInteractionUrl}>Go to Latest Seen Interaction</a>
-  {:else}
-    {#if isExistingInteraction}
-      <div>Existing INteraction</div>
-    {:else if shouldGenerateNewInteraction}
-      <div>....generating new interaction</div>
-    {:else}
-      <div>If clauses not exhaustive ... you shouldn't even see this?!</div>
-    {/if}
-    {#if shouldGenerateNewInteraction || isExistingInteraction}
-      <a href={nextPageUrl}>next</a>
-      {#if !isFirstInteraction}
-        <a href={previousPageUrl}>previous</a>
-      {/if}
-    {/if}
-  {/if}
+  <h2>State: {interactionState.type}</h2>
+  <p>{getStateMessage(interactionState)}</p>
 
-  {#if $navigating}
-    <div>navigating to {$navigating.to?.url}</div>
+  {#if interactionState.type === 'OK'}
+    <div>
+      <h3>Interaction {currentInteractionIndex}</h3>
+      <p>{JSON.stringify(interaction)}</p>
+      <div>
+        <a href={nextPageUrl}>Next</a>
+        {#if !isFirstInteraction}
+          <a href={previousPageUrl}>Previous</a>
+        {/if}
+      </div>
+    </div>
+  {:else if interactionState.type === 'NEW_INTERACTION'}
+    <div>
+      <h3>Generating new interaction...</h3>
+      <!-- Add logic here to generate new interaction -->
+      {#if !isFirstInteraction}
+        <a href={previousPageUrl}>Previous</a>
+      {/if}
+    </div>
+  {:else if interactionState.type === 'SEQUENCE_NOT_FOUND'}
+    <div>
+      <p>This sequence doesn't exist.</p>
+      <a href="/">Go back home</a>
+    </div>
+  {:else if interactionState.type === 'INTERACTION_OUT_OF_BOUNDS'}
+    <div>
+      <p>This interaction is out of bounds.</p>
+      <a href="/seq/{sequence?.index}/{lastExistingInteractionIndex}">Go to latest interaction</a>
+    </div>
+  {:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
+    <div>
+      <p>This interaction should exist but doesn't. This might be a bug.</p>
+    </div>
   {/if}
 </div>

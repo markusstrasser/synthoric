@@ -13,13 +13,20 @@ const mockDB = async (seqIndex: number, interactionIndex: number) => {
   return mockPosts.find(post => post.slug === interactionIndex.toString())
 }
 
+type InteractionState =
+  | { type: 'OK' }
+  | { type: 'SEQUENCE_NOT_FOUND' }
+  | { type: 'INTERACTION_OUT_OF_BOUNDS'; lastAvailable: number }
+  | { type: 'NEW_INTERACTION' }
+  | { type: 'INTERACTION_NOT_FOUND' }
+
 export const load: PageServerLoad = async ({ params }) => {
   const seqIndex = Number.parseInt(params.seqIndex)
   const interactionIndex = Number.parseInt(params.interactionIndex)
 
   console.log('seqIndex', seqIndex)
   console.log('interactionIndex', interactionIndex)
-  const post = await mockDB(Number(seqIndex), Number(interactionIndex))
+
   const [sequence, interaction] = await Promise.all([
     convexClient.query(api.sequences.getByIndex, { index: seqIndex }),
     convexClient.query(api.interactions.getByIndices, {
@@ -28,14 +35,35 @@ export const load: PageServerLoad = async ({ params }) => {
     }),
   ])
 
-  const interactionCount = sequence?.interactions?.length ?? 0
-  const lastExistingInteractionIndex = sequence ? Math.max(interactionCount - 1, 0) : -1
+  let interactionState: InteractionState = { type: 'OK' }
 
-  // if (!post) {
-  //   throw error(404, 'Post not found')
-  // }
+  if (!sequence) {
+    interactionState = { type: 'SEQUENCE_NOT_FOUND' }
+  } else {
+    const interactionCount = sequence.interactions?.length ?? 0
+    const lastExistingInteractionIndex = interactionCount - 1
 
-  return { post, sequence, interaction, lastExistingInteractionIndex }
+    if (interactionIndex > lastExistingInteractionIndex + 1) {
+      interactionState = {
+        type: 'INTERACTION_OUT_OF_BOUNDS',
+        lastAvailable: lastExistingInteractionIndex,
+      }
+    } else if (interactionIndex === lastExistingInteractionIndex + 1) {
+      interactionState = { type: 'NEW_INTERACTION' }
+    } else if (!interaction) {
+      interactionState = { type: 'INTERACTION_NOT_FOUND' }
+    }
+  }
+
+  return {
+    sequence,
+    interaction,
+    interactionState,
+    currentInteractionIndex: interactionIndex,
+    lastExistingInteractionIndex: sequence
+      ? Math.max((sequence.interactions?.length ?? 0) - 1, 0)
+      : -1,
+  }
 }
 
 import { fail } from '@sveltejs/kit'
