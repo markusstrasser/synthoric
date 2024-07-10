@@ -8,6 +8,7 @@ import { SubmissionReview } from '../lib/tools/AIToolConfigs'
 import { UserAction } from '../lib/schemas'
 // Types based on your schema
 import type { Id } from './_generated/dataModel'
+import type { Doc } from './_generated/dataModel'
 
 // Helper functions
 //@ts-ignore
@@ -94,8 +95,8 @@ export const insertInteractionAndLinkToSequence = mutation({
 
 export const getByIndices = query({
   args: { seqIndex: v.number(), interactionIndex: v.number() },
-  handler: async ({ db }, { seqIndex, interactionIndex }) =>
-    await db
+  handler: async (ctx, { seqIndex, interactionIndex }): Promise<Doc['interactions'] | null> =>
+    await ctx.db
       .query('interactions')
       .filter(q => q.eq(q.field('seqIndex'), seqIndex))
       .filter(q => q.eq(q.field('interactionIndex'), interactionIndex))

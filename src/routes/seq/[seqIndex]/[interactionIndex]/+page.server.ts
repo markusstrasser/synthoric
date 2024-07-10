@@ -64,18 +64,18 @@ export const load: PageServerLoad = async ({ params }) => {
   }
 }
 
-export const actions: Actions = {
-  next: async ({ params, url, setHeaders, request }) => {
-    const { seqIndex, interactionIndex } = params
-    const nextInteractionIndex = Number(interactionIndex) + 1
-    throw redirect(303, `/seq/${seqIndex}/${nextInteractionIndex}`)
-  },
-  previous: async ({ params }) => {
-    const { seqIndex, interactionIndex } = params
-    const previousInteractionIndex = Number(interactionIndex) - 1
-    if (previousInteractionIndex < 0) {
-      throw redirect(303, `/seq/${seqIndex}`)
-    }
-    throw redirect(303, `/seq/${seqIndex}/${previousInteractionIndex}`)
-  },
-}
+// export const actions: Actions = {
+//   next: async ({ params, url, setHeaders, request }) => {
+//     const { seqIndex, interactionIndex } = params
+//     const nextInteractionIndex = Number(interactionIndex) + 1
+//     throw redirect(303, `/seq/${seqIndex}/${nextInteractionIndex}`)
+//   },
+//   previous: async ({ params }) => {
+//     const { seqIndex, interactionIndex } = params
+//     const previousInteractionIndex = Number(interactionIndex) - 1
+//     if (previousInteractionIndex < 0) {
+//       throw redirect(303, `/seq/${seqIndex}`)
+//     }
+//     throw redirect(303, `/seq/${seqIndex}/${previousInteractionIndex}`)
+//   },
+// }
