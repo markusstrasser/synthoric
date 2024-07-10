@@ -23,6 +23,8 @@ const updateStatus = async (status: string) => {
 
 const generateNextInteraction = async (seqIndex: number, interactionIndex: number) => {
   updateStatus('Gathering Context')
+  console.log('seqIndex', seqIndex)
+  console.log('interactionIndex', interactionIndex)
   const context = await convexClient.query(api.interactions.getContext, {
     seqIndex,
     interactionIndex,

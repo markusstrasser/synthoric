@@ -1,90 +1,31 @@
-<script lang="ts">
-  import { page } from '$app/stores'
+<script>
+  import { useQuery } from 'convex-svelte'
   import { api } from '$convex/_generated/api'
-  import { useConvexClient, useQuery } from 'convex-svelte'
-  import { goto } from '$app/navigation'
+  import { page, navigating } from '$app/stores'
+  import { fly, slide } from 'svelte/transition'
 
-  const client = useConvexClient()
+  const { data } = $props()
 
-  const seqIndex = $state(Number.parseInt($page.params.seqIndex))
-  const interactionIndex = $state(Number.parseInt($page.params.interactionIndex))
+  let sequence = $derived(data.sequence)
+  let interaction = $derived(data.interaction)
 
-  //TODO: put this logic and routing into own class/file?
-  const sequence = useQuery(api.sequences.getByIndex, { index: seqIndex })
-  const interaction = useQuery(api.interactions.getByIndices, { seqIndex, interactionIndex })
-
-  $effect(() => {
-    if (interaction.data) {
-      console.log('interaction.data', interaction.data)
-    }
-    if (!sequence.data) return
-
-    const lastValidIndex = sequence.data.interactions.length
-    if (interactionIndex > lastValidIndex || interactionIndex < 0) {
-      goto(`/seq/${seqIndex}/${lastValidIndex}`, { replaceState: true })
-    } else if (interactionIndex === lastValidIndex) {
-      fetch(
-        `/api/generateNextInteraction?seqIndex=${seqIndex}&interactionIndex=${interactionIndex}`
-      )
-    }
-  })
-
-  const redirectInfo = $derived({
-    show:
-      !sequence.data ||
-      interactionIndex > (sequence.data?.interactions.length || 0) ||
-      interactionIndex < 0,
-    url: sequence.data ? `/seq/${seqIndex}/${sequence.data.interactions.length}` : '/',
-    message: sequence.data
-      ? `This interaction doesn't exist yet. The last valid interaction is at index ${sequence.data.interactions.length}.`
-      : "This sequence doesn't exist.",
-  })
-
-  function submitAnswer() {
-    console.log('Submitting action')
-    // Implement your submission logic here
-  }
+  const nextPageUrl = $derived(`/seq/${sequence.index}/${interaction.interactionIndex + 1}`)
+  const previousPageUrl = $derived(`/seq/${sequence.index}/${interaction.interactionIndex - 1}`)
 </script>
 
-<h1>Interaction in the sequence</h1>
+<div>
+  <div in:fly={{ y: 20 }} out:slide>{JSON.stringify(data)}</div>
+  <h1>SeqIndex</h1>
+  <div>{sequence.index}</div>
+  <h1>Interaction</h1>
+  <div>Index: {interaction.interactionIndex}</div>
+  <div>{JSON.stringify(interaction)}</div>
+  <h1>todos</h1>
 
-{#if redirectInfo.show}
-  <div>
-    <p>{redirectInfo.message}</p>
-    <button
-      onclick={() =>
-        goto(redirectInfo.url, { replaceState: true }).then(() => {
-          location.reload()
-        })}
-    >
-      {sequence.data ? 'Go to last interaction in sequence' : 'Go to homepage'}
-    </button>
-  </div>
-{:else}
-  <h3>All Parameters:</h3>
-  <div>
-    SeqIndex: {seqIndex}
-    InteractionIndex: {interactionIndex}
-  </div>
+  <a href={nextPageUrl}>next</a>
+  <a href={previousPageUrl}>previous</a>
 
-  {#if interaction.isLoading}
-    <p>Loading interaction data...</p>
-  {:else if interaction.error}
-    <p>Error loading interaction: {interaction.error.toString()}</p>
-  {:else if interaction.data}
-    <h2>Interaction Details:</h2>
-    {#if interaction.data.content}
-      <pre>{JSON.stringify(interaction.data.content, null, 2)} Hei</pre>
-    {:else}
-      <pre>... 👾 Creating Interaction Content</pre>
-    {/if}
-  {:else}
-    <p>No interaction at all at this index.</p>
+  {#if $navigating}
+    <div>navigating to {$navigating.to?.url}</div>
   {/if}
-
-  <div>SOLUTION (**hidden** until review-flow is done)</div>
-  <button onclick={submitAnswer}>Submit</button>
-  <div>Review, Remediation (wait for AI to review Submission)</div>
-  <a href="/seq/{seqIndex}/{interactionIndex - 1}">Go back</a>
-  <a href="/seq/{seqIndex}/{interactionIndex + 1}">Next (display on review-flow done)</a>
-{/if}
+</div>

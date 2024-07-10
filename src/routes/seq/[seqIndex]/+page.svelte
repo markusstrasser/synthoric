@@ -6,6 +6,6 @@
 
 <div>Sequence Overview: {seqIndex}</div>
 
-<a href="/seq/1/1">Go to first interaction</a>
+<a href="/seq/{seqIndex}/0">Go to first interaction</a>
 
 <p>TODO: sequence summary and sequence card (interaction summaries/cards expand on click)</p>
