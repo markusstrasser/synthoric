@@ -36,8 +36,8 @@ importers:
         specifier: ^0.165.0
         version: 0.165.0
       ai:
-        specifier: ^3.2.19
-        version: 3.2.19(openai@4.52.4)(react@18.3.1)(svelte@5.0.0-next.166)(vue@3.4.31(typescript@5.5.3))(zod@3.23.8)
+        specifier: ^3.2.20
+        version: 3.2.20(openai@4.52.5)(react@18.3.1)(svelte@5.0.0-next.166)(vue@3.4.31(typescript@5.5.3))(zod@3.23.8)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -81,8 +81,8 @@ importers:
         specifier: ^5.0.7
         version: 5.0.7
       openai:
-        specifier: ^4.52.4
-        version: 4.52.4
+        specifier: ^4.52.5
+        version: 4.52.5
       pino:
         specifier: ^9.2.0
         version: 9.2.0
@@ -684,6 +684,10 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
+  '@opentelemetry/api@1.9.0':
+    resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
+    engines: {node: '>=8.0.0'}
+
   '@playwright/test@1.45.1':
     resolution: {integrity: sha512-Wo1bWTzQvGA7LyKGIZc8nFSTFf2TkthGIFBR+QVNilvwouGzFd4PYukZe3rvf5PSqjHi1+1NyKSDZKcQWETzaA==}
     engines: {node: '>=18'}
@@ -1032,8 +1036,8 @@ packages:
     resolution: {integrity: sha512-5GG/5IbQQpC9FpkRGsSvZI5QYeSCzlJHdpBQntCsuTOxhKD8lqKhrleg2Yi7yvMIf82Ycmmqln9U8V9qwEiJew==}
     engines: {node: '>= 8.0.0'}
 
-  ai@3.2.19:
-    resolution: {integrity: sha512-fQV1FSp+mq8PsYM79Ik1u00pDhDn2zy7FaL6oXnELnpRefPhViO8OHtlS+ptOS9fj9+Il6GXTbVfS5fAhDvLfA==}
+  ai@3.2.20:
+    resolution: {integrity: sha512-MG37/QmWl0T9NoqdUZ2QR4x6ENJdaMXDDLjLSNrpRnNnMTkt6udO27ZKY+0fArQLq2rabZKnzZQMMS1yKomvcw==}
     engines: {node: '>=18'}
     peerDependencies:
       openai: ^4.42.0
@@ -2012,8 +2016,8 @@ packages:
     resolution: {integrity: sha512-1FlR+gjXK7X+AsAHso35MnyN5KqGwJRi/31ft6x0M194ht7S+rWAvd7PHss9xSKMzE0asv1pyIHaJYq+BbacAQ==}
     engines: {node: '>=12'}
 
-  openai@4.52.4:
-    resolution: {integrity: sha512-3CkV7e8epJBnTe5ptn4i3ivfm1d8cvkbvBOzhGmGYEarpDpcCgwOMV1aBPvZ/HoveUtREWUE9Fqcy7BcPNtMJg==}
+  openai@4.52.5:
+    resolution: {integrity: sha512-qqH8GsyPE3z06took/2uWOGqRcrZNlRoPAsihpg4jsl0+2Dfelnw6HDDMep0EI2Cfzw75nn3vHRZehep/IZzxg==}
     hasBin: true
 
   optionator@0.9.4:
@@ -3062,6 +3066,8 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
 
+  '@opentelemetry/api@1.9.0': {}
+
   '@playwright/test@1.45.1':
     dependencies:
       playwright: 1.45.1
@@ -3420,7 +3426,7 @@ snapshots:
     dependencies:
       humanize-ms: 1.2.1
 
-  ai@3.2.19(openai@4.52.4)(react@18.3.1)(svelte@5.0.0-next.166)(vue@3.4.31(typescript@5.5.3))(zod@3.23.8):
+  ai@3.2.20(openai@4.52.5)(react@18.3.1)(svelte@5.0.0-next.166)(vue@3.4.31(typescript@5.5.3))(zod@3.23.8):
     dependencies:
       '@ai-sdk/provider': 0.0.12
       '@ai-sdk/provider-utils': 1.0.2(zod@3.23.8)
@@ -3429,6 +3435,7 @@ snapshots:
       '@ai-sdk/svelte': 0.0.14(svelte@5.0.0-next.166)(zod@3.23.8)
       '@ai-sdk/ui-utils': 0.0.11(zod@3.23.8)
       '@ai-sdk/vue': 0.0.13(vue@3.4.31(typescript@5.5.3))(zod@3.23.8)
+      '@opentelemetry/api': 1.9.0
       eventsource-parser: 1.1.2
       json-schema: 0.4.0
       jsondiffpatch: 0.6.0
@@ -3437,7 +3444,7 @@ snapshots:
       sswr: 2.1.0(svelte@5.0.0-next.166)
       zod-to-json-schema: 3.22.5(zod@3.23.8)
     optionalDependencies:
-      openai: 4.52.4
+      openai: 4.52.5
       react: 18.3.1
       svelte: 5.0.0-next.166
       zod: 3.23.8
@@ -4559,7 +4566,7 @@ snapshots:
     dependencies:
       mimic-fn: 4.0.0
 
-  openai@4.52.4:
+  openai@4.52.5:
     dependencies:
       '@types/node': 18.19.39
       '@types/node-fetch': 2.6.11

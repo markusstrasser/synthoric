@@ -36,6 +36,7 @@ export const load: PageServerLoad = async ({ params }) => {
       interactionIndex,
     }),
   ])
+  console.log(sequence, interaction)
 
   let interactionState: InteractionState = { type: 'OK' }
   const interactionCount = sequence?.interactions?.length ?? 0
@@ -54,6 +55,7 @@ export const load: PageServerLoad = async ({ params }) => {
       interactionState = { type: 'INTERACTION_NOT_FOUND' }
     }
   }
+  console.log(interactionState, 'interactionState')
 
   return {
     sequence,
@@ -64,6 +66,7 @@ export const load: PageServerLoad = async ({ params }) => {
   }
 }
 
+// //TODO: can call from other routes
 // export const actions: Actions = {
 //   next: async ({ params, url, setHeaders, request }) => {
 //     const { seqIndex, interactionIndex } = params

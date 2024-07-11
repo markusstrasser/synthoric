@@ -1,19 +1,19 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-  import type { PageData } from './$types'
-
-  export let data: PageData
-
-  $: ({
+  let {
     sequence,
     interaction,
     interactionState,
     currentInteractionIndex,
     lastExistingInteractionIndex,
-  } = data)
-  $: nextPageUrl = `/seq/${sequence?.index}/${currentInteractionIndex + 1}`
-  $: previousPageUrl = `/seq/${sequence?.index}/${currentInteractionIndex - 1}`
-  $: isFirstInteraction = currentInteractionIndex === 0
+  } = $props()
+
+  console.log(sequence, 'sequence')
+
+  console.log(interactionState, 'interactionstate')
+
+  const nextPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex + 1}`)
+  const previousPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex - 1}`)
+  const isFirstInteraction = $derived(currentInteractionIndex === 0)
 
   function getStateMessage(state: typeof interactionState) {
     switch (state.type) {
@@ -29,6 +29,13 @@
         return 'This interaction does not exist, but it should.'
     }
   }
+
+  $effect(() => {
+    console.log('interactionState', interactionState)
+    if (interactionState.type === 'NEW_INTERACTION') {
+      console.log('Generating new interaction...')
+    }
+  })
 </script>
 
 <div>
@@ -50,6 +57,7 @@
     <div>
       <h3>Generating new interaction...</h3>
       <!-- Add logic here to generate new interaction -->
+
       {#if !isFirstInteraction}
         <a href={previousPageUrl}>Previous</a>
       {/if}
