@@ -1,19 +1,16 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-  import type { PageData } from './$types'
-
-  export let data: PageData
-
-  $: ({
+  let { data } = $props()
+  const {
     sequence,
     interaction,
     interactionState,
     currentInteractionIndex,
     lastExistingInteractionIndex,
-  } = data)
-  $: nextPageUrl = `/seq/${sequence?.index}/${currentInteractionIndex + 1}`
-  $: previousPageUrl = `/seq/${sequence?.index}/${currentInteractionIndex - 1}`
-  $: isFirstInteraction = currentInteractionIndex === 0
+  } = data
+
+  let nextPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex + 1}`)
+  let previousPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex - 1}`)
+  let isFirstInteraction = $derived(currentInteractionIndex === 0)
 
   function getStateMessage(state: typeof interactionState) {
     switch (state.type) {

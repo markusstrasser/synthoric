@@ -1,10 +1,17 @@
 <script lang="ts">
-  import type { PageData } from './$types'
-  import { onMount } from 'svelte'
-  import { useConvexClient, useQuery } from 'convex-svelte'
-  import { api } from '$convex/_generated/api.js'
+  import { enhance } from '$app/forms'
   import { goto } from '$app/navigation'
   import SequencePreviewCard from '$components/SequencePreviewCard.svelte'
+  import { api } from '$convex/_generated/api.js'
+  import { useConvexClient, useQuery } from 'convex-svelte'
+
+  let { form } = $props()
+
+  $effect(() => {
+    if (form?.error) {
+      // display toast or error message
+    }
+  })
 
   const client = useConvexClient()
   const query = useQuery(api.sequences.getLatestK, { k: 3 })
@@ -13,22 +20,22 @@
 
   $inspect(query.data)
 
-  const generateSequences = async () => {
-    isGenerating = true
-    try {
-      const res = await fetch('/api/sequences')
-      const newSequences = await res.json()
-      // Store generated sequences in Convex
-      await Promise.all(
-        newSequences.map(seq => client.mutation(api.sequences.create, { sequence: seq }))
-      )
-      // sequences = newSequences
-    } catch (error) {
-      console.error('Failed to generate sequences:', error)
-    } finally {
-      isGenerating = false
-    }
-  }
+  // const generateSequences = async () => {
+  //   isGenerating = true
+  //   try {
+  //     const res = await fetch('/api/sequences')
+  //     const newSequences = await res.json()
+  //     // Store generated sequences in Convex
+  //     await Promise.all(
+  //       newSequences.map(seq => client.mutation(api.sequences.create, { sequence: seq }))
+  //     )
+  //     // sequences = newSequences
+  //   } catch (error) {
+  //     console.error('Failed to generate sequences:', error)
+  //   } finally {
+  //     isGenerating = false
+  //   }
+  // }
 
   const handleSequenceClick = seq => goto(`/seq/${seq.index}/${seq.interactions.length}`)
 </script>
@@ -54,12 +61,24 @@
     </div>
   {/if}
   <div class="mt-4 flex space-x-2">
-    <button
-      onclick={generateSequences}
-      class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded disabled:opacity-50"
-      disabled={query.isLoading}
+    <form
+      method="post"
+      use:enhance={() => {
+        isGenerating = true
+
+        return async ({ update }) => {
+          isGenerating = false
+          return update()
+        }
+      }}
     >
-      {query.isLoading ? 'Loading...' : isGenerating ? 'Generating...' : 'Generate New Sequences'}
-    </button>
+      <button
+        type="submit"
+        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded disabled:opacity-50"
+        disabled={query.isLoading}
+      >
+        {query.isLoading ? 'Loading...' : isGenerating ? 'Generating...' : 'Generate New Sequences'}
+      </button>
+    </form>
   </div>
 </section>
