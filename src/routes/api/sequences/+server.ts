@@ -23,7 +23,7 @@ export const GET: RequestHandler = async () => {
     
     A sequence is usually about 10-30 minutes of work so scope the content for what can be learned in that time!
     
-
+    Generate exactly 3 sequences.
     To help personalize the preview info
     The user's most recent interests are: ${topic}
     `,
