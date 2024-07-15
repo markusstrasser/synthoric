@@ -27,7 +27,7 @@
   // })
 
   let generatedInteraction = $state(null)
-  $inspect(generatedInteraction, 'generatedinteraction')
+  const interactionContent = $derived(generatedInteraction || interaction?.content)
   const statusQ = useQuery(api.cache.getStatus, {})
   let isGenerating = $state(false)
   const shouldGenerate = $derived(interactionState.type === 'NEW_INTERACTION' && !isGenerating)
@@ -74,24 +74,15 @@
   <h2>Status: {statusQ?.data?.status}</h2>
   {#if interactionState.type === 'OK'}
     <div>
-      <!-- {#if interaction.data} -->
       <h3>Interaction {currentInteractionIndex}</h3>
-      <p>{JSON.stringify(generatedInteraction ? generatedInteraction : interaction)}</p>
-      <!-- {/if} -->
-      <div>
-        <a href={nextPageUrl}>Next</a>
-        {#if !isFirstInteraction}
-          <a href={previousPageUrl}>Previous</a>
-        {/if}
-      </div>
+      <p>{JSON.stringify(interactionContent)}</p>
     </div>
   {:else if interactionState.type === 'NEW_INTERACTION'}
     <div>
-      <h3>Generating new interaction...</h3>
-      <!-- Add logic here to generate new interaction -->
-      <p>{JSON.stringify(generatedInteraction ? generatedInteraction : interaction)}</p>
-      {#if !isFirstInteraction}
-        <a href={previousPageUrl}>Previous</a>
+      {#if interactionContent}
+        <p>{JSON.stringify(interactionContent)}</p>
+      {:else}
+        <h3>Generating new interaction...</h3>
       {/if}
     </div>
   {:else if interactionState.type === 'SEQUENCE_NOT_FOUND'}
@@ -108,5 +99,11 @@
     <div>
       <a href="/">Go back home</a>
     </div>
+  {/if}
+  {#if interactionContent}
+    <a href={nextPageUrl}>Next</a>
+  {/if}
+  {#if !isFirstInteraction}
+    <a href={previousPageUrl}>Previous</a>
   {/if}
 </div>
