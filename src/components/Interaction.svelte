@@ -9,8 +9,6 @@
   const interactionContent = $derived(
     getInteractionContent(interactionConfig, actions.hasSubmitted)
   )
-
-  console.log(interactionConfig, 'content')
 </script>
 
 {#each interactionContent as { key, value, config }}

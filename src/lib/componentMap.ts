@@ -14,7 +14,7 @@ type ComponentConfig<T = any> = {
 const componentMap: Record<string, ComponentConfig> = {
   task: {
     component: Markdown,
-    mapProps: props => ({ source: props.content }),
+    mapProps: props => ({ source: props }),
     inputComponents: [TextInput, SubmitButton],
   },
   solution: {
@@ -44,7 +44,7 @@ const componentMap: Record<string, ComponentConfig> = {
 export default componentMap
 
 export const getInteractionContent = (interaction: any, hasSubmitted: boolean) => {
-  return Object.entries(interaction.content)
+  return Object.entries(interaction)
     .filter(([key]) => key in componentMap)
     .map(([key, value]) => ({ key, value, config: componentMap[key] }))
     .filter(({ config }) => !config.condition || config.condition(hasSubmitted))

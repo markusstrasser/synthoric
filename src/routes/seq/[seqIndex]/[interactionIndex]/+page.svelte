@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Interaction from '$components/Interaction.svelte'
   import { api } from '$convex/_generated/api.js'
   import { useQuery } from 'convex-svelte'
   import type { derived } from 'svelte/store'
@@ -67,6 +68,8 @@
         })
     }
   })
+
+  $inspect(interactionContent, 'interactionContent')
 </script>
 
 <div>
@@ -75,12 +78,12 @@
   {#if interactionState.type === 'OK'}
     <div>
       <h3>Interaction {currentInteractionIndex}</h3>
-      <p>{JSON.stringify(interactionContent)}</p>
+      <Interaction interactionConfig={interactionContent} />
     </div>
   {:else if interactionState.type === 'NEW_INTERACTION'}
     <div>
       {#if interactionContent}
-        <p>{JSON.stringify(interactionContent)}</p>
+        <Interaction interactionConfig={interactionContent} />
       {:else}
         <h3>Generating new interaction...</h3>
       {/if}
