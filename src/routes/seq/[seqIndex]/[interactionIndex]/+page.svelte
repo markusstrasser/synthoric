@@ -1,25 +1,83 @@
 <script lang="ts">
+  import { api } from '$convex/_generated/api.js'
+  import { useQuery } from 'convex-svelte'
+  import type { derived } from 'svelte/store'
+
   const { data } = $props()
   const {
     sequence,
     interaction,
+
     interactionState,
     currentInteractionIndex,
     lastExistingInteractionIndex,
   } = $derived(data)
 
+  // let interaction = $state(data)
+
+  // const params = $derived({
+  //   seqIndex: sequence?.index,
+  //   interactionIndex: currentInteractionIndex,
+  // })
+
+  // //! not updating on newPage
+  // const interaction = useQuery(api.interactions.getByIndices, {
+  //   seqIndex: data.sequence.index,
+  //   interactionIndex: data.currentInteractionIndex,
+  // })
+
+  let generatedInteraction = $state(null)
+  $inspect(generatedInteraction, 'generatedinteraction')
+  const statusQ = useQuery(api.cache.getStatus, {})
+  let isGenerating = $state(false)
+  const shouldGenerate = $derived(interactionState.type === 'NEW_INTERACTION' && !isGenerating)
+
+  // export async function getInteraction() {
+  //   if (shouldGenerate) {
+  //     return await new Promise(f => setTimeout(f, 2000))
+  //   }
+  // }
   const nextPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex + 1}`)
   const previousPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex - 1}`)
   const isFirstInteraction = $derived(currentInteractionIndex === 0)
+
+  $effect(() => {
+    if (shouldGenerate) {
+      isGenerating = true
+      fetch('/api/generateNextInteraction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sequenceIndex: sequence?.index,
+          interactionIndex: currentInteractionIndex,
+        }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Handle the response data here if needed
+
+          console.log('Generation complete:', data)
+
+          generatedInteraction = data.data?.interaction
+        })
+        .catch(error => {
+          console.error('Error generating next interaction:', error)
+        })
+    }
+  })
 </script>
 
 <div>
   <h2>State: {interactionState.type}</h2>
-
-  {#if $state.is(interactionState.type, 'OK')}
+  <h2>Status: {statusQ?.data?.status}</h2>
+  {#if interactionState.type === 'OK'}
     <div>
+      <!-- {#if interaction.data} -->
       <h3>Interaction {currentInteractionIndex}</h3>
-      <p>{JSON.stringify(interaction)}</p>
+      <p>{JSON.stringify(generatedInteraction ? generatedInteraction : interaction)}</p>
+      <!-- {/if} -->
       <div>
         <a href={nextPageUrl}>Next</a>
         {#if !isFirstInteraction}
@@ -31,7 +89,7 @@
     <div>
       <h3>Generating new interaction...</h3>
       <!-- Add logic here to generate new interaction -->
-
+      <p>{JSON.stringify(generatedInteraction ? generatedInteraction : interaction)}</p>
       {#if !isFirstInteraction}
         <a href={previousPageUrl}>Previous</a>
       {/if}

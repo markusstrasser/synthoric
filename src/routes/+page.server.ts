@@ -1,7 +1,6 @@
-import { api } from '$convex/_generated/api.js';
+import { api } from '$convex/_generated/api.js'
 
-export const load = async ({locals}) => {
-};
+export const load = async ({ locals }) => {}
 
 export const actions = {
   default: async ({ fetch, locals }) => {
@@ -10,7 +9,9 @@ export const actions = {
       const newSequences = await res.json()
       // Store generated sequences in Convex
       await Promise.all(
-        newSequences.map(seq => locals.convexClient.mutation(api.sequences.create, { sequence: seq }))
+        newSequences.map(seq =>
+          locals.convexClient.mutation(api.sequences.create, { sequence: seq })
+        )
       )
       // sequences = newSequences
 

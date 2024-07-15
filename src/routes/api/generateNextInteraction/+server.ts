@@ -56,9 +56,7 @@ const generateNextInteraction = async (seqIndex: number, interactionIndex: numbe
       //@ts-ignore
       .execute(`${prompt}.\n${ContentGuidelinePrompt}`)
 
-    convexClient.mutation(api.cache.newStatus, {
-      status: `Interaction Generation: Generating Interaction ${index} of ${prompts.length}`,
-    })
+    updateStatus(`Interaction Generation: Generating Interaction ${index} of ${prompts.length}`)
 
     const interactionId = await convexClient.mutation(
       api.interactions.insertInteractionAndLinkToSequence,
@@ -69,40 +67,41 @@ const generateNextInteraction = async (seqIndex: number, interactionIndex: numbe
         seqId: seq._id,
       }
     )
-    return interactionId
+    return { interaction, interactionId }
   }
 
   //TODO: make all interactionCreation run in parallel with while loop checking if resolved?
 
-  const firstInteractionId = await generateAndInsertInteraction(prompts[0], 0)
-  const remainingInteractionIds = await Promise.all(
+  const { interaction, interactionId } = await generateAndInsertInteraction(prompts[0], 0)
+  await Promise.all(
     prompts.slice(1).map((prompt, index) => generateAndInsertInteraction(prompt, index + 1))
   )
 
+  updateStatus('...')
   return {
-    success: true,
-    firstInteractionId,
+    interaction,
+    interactionId,
+    // firstInteractionId,
     totalInteractions: prompts.length,
-    allInteractionIds: [firstInteractionId, ...remainingInteractionIds],
+    // allInteractionIds: [firstInteractionId, ...remainingInteractionIds],
   }
 }
 
-export const GET: RequestHandler = async ({ url }) => {
-  const seqIndex = Number(url.searchParams.get('seqIndex'))
-  const interactionIndex = Number(url.searchParams.get('interactionIndex'))
+export const POST: RequestHandler = async ({ request }) => {
+  const { sequenceIndex, interactionIndex } = await request.json()
 
-  if (!seqIndex || !interactionIndex) {
-    throw new Error('Invalid seqIndex or interactionIndex in uRL params')
+  if (typeof sequenceIndex !== 'number' || typeof interactionIndex !== 'number') {
+    return json(
+      { success: false, error: 'Invalid sequenceIndex or interactionIndex' },
+      { status: 400 }
+    )
   }
-  const res = await generateNextInteraction(seqIndex, interactionIndex)
-  return json({ success: true, data: res })
-}
-// export const POST: RequestHandler = async ({ request }) => {
-//   const { seqIndex, interactionIndex } = await request.json()
 
-//   const res = await generateNextInteraction(seqIndex, interactionIndex)
-//   return json({
-//     success: true,
-//     data: res,
-//   })
-// }
+  try {
+    const res = await generateNextInteraction(sequenceIndex, interactionIndex)
+    return json({ success: true, data: res })
+  } catch (error) {
+    console.error('Error generating next interaction:', error)
+    return json({ success: false, error: 'Failed to generate next interaction' }, { status: 500 })
+  }
+}
