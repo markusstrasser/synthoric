@@ -1,9 +1,9 @@
-import { type RequestHandler, json } from '@sveltejs/kit'
+import { ApplicationExplainer } from '$lib/prompts'
 import { anthropic } from '$lib/providers'
+import SequencePreview from '$lib/tools/AIToolConfigs/SequencePreview'
+import { type RequestHandler, json } from '@sveltejs/kit'
 import { generateObject } from 'ai'
 import { z } from 'zod'
-import { ApplicationExplainer } from '$lib/prompts'
-import SequencePreview from '$lib/tools/AIToolConfigs/SequencePreview'
 
 const topic = 'physics'
 
@@ -23,7 +23,7 @@ export const GET: RequestHandler = async () => {
     
     A sequence is usually about 10-30 minutes of work so scope the content for what can be learned in that time!
     
-
+    Generate exactly 3 sequences.
     To help personalize the preview info
     The user's most recent interests are: ${topic}
     `,
@@ -33,5 +33,6 @@ export const GET: RequestHandler = async () => {
       content: z.array(SequencePreview.schema).length(3),
     }),
   })
+
   return json(object.content)
 }

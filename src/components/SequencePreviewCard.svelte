@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { z } from 'zod'
   import type Tools from '$lib/tools'
+  import type { z } from 'zod'
 
   type SequencePreview = z.infer<typeof Tools.SequencePreview.schema>
   const { title, tagline, prerequisites, onClick } = $props()

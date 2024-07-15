@@ -1,12 +1,11 @@
 <script lang="ts">
   const { data } = $props()
-  let {
+  const {
     sequence,
     interaction,
     interactionState,
     currentInteractionIndex,
     lastExistingInteractionIndex,
-    stateMessage,
   } = $derived(data)
 
   const nextPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex + 1}`)
@@ -16,7 +15,6 @@
 
 <div>
   <h2>State: {interactionState.type}</h2>
-  <p>{stateMessage}</p>
 
   {#if $state.is(interactionState.type, 'OK')}
     <div>
@@ -40,19 +38,16 @@
     </div>
   {:else if interactionState.type === 'SEQUENCE_NOT_FOUND'}
     <div>
-      <p>This sequence doesn't exist.</p>
       <a href="/">Go back home</a>
     </div>
   {:else if interactionState.type === 'INTERACTION_OUT_OF_BOUNDS'}
     <div>
-      <p>This interaction is out of bounds.</p>
-      <a href="/seq/{sequence?.index}/{Math.max(lastExistingInteractionIndex, 0)}"
-        >Go to latest interaction</a
-      >
+      <a href="/seq/{sequence?.index}/{Math.max(lastExistingInteractionIndex, 0)}">
+        Go to latest interaction
+      </a>
     </div>
   {:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
     <div>
-      <p>Wrong route buddy.</p>
       <a href="/">Go back home</a>
     </div>
   {/if}
