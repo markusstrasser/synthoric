@@ -1,48 +1,24 @@
 <script lang="ts">
+  const { data } = $props()
   let {
     sequence,
     interaction,
     interactionState,
     currentInteractionIndex,
     lastExistingInteractionIndex,
-  } = $props()
-
-  console.log(sequence, 'sequence')
-
-  console.log(interactionState, 'interactionstate')
+    stateMessage,
+  } = $derived(data)
 
   const nextPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex + 1}`)
   const previousPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex - 1}`)
   const isFirstInteraction = $derived(currentInteractionIndex === 0)
-
-  function getStateMessage(state: typeof interactionState) {
-    switch (state.type) {
-      case 'OK':
-        return 'Everything is fine.'
-      case 'SEQUENCE_NOT_FOUND':
-        return 'This sequence does not exist.'
-      case 'INTERACTION_OUT_OF_BOUNDS':
-        return `Interaction index too high. Last available: ${state.lastAvailable}`
-      case 'NEW_INTERACTION':
-        return 'This is a new interaction that needs to be generated.'
-      case 'INTERACTION_NOT_FOUND':
-        return 'This interaction does not exist, but it should.'
-    }
-  }
-
-  $effect(() => {
-    console.log('interactionState', interactionState)
-    if (interactionState.type === 'NEW_INTERACTION') {
-      console.log('Generating new interaction...')
-    }
-  })
 </script>
 
 <div>
   <h2>State: {interactionState.type}</h2>
-  <p>{getStateMessage(interactionState)}</p>
+  <p>{stateMessage}</p>
 
-  {#if interactionState.type === 'OK'}
+  {#if $state.is(interactionState.type, 'OK')}
     <div>
       <h3>Interaction {currentInteractionIndex}</h3>
       <p>{JSON.stringify(interaction)}</p>

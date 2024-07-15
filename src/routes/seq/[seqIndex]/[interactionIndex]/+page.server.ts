@@ -22,6 +22,21 @@ type InteractionState =
   | { type: 'NEW_INTERACTION' }
   | { type: 'INTERACTION_NOT_FOUND' }
 
+function getStateMessage(state: InteractionState): string {
+  switch (state.type) {
+    case 'OK':
+      return 'Everything is fine.'
+    case 'SEQUENCE_NOT_FOUND':
+      return 'This sequence does not exist.'
+    case 'INTERACTION_OUT_OF_BOUNDS':
+      return `Interaction index too high. Last available: ${state.lastAvailable}`
+    case 'NEW_INTERACTION':
+      return 'This is a new interaction that needs to be generated.'
+    case 'INTERACTION_NOT_FOUND':
+      return 'This interaction does not exist, but it should.'
+  }
+}
+
 export const load: PageServerLoad = async ({ params }) => {
   const seqIndex = Number.parseInt(params.seqIndex)
   const interactionIndex = Number.parseInt(params.interactionIndex)
@@ -63,6 +78,7 @@ export const load: PageServerLoad = async ({ params }) => {
     interactionState,
     currentInteractionIndex: interactionIndex,
     lastExistingInteractionIndex,
+    stateMessage: getStateMessage(interactionState),
   }
 }
 
