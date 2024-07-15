@@ -3,41 +3,27 @@
   import { goto } from '$app/navigation'
   import SequencePreviewCard from '$components/SequencePreviewCard.svelte'
   import { api } from '$convex/_generated/api.js'
-  import { useConvexClient, useQuery } from 'convex-svelte'
+  import { useQuery } from 'convex-svelte'
 
-  let { form } = $props()
+  const { form } = $props()
+  const query = useQuery(api.sequences.getLatestK, { k: 3 })
+  let isGenerating = $state(false)
 
   $effect(() => {
     if (form?.error) {
-      // display toast or error message
+      // TODO: display toast or error message
     }
   })
 
-  const client = useConvexClient()
-  const query = useQuery(api.sequences.getLatestK, { k: 3 })
-
-  let isGenerating = $state(false)
-
-  $inspect(query.data)
-
-  // const generateSequences = async () => {
-  //   isGenerating = true
-  //   try {
-  //     const res = await fetch('/api/sequences')
-  //     const newSequences = await res.json()
-  //     // Store generated sequences in Convex
-  //     await Promise.all(
-  //       newSequences.map(seq => client.mutation(api.sequences.create, { sequence: seq }))
-  //     )
-  //     // sequences = newSequences
-  //   } catch (error) {
-  //     console.error('Failed to generate sequences:', error)
-  //   } finally {
-  //     isGenerating = false
-  //   }
-  // }
-
   const handleSequenceClick = seq => goto(`/seq/${seq.index}/${seq.interactions.length}`)
+
+  const handleSubmit = () => {
+    isGenerating = true
+    return async ({ update }) => {
+      isGenerating = false
+      await update()
+    }
+  }
 </script>
 
 <svelte:head>
@@ -48,11 +34,11 @@
 <section class="p-4">
   <h1 class="text-2xl font-bold mb-4">Synth</h1>
   <p>Available Sequences:</p>
-  <!-- {@debug isLoading, sequences, error} -->
+
   {#if query.isLoading}
-    Loading...
+    <p>Loading...</p>
   {:else if query.error}
-    failed to load: {query.error.toString()}
+    <p class="text-red-500">Failed to load: {query.error.toString()}</p>
   {:else}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {#each query.data as sequence}
@@ -60,22 +46,16 @@
       {/each}
     </div>
   {/if}
-  <div class="mt-4 flex space-x-2">
-    <form
-      method="post"
-      use:enhance={() => {
-        isGenerating = true
 
-        return async ({ update }) => {
-          isGenerating = false
-          return update()
-        }
-      }}
-    >
+  <div class="mt-4">
+    {#if form?.error}
+      <h2 class="text-red-500 mb-2">{form.error}</h2>
+    {/if}
+    <form method="post" use:enhance={handleSubmit}>
       <button
         type="submit"
         class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded disabled:opacity-50"
-        disabled={query.isLoading}
+        disabled={query.isLoading || isGenerating}
       >
         {query.isLoading ? 'Loading...' : isGenerating ? 'Generating...' : 'Generate New Sequences'}
       </button>
