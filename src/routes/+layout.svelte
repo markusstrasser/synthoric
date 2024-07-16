@@ -3,6 +3,7 @@
   import '../app.css'
   import { PUBLIC_CONVEX_URL } from '$env/static/public'
   import { setupConvex } from 'convex-svelte'
+  import DebugView from '$components/DebugView.svelte'
 
   setupConvex(PUBLIC_CONVEX_URL)
 </script>
@@ -14,6 +15,7 @@
     <slot />
   </main>
 
+  <DebugView />
   <footer
     class="bg-purple-200 dark:bg-purple-800 flex flex-col justify-center items-center p-3 sm:p-3"
   >
