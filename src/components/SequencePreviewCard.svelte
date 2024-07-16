@@ -21,6 +21,6 @@
     </ul>
   </Card.Content>
   <Card.Footer>
-    <button on:click={onClick} class="btn btn-primary mt-4 w-full"> Start Sequence </button>
+    <button onclick={onClick} class="btn btn-primary mt-4 w-full"> Start Sequence </button>
   </Card.Footer>
 </Card.Root>
