@@ -2,7 +2,7 @@
   import { nanoid } from 'nanoid'
   import { addUserAction } from '$stores/index.svelte'
 
-  let { choices, isCorrect, isReadOnly = false } = $props()
+  const { choices, isCorrect, isReadOnly = false } = $props()
 
   const id = nanoid(4)
   let selectedIndex = $state<number | null>(null)
@@ -20,20 +20,19 @@
 
 <div class="grid grid-cols-1 gap-4">
   {#each choices as choice, index (choice)}
-    <div>
+    <label class="flex items-center space-x-2">
       <input
         type="radio"
-        id={`choice-${id}-${index}`}
         name={`choice-${id}`}
         value={index}
         checked={selectedIndex === index}
         onchange={() => handleChoice(index)}
         disabled={isReadOnly}
       />
-      <label for={`choice-${id}-${index}`}>{choice}</label>
+      <span>{choice}</span>
       {#if isCorrect !== undefined && selectedIndex === index}
-        <span class="ml-2">{isCorrect[index] ? '✓' : '✗'}</span>
+        <span>{isCorrect[index] ? '✓' : '✗'}</span>
       {/if}
-    </div>
+    </label>
   {/each}
 </div>

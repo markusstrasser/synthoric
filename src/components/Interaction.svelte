@@ -1,24 +1,22 @@
 <script lang="ts">
-  import { getInteractionContent } from '$lib/componentMap'
+  import componentMap from '$lib/componentMap'
   import actions from '$stores/index.svelte'
 
-  const { interactionConfig } = $props()
+  const { interactionConfig: config } = $props()
 
-  console.log(actions.hasSubmitted, 'hasSubmitted')
-  $inspect(interactionConfig, 'interactionConfig')
   const interactionContent = $derived(
-    getInteractionContent(interactionConfig, actions.hasSubmitted)
+    Object.entries(config)
+      .filter(([key, value]) => {
+        const configItem = componentMap[key]
+        return configItem && (!configItem.condition || configItem.condition(actions.hasSubmitted))
+      })
+      .map(([key, value]) => ({
+        component: componentMap[key].component,
+        props: componentMap[key].propMap(value, config),
+      }))
   )
-
-  $inspect(interactionContent, 'interactionContent')
-
-  // console.log(interactionContent, 'interactionContent')
 </script>
 
 {#each interactionContent as { component, props }}
-  {#if component && props}
-    <div>
-      <svelte:component this={component} {...props} />
-    </div>
-  {/if}
+  <svelte:component this={component} {...props} />
 {/each}
