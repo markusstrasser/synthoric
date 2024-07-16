@@ -15,9 +15,9 @@
 <button
   {disabled}
   onclick={handleSubmit}
-  class="mt-2 px-4 py-2 rounded-md cursor-pointer transition-colors
+  class="mt-2 cursor-pointer rounded-md px-4 py-2 transition-colors
     {disabled
-    ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+    ? 'cursor-not-allowed bg-gray-400 text-gray-600'
     : 'bg-blue-500 text-white hover:bg-blue-600'}"
 >
   Submit

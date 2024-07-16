@@ -38,8 +38,8 @@
   )
 </script>
 
-<div class="p-2 bg-gray-100 text-xs">
-  <div class="flex justify-between items-center mb-2">
+<div class="bg-gray-100 p-2 text-xs">
+  <div class="mb-2 flex items-center justify-between">
     <h1 class="text-sm font-bold">{title}</h1>
     <div class="text-gray-600">
       Actions: {displayedActions.length} | Submitted: {userActions.hasSubmitted ? '✅' : '❌'}
@@ -47,10 +47,10 @@
   </div>
 
   {#if debugInfo}
-    <h2 class="font-semibold mb-1">General Debug Info</h2>
-    <ul class="space-y-1 mb-4">
+    <h2 class="mb-1 font-semibold">General Debug Info</h2>
+    <ul class="mb-4 space-y-1">
       {#each Object.entries(debugInfo) as [key, value]}
-        <li class="bg-white p-1 rounded text-[10px] flex items-start">
+        <li class="flex items-start rounded bg-white p-1 text-[10px]">
           <span class="mr-1">{icons[value] || icons[key] || '❓'}</span>
           <div class="flex-grow overflow-hidden">
             <span class="font-medium">{key}:</span>
@@ -61,12 +61,12 @@
     </ul>
   {/if}
 
-  <h2 class="font-semibold mb-1">
+  <h2 class="mb-1 font-semibold">
     {showFilteredOnly ? 'Filtered Actions' : 'All Actions'}
   </h2>
   <ul class="space-y-1">
     {#each displayedActions as action}
-      <li class="bg-white p-1 rounded text-[10px] flex items-start">
+      <li class="flex items-start rounded bg-white p-1 text-[10px]">
         <span class="mr-1">{icons[action.type] || '❓'}</span>
         <div class="flex-grow overflow-hidden">
           <div class="flex justify-between">

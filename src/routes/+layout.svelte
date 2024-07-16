@@ -5,22 +5,18 @@
   import { setupConvex } from 'convex-svelte'
   import DebugView from '$components/DebugView.svelte'
   import DebugSidebar from '$components/DebugSidebar.svelte'
-
   setupConvex(PUBLIC_CONVEX_URL)
 </script>
 
-<div class="flex flex-col min-h-screen gradient-bg">
-  <Header />
+<div class="gradient-bg flex min-h-screen flex-col">
+  <Header></Header>
 
-  <main class="flex-1 flex flex-col p-8 w-full max-w-4xl mx-auto">
-    <slot />
+  <main class="mx-auto flex w-full max-w-4xl flex-1 flex-col p-8">
+    <slot></slot>
   </main>
 
-  <DebugSidebar />
-  <footer class="bg-gray-100 text-gray-600 py-4 text-center">
-    <p class="text-sm">
-      <span class="font-medium">visit</span>
-      <span class="text-blue-600 font-bold hover:underline">ABC</span>
-    </p>
+  <DebugSidebar></DebugSidebar>
+  <footer class="bg-gray-100 py-4 text-center text-gray-600">
+    <span class="font-bold text-blue-600 hover:underline">Footer</span>
   </footer>
 </div>

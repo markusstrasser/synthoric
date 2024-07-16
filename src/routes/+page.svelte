@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Button } from '$components/ui/button'
   import { enhance } from '$app/forms'
   import { goto } from '$app/navigation'
   import SequencePreviewCard from '$components/SequencePreviewCard.svelte'
@@ -28,36 +29,55 @@
 </script>
 
 <svelte:head>
-  <title>Home | Synth</title>
+  <title>Synthoric</title>
   <meta name="description" content="Synth - AI-driven STEM learning platform" />
 </svelte:head>
 
-<section class="space-y-8">
-  <h1 class="text-4xl font-bold text-center text-shadow">Welcome to Synth</h1>
-  <p class="text-xl text-center text-gray-600">Discover and explore learning sequences:</p>
+<div class="mx-auto max-w-4xl px-4 py-8 font-serif">
+  <p class="mb-12 text-center text-xl text-gray-600">-> Learning sequences</p>
 
   {#if query.isLoading}
-    <p class="text-center text-gray-500">Loading sequences...</p>
+    <div class="flex h-64 items-center justify-center">
+      <div class="h-16 w-16 animate-spin rounded-full border-b-2 border-t-2 border-gray-900"></div>
+    </div>
   {:else if query.error}
-    <p class="text-center text-red-500">Failed to load: {query.error.toString()}</p>
+    <div class="mb-8 border-l-4 border-red-500 bg-red-100 p-4 text-red-700" role="alert">
+      <p class="font-bold">Error</p>
+      <p>{query.error.toString()}</p>
+    </div>
   {:else}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
       {#each query.data as sequence, index}
-        <div in:fly={{ y: 20, delay: index * 100 }}>
+        <div in:fly={{ y: 20, delay: index * 100 }} class="col-span-1 md:col-span-2">
           <SequencePreviewCard {...sequence} onClick={() => handleSequenceClick(sequence)} />
         </div>
       {/each}
     </div>
   {/if}
 
-  <div class="mt-8 text-center">
+  <div class="mt-16 text-center">
     {#if form?.error}
-      <h2 class="text-red-500 mb-2">{form.error}</h2>
+      <div class="mb-8 border-l-4 border-red-500 bg-red-100 p-4 text-red-700" role="alert">
+        <p class="font-bold">Error</p>
+        <p>{form.error}</p>
+      </div>
     {/if}
     <form method="post" use:enhance={handleSubmit}>
-      <button type="submit" class="btn btn-primary" disabled={query.isLoading || isGenerating}>
-        {query.isLoading ? 'Loading...' : isGenerating ? 'Generating...' : 'Generate New Sequences'}
-      </button>
+      <Button
+        variant="default"
+        size="lg"
+        type="submit"
+        disabled={query.isLoading || isGenerating}
+        class="font-serif"
+      >
+        {#if query.isLoading}
+          Loading...
+        {:else if isGenerating}
+          Generating...
+        {:else}
+          Generate New Sequences
+        {/if}
+      </Button>
     </form>
   </div>
-</section>
+</div>
