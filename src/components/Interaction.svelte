@@ -3,6 +3,7 @@
   import actions from '$stores/index.svelte'
   import TextInput from './TextInput.svelte'
   import SubmitButton from './SubmitButton.svelte'
+  import { fade } from 'svelte/transition'
 
   const { interactionConfig: config } = $props()
 
@@ -24,25 +25,21 @@
   const hasChoices = $derived(interactionContent.some(item => item.name === 'choices'))
 </script>
 
-<div class="flex flex-col items-center p-4">
-  <div class="w-full max-w-2xl space-y-4">
-    {#each interactionContent as { name, component, props }}
-      <div class="w-full">
-        <svelte:component this={component} {...props} />
+<div class="space-y-8">
+  {#each interactionContent as { name, component, props }, index}
+    <div in:fade={{ delay: index * 100, duration: 300 }}>
+      <svelte:component this={component} {...props} />
+    </div>
+    {#if name === 'choices'}
+      <div class="mt-4">
+        <SubmitButton disabled={actions.hasSubmitted} />
       </div>
-      {#if name === 'choices'}
-        <div class="w-full">
-          <SubmitButton disabled={actions.hasSubmitted} />
-        </div>
-      {/if}
-      {#if name === 'task' && !hasChoices}
-        <div class="w-full">
-          <TextInput />
-        </div>
-        <div class="w-full">
-          <SubmitButton disabled={actions.hasSubmitted} />
-        </div>
-      {/if}
-    {/each}
-  </div>
+    {/if}
+    {#if name === 'task' && !hasChoices}
+      <div class="space-y-4">
+        <TextInput />
+        <SubmitButton disabled={actions.hasSubmitted} />
+      </div>
+    {/if}
+  {/each}
 </div>

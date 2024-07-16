@@ -1,7 +1,39 @@
 @import 'tailwindcss';
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-800 font-serif;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans font-bold;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300;
+  }
+  .btn {
+    @apply px-4 py-2 rounded-md font-sans font-medium transition-colors duration-300;
+  }
+  .btn-primary {
+    @apply bg-blue-500 text-white hover:bg-blue-600;
+  }
+  .input {
+    @apply border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-300;
+  }
+}
+
 @layer utilities {
-  .truncate:hover {
-    white-space: normal;
-    overflow: visible;
+  .gradient-bg {
+    @apply bg-gradient-to-br from-blue-50 to-purple-50;
+  }
+  .text-shadow {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
   }
 }

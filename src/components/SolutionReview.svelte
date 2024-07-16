@@ -2,25 +2,9 @@
   import { nanoid } from 'nanoid'
   import SvelteMarkdown from 'svelte-markdown'
   import { addUserAction } from '$stores/index.svelte'
+  import { slide } from 'svelte/transition'
 
-  interface SubStep {
-    title: string
-  }
-
-  interface Step {
-    step: string
-    subSteps: SubStep[]
-  }
-
-  const {
-    highLevelSketch,
-    conceptualExplanation = null,
-    stepsNested,
-  } = $props<{
-    highLevelSketch: string
-    conceptualExplanation?: string | null
-    stepsNested: Step[]
-  }>()
+  const { highLevelSketch, conceptualExplanation = null, stepsNested } = $props()
 
   let selectedStep: string | null = $state(null)
   const id = nanoid(4)
@@ -31,64 +15,55 @@
   }
 </script>
 
-<section class="p-4">
-  <div class="bg-white shadow rounded-lg overflow-hidden">
-    <div class="px-4 py-5 sm:px-6">
-      <h3 class="text-lg leading-6 font-medium text-gray-900">Reflection on Student Exercise</h3>
+<section class="card p-6 space-y-6">
+  <h3 class="text-2xl font-bold mb-4">Solution Review</h3>
+
+  <div class="space-y-4">
+    <div>
+      <h4 class="text-lg font-semibold mb-2">High-Level Sketch</h4>
+      <div class="prose prose-sm max-w-none">
+        <SvelteMarkdown source={highLevelSketch} />
+      </div>
     </div>
-    <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
-      <dl class="sm:divide-y sm:divide-gray-200">
-        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">High-Level Sketch</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            <SvelteMarkdown source={highLevelSketch} />
-          </dd>
+
+    {#if conceptualExplanation}
+      <div>
+        <h4 class="text-lg font-semibold mb-2">Conceptual Explanation</h4>
+        <div class="prose prose-sm max-w-none">
+          <SvelteMarkdown source={conceptualExplanation} />
         </div>
-        {#if conceptualExplanation}
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500">Conceptual Explanation</dt>
-            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-              <SvelteMarkdown source={conceptualExplanation} />
-            </dd>
-          </div>
-        {/if}
-        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-          <dt class="text-sm font-medium text-gray-500">Step-by-Step Solution</dt>
-          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            <ol class="space-y-2">
-              {#each stepsNested as step (step.step)}
-                <li>
-                  <div
-                    role="button"
-                    tabindex="0"
-                    class="cursor-pointer rounded-md p-2 transition-all"
-                    class:bg-blue-200={selectedStep === step.step}
-                    class:hover:bg-gray-200={selectedStep !== step.step}
-                    onclick={() => handleStepClick(step.step)}
-                    onkeydown={e => e.key === 'Enter' && handleStepClick(step.step)}
-                  >
-                    <SvelteMarkdown source={step.step} />
-                  </div>
-                  <ul class="ml-4 mt-2 space-y-1">
-                    {#each step.subSteps as subStep (subStep.title)}
-                      <li>
-                        <button
-                          class="w-full text-left cursor-pointer border-l-2 border-gray-300 pl-2"
-                          class:bg-blue-200={selectedStep === subStep.title}
-                          class:hover:bg-gray-200={selectedStep !== subStep.title}
-                          onclick={() => handleStepClick(subStep.title)}
-                        >
-                          <SvelteMarkdown source={subStep.title} />
-                        </button>
-                      </li>
-                    {/each}
-                  </ul>
-                </li>
-              {/each}
-            </ol>
-          </dd>
-        </div>
-      </dl>
+      </div>
+    {/if}
+
+    <div>
+      <h4 class="text-lg font-semibold mb-2">Step-by-Step Solution</h4>
+      <ol class="space-y-4">
+        {#each stepsNested as step (step.step)}
+          <li>
+            <button
+              class="w-full text-left p-2 rounded-md transition-colors duration-300"
+              class:bg-blue-100={selectedStep === step.step}
+              class:hover:bg-gray-100={selectedStep !== step.step}
+              on:click={() => handleStepClick(step.step)}
+            >
+              <div class="prose prose-sm max-w-none">
+                <SvelteMarkdown source={step.step} />
+              </div>
+            </button>
+            {#if selectedStep === step.step}
+              <ul class="mt-2 space-y-2 pl-4" transition:slide>
+                {#each step.subSteps as subStep (subStep.title)}
+                  <li class="border-l-2 border-gray-300 pl-2">
+                    <div class="prose prose-sm max-w-none">
+                      <SvelteMarkdown source={subStep.title} />
+                    </div>
+                  </li>
+                {/each}
+              </ul>
+            {/if}
+          </li>
+        {/each}
+      </ol>
     </div>
   </div>
 </section>
