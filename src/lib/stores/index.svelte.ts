@@ -8,7 +8,7 @@ export type UserAction = {
   // Add any other properties that might be in the payload
 }
 
-let userActions = $state([{ type: 'init' }])
+let userActions = $state([])
 
 export const addUserAction = (action: UserAction) => {
   userActions.push({ ...action, timestamp: Date.now() })
@@ -25,6 +25,18 @@ const reset = () => {
   userActions = []
   // hasSubmitted = false
 }
+
+// Debug store
+let debugInfo = $state({})
+
+export const clearDebugInfo = () => {
+  debugInfo = {}
+}
+
+export const setDebugInfo = (info: any) => {
+  debugInfo = info
+}
+
 export default {
   //? if you want to destructure the store in the component use {a,b} = $derived(store) if not store.a ...
   get userActions() {
@@ -38,4 +50,9 @@ export default {
   },
   reset,
   // hasSubmitted = false
+  get debugInfo() {
+    return debugInfo
+  },
+  setDebugInfo,
+  clearDebugInfo,
 }
