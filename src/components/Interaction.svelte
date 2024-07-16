@@ -5,9 +5,10 @@
   import SubmitButton from './SubmitButton.svelte'
   const { interactionConfig: config } = $props()
 
+  const displayOrderByType = ['task', 'choices', 'hint', 'solution']
   const interactionContent = $derived(
     Object.entries(config)
-      .filter(([key, value]) => {
+      .filter(([key, _]) => {
         const configItem = componentMap[key]
         return configItem && (!configItem.condition || configItem.condition(actions.hasSubmitted))
       })
@@ -16,16 +17,19 @@
         component: componentMap[key].component,
         props: componentMap[key].propMap(value, config),
       }))
+      .sort((a, b) => displayOrderByType.indexOf(a.name) - displayOrderByType.indexOf(b.name))
   )
 
   const hasChoices = $derived(interactionContent.some(item => item.name === 'choices'))
 </script>
 
-{#each interactionContent as { component, props }}
+{#each interactionContent as { name, component, props }}
   <svelte:component this={component} {...props} />
+  {#if name === 'choices'}
+    <SubmitButton disabled={actions.hasSubmitted} />
+  {/if}
+  {#if name === 'task' && !hasChoices}
+    <TextInput />
+    <SubmitButton disabled={actions.hasSubmitted} />
+  {/if}
 {/each}
-
-{#if !hasChoices}
-  <TextInput />
-{/if}
-<SubmitButton />
