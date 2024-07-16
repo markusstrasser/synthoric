@@ -1,13 +1,7 @@
 import { type ClassValue, clsx } from 'clsx'
 import * as jsyaml from 'js-yaml'
-import { twMerge } from 'tailwind-merge'
 import { formatDistanceToNow } from 'date-fns'
 import type { z } from 'zod'
-
-//! TODO -- new architecture
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
 
 export const formatTimeAgo = (timestamp: number): string => {
   const date = new Date(timestamp / 1000) // Convert microseconds to milliseconds
