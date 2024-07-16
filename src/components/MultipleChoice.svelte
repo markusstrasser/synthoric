@@ -2,30 +2,38 @@
   import { nanoid } from 'nanoid'
   import { addUserAction } from '$stores/index.svelte'
 
-  const { interaction, isReadOnly = false } = $props()
+  let { choices, isCorrect, isReadOnly = false } = $props()
 
   const id = nanoid(4)
-  const { choices, isCorrect, task } = interaction
+  let selectedIndex = $state<number | null>(null)
 
-  function handleChoice(choice: string, index: number) {
+  function handleChoice(index: number) {
+    if (isReadOnly) return
+    selectedIndex = index
     addUserAction({
       type: 'multipleChoiceAnswer',
       id,
-      value: { choice, isCorrect: isCorrect[index] },
+      value: { choice: choices[index], isCorrect: isCorrect?.[index] },
     })
   }
 </script>
 
 <div class="grid grid-cols-1 gap-4">
-  <p>{task}</p>
   {#each choices as choice, index (choice)}
-    <button
-      class="w-full py-2 px-4 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      onclick={() => handleChoice(choice, index)}
-      disabled={isReadOnly}
-    >
-      {choice}
-    </button>
+    <div>
+      <input
+        type="radio"
+        id={`choice-${id}-${index}`}
+        name={`choice-${id}`}
+        value={index}
+        checked={selectedIndex === index}
+        onchange={() => handleChoice(index)}
+        disabled={isReadOnly}
+      />
+      <label for={`choice-${id}-${index}`}>{choice}</label>
+      {#if isCorrect !== undefined && selectedIndex === index}
+        <span class="ml-2">{isCorrect[index] ? '✓' : '✗'}</span>
+      {/if}
+    </div>
   {/each}
-  <hr class="my-4" />
 </div>
