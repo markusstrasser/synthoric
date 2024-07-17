@@ -117,7 +117,7 @@
     {/if}
 
     {#if interactionContent}
-      <Button variant="outline">
+      <Button variant="outline" disabled={isGenerating}>
         <a href={nextPageUrl}>Next →</a>
       </Button>
     {/if}
