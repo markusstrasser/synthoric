@@ -29,13 +29,16 @@ export const load: PageServerLoad = async ({ params }) => {
   console.log('seqIndex', seqIndex)
   console.log('interactionIndex', interactionIndex)
 
-  const [sequence, interaction] = await Promise.all([
-    convexClient.query(api.sequences.getByIndex, { index: seqIndex }),
-    convexClient.query(api.interactions.getByIndices, {
-      seqIndex,
-      interactionIndex,
-    }),
-  ])
+  const sequence = await convexClient.query(api.sequences.getByIndex, { index: seqIndex })
+
+  let interaction = null
+  try {
+    interaction = await convexClient.query(api.interactions.getById, {
+      id: sequence?.interactions[interactionIndex],
+    })
+  } catch (error) {
+    console.log(error, 'error')
+  }
   console.log(sequence, interaction)
 
   let interactionState: InteractionState = { type: 'OK' }
