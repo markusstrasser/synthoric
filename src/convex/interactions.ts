@@ -28,8 +28,8 @@ const zMutation = zCustomMutation(
 )
 
 export const getContext = query({
-  args: { seqIndex: v.number(), interactionIndex: v.number() },
-  handler: async (ctx, { seqIndex, interactionIndex }) => {
+  args: { seqIndex: v.number() },
+  handler: async (ctx, { seqIndex }) => {
     const [interactions, inferences, seq] = await Promise.all([
       ctx.db.query('interactions').collect(),
       ctx.db.query('inferences').collect(),
@@ -58,29 +58,20 @@ export const upsertLastVisited = zMutation({
     const interaction = await getByIndices(ctx, { seqIndex, interactionIndex })
     const time = 'testtime' // new Date(Date.now())
     if (!interaction) {
-      ctx.db.insert('interactions', {
-        seqIndex,
-        interactionIndex,
-        lastVisited: time,
-      })
-    } else {
-      return await ctx.db.patch(interaction._id, { lastVisited: time })
+      throw new Error('Interaction not found when trying to upsertLastVisitedTime')
     }
+    return await ctx.db.patch(interaction._id, { lastVisited: time })
   },
 })
 
 export const insertInteractionAndLinkToSequence = mutation({
   args: {
-    content: v.any(),
-    seqIndex: v.number(),
-    interactionIndex: v.number(),
+    interactionContent: v.any(),
     seqId: v.id('sequences'),
   },
-  handler: async (ctx, { content, seqIndex, interactionIndex, seqId }) => {
+  handler: async (ctx, { interactionContent, seqId }) => {
     const interactionId = await ctx.db.insert('interactions', {
-      content,
-      seqIndex,
-      interactionIndex,
+      content: interactionContent,
     })
 
     const seq = await ctx.db.get(seqId)
@@ -95,12 +86,15 @@ export const insertInteractionAndLinkToSequence = mutation({
 
 export const getByIndices = query({
   args: { seqIndex: v.number(), interactionIndex: v.number() },
-  handler: async (ctx, { seqIndex, interactionIndex }): Promise<Doc['interactions'] | null> =>
-    await ctx.db
-      .query('interactions')
-      .filter(q => q.eq(q.field('seqIndex'), seqIndex))
-      .filter(q => q.eq(q.field('interactionIndex'), interactionIndex))
-      .first(),
+  handler: async (ctx, { seqIndex, interactionIndex }): Promise<Doc['interactions'] | null> => {
+    const seq = await ctx.db
+      .query('sequences')
+      .filter(q => q.eq(q.field('index'), seqIndex))
+      .first()
+
+    const interactionId = seq.interactions[interactionIndex]
+    return await ctx.db.get(interactionId)
+  },
 })
 
 export const patchUserActions = zMutation({

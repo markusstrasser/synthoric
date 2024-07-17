@@ -27,9 +27,9 @@ const generateNextInteraction = async (seqIndex: number, interactionIndex: numbe
   console.log('interactionIndex', interactionIndex)
   const context = await convexClient.query(api.interactions.getContext, {
     seqIndex,
-    interactionIndex,
   })
 
+  //? right now fetches entire tables from the Database
   const { interactions, inferences, seq } = context
 
   const contextStr = createContextPrompt({
@@ -50,41 +50,27 @@ const generateNextInteraction = async (seqIndex: number, interactionIndex: numbe
     availableTools,
   })) as { prompts: string[]; interactionType: ToolType }
 
-  const generateAndInsertInteraction = async (prompt: string, index: number) => {
-    updateStatus(`Generating Interaction ${index} with prompt: ${prompt}`)
-    const interaction = await availableTools[interactionType]
-      //@ts-ignore
-      .execute(`${prompt}.\n${ContentGuidelinePrompt}`)
-
-    updateStatus(`Interaction Generation: Generating Interaction ${index} of ${prompts.length}`)
-
-    const interactionId = await convexClient.mutation(
-      api.interactions.insertInteractionAndLinkToSequence,
-      {
-        content: interaction,
-        seqIndex,
-        interactionIndex: interactionIndex + index,
-        seqId: seq._id,
-      }
-    )
-    return { interaction, interactionId }
-  }
-
+  let nextInteractionContent = null
   //TODO: make all interactionCreation run in parallel with while loop checking if resolved?
+  for (const [index, prompt] of prompts.entries()) {
+    updateStatus(`Generating Interaction ${index} of ${prompts.length} with prompt: ${prompt}`)
+    //@ts-ignore
+    const interaction = await availableTools[interactionType].execute(
+      `${prompt}.\n${ContentGuidelinePrompt}`
+    )
+    if (index === 0) {
+      nextInteractionContent = interaction
+    }
 
-  const { interaction, interactionId } = await generateAndInsertInteraction(prompts[0], 0)
-  // await Promise.all(
-  //   prompts.slice(1).map((prompt, index) => generateAndInsertInteraction(prompt, index + 1))
-  // )
-
-  updateStatus('...')
-  return {
-    interaction,
-    interactionId,
-    // firstInteractionId,
-    totalInteractions: prompts.length,
-    // allInteractionIds: [firstInteractionId, ...remainingInteractionIds],
+    //? adds interaction to .interactions and id to seq.interactions[...id]
+    await convexClient.mutation(api.interactions.insertInteractionAndLinkToSequence, {
+      interactionContent: interaction,
+      seqId: seq._id,
+    })
   }
+
+  updateStatus('Completed Generating Interactions')
+  return nextInteractionContent
 }
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -98,8 +84,8 @@ export const POST: RequestHandler = async ({ request }) => {
   }
 
   try {
-    const res = await generateNextInteraction(sequenceIndex, interactionIndex)
-    return json({ success: true, data: res })
+    const nextInteraction = await generateNextInteraction(sequenceIndex, interactionIndex)
+    return json(nextInteraction)
   } catch (error) {
     console.error('Error generating next interaction:', error)
     return json({ success: false, error: 'Failed to generate next interaction' }, { status: 500 })

@@ -25,11 +25,6 @@ export class DB {
     return this.client.mutation(api.sequences.create, { sequence })
   }
 
-  // Interactions
-  async getInteraction(seqIndex: number, interactionIndex: number) {
-    return this.client.query(api.interactions.getByIndices, { seqIndex, interactionIndex })
-  }
-
   async patchUserActions(interactionId: Id<'interactions'>, userActions: any[]) {
     return this.client.mutation(api.interactions.patchUserActions, { interactionId, userActions })
   }

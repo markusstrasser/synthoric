@@ -41,12 +41,12 @@
         }),
       })
         .then(response => response.json())
-        .then(data => {
+        .then(nextInteraction => {
           // Handle the response data here if needed
 
-          console.log('Generation complete:', data)
+          console.log('Generation complete:', nextInteraction)
 
-          generatedInteraction = data.data?.interaction
+          generatedInteraction = nextInteraction
           generateState = 2
         })
         .catch(error => {

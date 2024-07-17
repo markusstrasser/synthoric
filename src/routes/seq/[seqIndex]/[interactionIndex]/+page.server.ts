@@ -29,16 +29,15 @@ export const load: PageServerLoad = async ({ params }) => {
   console.log('seqIndex', seqIndex)
   console.log('interactionIndex', interactionIndex)
 
+  //? either will return null if not present
   const sequence = await convexClient.query(api.sequences.getByIndex, { index: seqIndex })
+  const interactionId = sequence?.interactions[interactionIndex]
+  const interaction =
+    interactionId &&
+    (await convexClient.query(api.interactions.getById, {
+      id: interactionId,
+    }))
 
-  let interaction = null
-  try {
-    interaction = await convexClient.query(api.interactions.getById, {
-      id: sequence?.interactions[interactionIndex],
-    })
-  } catch (error) {
-    console.log(error, 'error')
-  }
   console.log(sequence, interaction)
 
   let interactionState: InteractionState = { type: 'OK' }
