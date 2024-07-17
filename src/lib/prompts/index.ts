@@ -43,4 +43,7 @@ $$
 Use Markdown features to format your response and lower the time and mental effort for the user to understand the problem
 `
 
+export const defaultStudentDescription =
+  ' If not enough context on the student is provided assume a smart high school or beginning undergraduate students. '
+
 //${inference.schema.map()}

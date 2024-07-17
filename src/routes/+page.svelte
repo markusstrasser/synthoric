@@ -34,8 +34,6 @@
 </svelte:head>
 
 <div class="mx-auto max-w-4xl px-4 py-8 font-serif">
-  <p class="mb-12 text-center text-xl text-gray-600">-> Learning sequences</p>
-
   {#if query.isLoading}
     <div class="flex h-64 items-center justify-center">
       <div class="h-16 w-16 animate-spin rounded-full border-b-2 border-t-2 border-gray-900"></div>
@@ -64,7 +62,7 @@
     {/if}
     <form method="post" use:enhance={handleSubmit}>
       <Button
-        variant="default"
+        variant="outline"
         size="lg"
         type="submit"
         disabled={query.isLoading || isGenerating}

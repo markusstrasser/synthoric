@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { addUserAction } from '$stores/index.svelte.ts'
+  import { addUserAction } from '$stores/index.svelte'
 
   const { id = '', disabled = false } = $props()
 

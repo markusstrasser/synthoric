@@ -1,5 +1,5 @@
 import jsyaml from 'js-yaml'
-import { compressInteractionsforLLM, omit } from './utils'
+import { compressInteractionsforLLM, omit } from '$lib/utils/index'
 
 //@ts-ignore
 export default ({ interactions, inferences, seqIndex, tagline }) => {

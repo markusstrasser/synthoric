@@ -7,7 +7,7 @@
   const { title, tagline, prerequisites, onClick } = $props<SequencePreview>()
 </script>
 
-<Card.Root class="transition-transform duration-300 hover:scale-105">
+<Card.Root class="bg-gray-50 transition-transform duration-300 hover:scale-105">
   <Card.Header>
     <Card.Title class="text-2xl font-bold">{title}</Card.Title>
     <Card.Description class="text-gray-600">{tagline}</Card.Description>

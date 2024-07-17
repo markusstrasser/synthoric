@@ -33,8 +33,6 @@ export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 export const omit = (keys: string[], obj) =>
   Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k)))
 
-//TODO:
-//@ts-ignore
 export const compressInteractionsforLLM = (interactions: Interaction[]) => {
   return interactions.map(summarizeInteraction)
 }

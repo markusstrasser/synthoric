@@ -4,7 +4,7 @@ import SequencePreview from '$lib/tools/AIToolConfigs/SequencePreview'
 import { type RequestHandler, json } from '@sveltejs/kit'
 import { generateObject } from 'ai'
 import { z } from 'zod'
-
+import Tools from '$lib/tools'
 const topic = 'physics'
 
 export const GET: RequestHandler = async () => {
@@ -12,27 +12,19 @@ export const GET: RequestHandler = async () => {
   //   messages: [{ role: 'user', content: 'Hello!' }],
   // })
   console.log('Fetching new Sequence Previews')
-
-  //TODO: sequencePreview.executeBatch()
-  const { object } = await generateObject({
-    //${ContextExplainerTemplate}
-    prompt: `${ApplicationExplainer}
-    
-    The user is current on the home screen and chosing between for new course sequences to learn.
+  const { SequencePreview } = Tools
+  const prompt = `
+  
+  ${ApplicationExplainer}
+    The user is currently on the home screen and chosing between for new course sequences to learn.
     The user is displayed card previews for each possible next sequence.
+  
+    ${SequencePreview.prompt}
     
-    A sequence is usually about 10-30 minutes of work so scope the content for what can be learned in that time!
-    
-    Generate exactly 3 sequences.
-    To help personalize the preview info
-    The user's most recent interests are: ${topic}
-    `,
+    `
 
-    model: anthropic('claude-3-5-sonnet-20240620'),
-    schema: z.object({
-      content: z.array(SequencePreview.schema).length(3),
-    }),
-  })
-
-  return json(object.content)
+  //@ts-ignore
+  const content = await SequencePreview.execute(prompt)
+  console.log(content, 'content')
+  return json([content])
 }

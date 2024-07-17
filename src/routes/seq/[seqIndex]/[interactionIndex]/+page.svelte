@@ -2,7 +2,6 @@
   import Interaction from '$components/Interaction.svelte'
   import { api } from '$convex/_generated/api.js'
   import { useQuery } from 'convex-svelte'
-  import DebugView from '$components/DebugView.svelte'
   import { setDebugInfo } from '$stores/index.svelte.js'
   import { Button } from '$components/ui/button'
   import { Skeleton } from '$components/ui/skeleton'
@@ -11,7 +10,6 @@
   const {
     sequence,
     interaction,
-
     interactionState,
     currentInteractionIndex,
     lastExistingInteractionIndex,
@@ -87,14 +85,14 @@
   {:else if interactionState.type === 'SEQUENCE_NOT_FOUND'}
     <div class="py-12 text-center">
       <h2 class="mb-4 text-3xl font-bold">Sequence Not Found</h2>
-      <Button variant="outline" asChild>
+      <Button variant="outline">
         <a href="/">Go back home</a>
       </Button>
     </div>
   {:else if interactionState.type === 'INTERACTION_OUT_OF_BOUNDS'}
     <div class="py-12 text-center">
       <h2 class="mb-4 text-3xl font-bold">Interaction Out of Bounds</h2>
-      <Button variant="outline" asChild>
+      <Button variant="outline">
         <a href="/seq/{sequence?.index}/{Math.max(lastExistingInteractionIndex, 0)}">
           Go to latest interaction
         </a>
@@ -103,7 +101,7 @@
   {:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
     <div class="py-12 text-center">
       <h2 class="mb-4 text-3xl font-bold">Interaction Not Found</h2>
-      <Button variant="outline" asChild>
+      <Button variant="outline">
         <a href="/">Go back home</a>
       </Button>
     </div>
@@ -111,7 +109,7 @@
 
   <div class="mt-8 flex justify-between">
     {#if !isFirstInteraction}
-      <Button variant="outline" asChild>
+      <Button variant="outline">
         <a href={previousPageUrl}>← Previous</a>
       </Button>
     {:else}
@@ -119,7 +117,7 @@
     {/if}
 
     {#if interactionContent}
-      <Button variant="outline" asChild>
+      <Button variant="outline">
         <a href={nextPageUrl}>Next →</a>
       </Button>
     {/if}

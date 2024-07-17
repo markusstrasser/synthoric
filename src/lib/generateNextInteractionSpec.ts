@@ -37,7 +37,7 @@ const generateNextInteractionSpec = async ({ contextStr, availableTools }) => {
         z.string().describe(
           `a specific LLM prompt for the next AI to use. The prompt has to detail the subtopic, what skill/concept should be tested and so on. 
         * Consult the previous student history to generate a fitting, personalized instruction (interactions and system inferences about the student). 
-        * In the prompt, list any context (interactions, inferences) to best inform the tool AI and personalize the UI and interaction.`
+        * In the prompt, list any context (interactions, inferences) to best inform the tool AI so it can personalize UI and interaction.`
         )
       ),
       // runConfig: z.object({
