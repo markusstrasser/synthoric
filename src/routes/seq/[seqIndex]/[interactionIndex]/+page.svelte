@@ -18,8 +18,10 @@
   let generatedInteraction = $state(null)
   const interactionContent = $derived(generatedInteraction || interaction?.content)
   const statusQ = useQuery(api.cache.getStatus, {})
-  let isGenerating = $state(false)
-  const shouldGenerate = $derived(interactionState.type === 'NEW_INTERACTION' && !isGenerating)
+  let generateState = $state(0)
+  const shouldGenerate = $derived(
+    interactionState.type === 'NEW_INTERACTION' && generateState === 0
+  )
 
   const nextPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex + 1}`)
   const previousPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex - 1}`)
@@ -27,7 +29,7 @@
 
   $effect(() => {
     if (shouldGenerate) {
-      isGenerating = true
+      generateState = 1
       fetch('/api/generateNextInteraction', {
         method: 'POST',
         headers: {
@@ -45,6 +47,7 @@
           console.log('Generation complete:', data)
 
           generatedInteraction = data.data?.interaction
+          generateState = 2
         })
         .catch(error => {
           console.error('Error generating next interaction:', error)
@@ -58,7 +61,7 @@
     state: interactionState.type,
     status: statusQ?.data?.status,
     index: currentInteractionIndex,
-    isGenerating,
+    generateState,
     shouldGenerate,
     isFirstInteraction,
   })
@@ -117,7 +120,7 @@
     {/if}
 
     {#if interactionContent}
-      <Button variant="outline" disabled={isGenerating}>
+      <Button variant="outline" disabled={generateState === 1}>
         <a href={nextPageUrl}>Next →</a>
       </Button>
     {/if}
