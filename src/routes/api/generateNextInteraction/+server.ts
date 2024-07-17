@@ -73,9 +73,9 @@ const generateNextInteraction = async (seqIndex: number, interactionIndex: numbe
   //TODO: make all interactionCreation run in parallel with while loop checking if resolved?
 
   const { interaction, interactionId } = await generateAndInsertInteraction(prompts[0], 0)
-  await Promise.all(
-    prompts.slice(1).map((prompt, index) => generateAndInsertInteraction(prompt, index + 1))
-  )
+  // await Promise.all(
+  //   prompts.slice(1).map((prompt, index) => generateAndInsertInteraction(prompt, index + 1))
+  // )
 
   updateStatus('...')
   return {
