@@ -21,22 +21,20 @@ const updateStatus = async (status: string) => {
   })
 }
 
-const generateNextInteraction = async (seqIndex: number, interactionIndex: number) => {
+const generateNextInteraction = async (seqIndex: number) => {
   updateStatus('Gathering Context')
   console.log('seqIndex', seqIndex)
-  console.log('interactionIndex', interactionIndex)
   const context = await convexClient.query(api.interactions.getContext, {
     seqIndex,
   })
 
   //? right now fetches entire tables from the Database
-  const { interactions, inferences, seq } = context
+  const { interactions, inferences, sequence } = context
 
   const contextStr = createContextPrompt({
     interactions,
     inferences,
-    seqIndex,
-    tagline: seq.tagline,
+    sequence,
   })
   console.log(contextStr, 'contextPrompt')
 
@@ -65,7 +63,7 @@ const generateNextInteraction = async (seqIndex: number, interactionIndex: numbe
     //? adds interaction to .interactions and id to seq.interactions[...id]
     await convexClient.mutation(api.interactions.insertInteractionAndLinkToSequence, {
       interactionContent: interaction,
-      seqId: seq._id,
+      seqId: sequence._id,
     })
   }
 
@@ -74,9 +72,9 @@ const generateNextInteraction = async (seqIndex: number, interactionIndex: numbe
 }
 
 export const POST: RequestHandler = async ({ request }) => {
-  const { sequenceIndex, interactionIndex } = await request.json()
+  const { sequenceIndex } = await request.json()
 
-  if (typeof sequenceIndex !== 'number' || typeof interactionIndex !== 'number') {
+  if (typeof sequenceIndex !== 'number') {
     return json(
       { success: false, error: 'Invalid sequenceIndex or interactionIndex' },
       { status: 400 }
@@ -84,7 +82,7 @@ export const POST: RequestHandler = async ({ request }) => {
   }
 
   try {
-    const nextInteraction = await generateNextInteraction(sequenceIndex, interactionIndex)
+    const nextInteraction = await generateNextInteraction(sequenceIndex)
     return json(nextInteraction)
   } catch (error) {
     console.error('Error generating next interaction:', error)

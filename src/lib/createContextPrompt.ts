@@ -1,21 +1,15 @@
 import jsyaml from 'js-yaml'
-import { compressInteractionsforLLM, omit } from '$lib/utils/index'
-
+import { summarizeInteraction, omit } from '$lib/utils/index'
+import _ from 'lodash'
 //@ts-ignore
-export default ({ interactions, inferences, seqIndex, tagline }) => {
-  //TODO: filter interaction keys and summarize. use partition func
+export default ({ interactions, inferences, sequence }) => {
+  const [currentSequenceInteractions, otherSequencesInteractions] = _.partition(interactions, i =>
+    sequence.interactions.includes(i._id)
+  ).map(group => group.map(summarizeInteraction))
+  //'_creationTime'
+  const infs = omit(['_id', 'sources'], inferences)
 
-  const currentSequenceInteractions = compressInteractionsforLLM(
-    //@ts-ignore
-    interactions.filter(i => i.seqIndex === seqIndex).map(i => omit(['_id'], i))
-  )
-  const otherSequencesInteractions = compressInteractionsforLLM(
-    //@ts-ignore
-    interactions.filter(i => i.seqIndex !== seqIndex).map(i => omit(['_id'], i))
-  )
-  const infs = jsyaml.dump(omit(['_id', '_creationTime', 'sources'], inferences), {
-    skipInvalid: true,
-  })
+  const { tagline } = sequence
 
   return `
   <context>

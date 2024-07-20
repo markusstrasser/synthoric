@@ -30,7 +30,7 @@ const zMutation = zCustomMutation(
 export const getContext = query({
   args: { seqIndex: v.number() },
   handler: async (ctx, { seqIndex }) => {
-    const [interactions, inferences, seq] = await Promise.all([
+    const [interactions, inferences, sequence] = await Promise.all([
       ctx.db.query('interactions').collect(),
       ctx.db.query('inferences').collect(),
       ctx.db
@@ -38,7 +38,7 @@ export const getContext = query({
         .filter(q => q.eq(q.field('index'), seqIndex))
         .first(),
     ])
-    return { interactions, inferences, seq }
+    return { interactions, inferences, sequence }
   },
 })
 

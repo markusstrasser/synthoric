@@ -37,7 +37,7 @@
         },
         body: JSON.stringify({
           sequenceIndex: sequence?.index,
-          interactionIndex: currentInteractionIndex,
+          // interactionIndex: currentInteractionIndex,
         }),
       })
         .then(response => response.json())
