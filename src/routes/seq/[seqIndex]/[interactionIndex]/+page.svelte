@@ -17,14 +17,13 @@
     lastExistingInteractionIndex,
   } = $derived(data)
 
-  onMount(() => {
-    actionState.reset()
-  })
-
   $effect(() => {
     if (interaction?.userActions?.length > 0) {
       console.log('setting userActions from DB')
       actionState.userActions = interaction.userActions
+      actionState.newSubmit = false
+    } else {
+      actionState.reset()
     }
   })
 

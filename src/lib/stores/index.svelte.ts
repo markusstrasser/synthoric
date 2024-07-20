@@ -10,6 +10,7 @@ function filterUserActions(actions: UserAction[]): UserAction[] {
 let hasSubmitted: boolean = $derived(!!userActions.find(action => action.hasSubmitted))
 let filteredUserActions = $derived(filterUserActions(userActions))
 const reset = () => {
+  newSubmit = false
   userActions = []
   // hasSubmitted = false
 }
