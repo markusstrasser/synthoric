@@ -42,10 +42,23 @@
     }
   })
 
+  let interact = $state()
+  $effect(() => {
+    //TODO: have the query just by the entire sequence + interactions ... no need for effects since the query has all seq data reactively
+    //TODO: this would also solve the caching issues
+    interact = useQuery(api.interactions.getByIndices, {
+      seqIndex: sequence?.index,
+      interactionIndex: currentInteractionIndex,
+    })
+  })
+  $inspect(interact, 'interact')
+
+  // $inspect(interact.data, 'HAAAA')
   let generatedInteraction = $state(null)
   let generateState = $state(0)
   const interactionContent = $derived(interaction?.content || generatedInteraction)
   const statusQ = useQuery(api.cache.getStatus, {})
+
   const shouldGenerate = $derived(
     interactionState.type === 'NEW_INTERACTION' && generateState === 0
   )
@@ -100,6 +113,7 @@
 </script>
 
 <div class="mx-auto max-w-3xl px-4 py-8 font-serif">
+  <h1>interact: {JSON.stringify(interact?.data)}</h1>
   {#if interactionState.type === 'OK'}
     <div class="prose prose-lg">
       <Interaction interactionConfig={interactionContent} />
