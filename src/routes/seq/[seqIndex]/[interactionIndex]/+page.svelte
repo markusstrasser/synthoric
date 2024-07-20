@@ -16,7 +16,7 @@
   } = $derived(data)
 
   let generatedInteraction = $state(null)
-  const interactionContent = $derived(generatedInteraction || interaction?.content)
+  const interactionContent = $derived(interaction?.content || generatedInteraction)
   const statusQ = useQuery(api.cache.getStatus, {})
   let generateState = $state(0)
   const shouldGenerate = $derived(
