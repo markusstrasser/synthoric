@@ -99,7 +99,7 @@ export const getByIndices = query({
 
 export const patchUserActions = zMutation({
   args: {
-    userActions: z.array(UserAction),
+    userActions: z.array(z.any()),
     interactionId: zid('interactions'),
   },
   handler: async ({ db }, { userActions, interactionId }) =>

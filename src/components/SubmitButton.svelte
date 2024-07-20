@@ -13,7 +13,6 @@
 </script>
 
 <button
-  {disabled}
   onclick={handleSubmit}
   class="mt-2 cursor-pointer rounded-md px-4 py-2 transition-colors
     {disabled

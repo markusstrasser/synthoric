@@ -22,7 +22,7 @@
     false: '❌',
   }
 
-  function formatTimestamp(ts) {
+  function formatTimeStamp(ts) {
     return new Date(ts).toLocaleTimeString()
   }
 
@@ -71,7 +71,7 @@
         <div class="flex-grow overflow-hidden">
           <div class="flex justify-between">
             <span class="font-medium">{action.type}</span>
-            <span class="text-gray-500">{formatTimestamp(action.timestamp)}</span>
+            <span class="text-gray-500">{formatTimeStamp(action.timestamp)}</span>
           </div>
           {#if action.value}
             <pre class="truncate">{JSON.stringify(action.value)}</pre>

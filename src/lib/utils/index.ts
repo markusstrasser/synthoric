@@ -3,8 +3,8 @@ import * as jsyaml from 'js-yaml'
 import { formatDistanceToNow } from 'date-fns'
 import type { z } from 'zod'
 
-export const formatTimeAgo = (timestamp: number): string => {
-  const date = new Date(timestamp / 1000) // Convert microseconds to milliseconds
+export const formatTimeAgo = (timeStamp: number): string => {
+  const date = new Date(timeStamp / 1000) // Convert microseconds to milliseconds
   return formatDistanceToNow(date, { addSuffix: true })
 }
 

@@ -1,23 +1,11 @@
-export type UserAction = {
-  type: string
-  id: string
-  value: any
-  displayIndex?: number //? this is mostly for the AI to see where things were on the screen and to discern between multiple inputs from the same element
-  timestamp?: number
-  hasSubmitted?: boolean
-  // Add any other properties that might be in the payload
-}
+import type { UserAction } from '../schemas/index.js'
 
 let userActions = $state([])
-
-export const addUserAction = (action: UserAction) => {
-  userActions.push({ ...action, timestamp: Date.now() })
-}
 
 function filterUserActions(actions: UserAction[]): UserAction[] {
   const grouped = Object.groupBy(actions, action => action.type)
   //@ts-ignore
-  return Object.values(grouped).map(group => group.sort((a, b) => b.timestamp - a.timestamp)[0])
+  return Object.values(grouped).map(group => group.sort((a, b) => b.timeStamp - a.timeStamp)[0])
 }
 let hasSubmitted: boolean = $derived(!!userActions.find(action => action.hasSubmitted))
 let filteredUserActions = $derived(filterUserActions(userActions))
@@ -36,11 +24,21 @@ export const clearDebugInfo = () => {
 export const setDebugInfo = (info: any) => {
   debugInfo = info
 }
+let newSubmit: boolean = $state(false)
 
-export default {
+const actionState = {
   //? if you want to destructure the store in the component use {a,b} = $derived(store) if not store.a ...
   get userActions() {
     return userActions
+  },
+  get newSubmit() {
+    return newSubmit
+  },
+  set newSubmit(value: boolean) {
+    newSubmit = value
+  },
+  set userActions(actions: UserAction[]) {
+    userActions = actions
   },
   get hasSubmitted() {
     return hasSubmitted
@@ -56,3 +54,10 @@ export default {
   setDebugInfo,
   clearDebugInfo,
 }
+export const addUserAction = (action: UserAction) => {
+  if (action.hasSubmitted) {
+    actionState.newSubmit = true
+  }
+  userActions.push({ ...action, timeStamp: Date.now() })
+}
+export default actionState

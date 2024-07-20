@@ -62,6 +62,7 @@ export const load: PageServerLoad = async ({ params }) => {
   return {
     sequence,
     interaction,
+    interactionId,
     interactionState,
     currentInteractionIndex: interactionIndex,
     lastExistingInteractionIndex,

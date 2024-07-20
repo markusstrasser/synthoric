@@ -5,20 +5,48 @@
   import { setDebugInfo } from '$stores/index.svelte.js'
   import { Button } from '$components/ui/button'
   import { Skeleton } from '$components/ui/skeleton'
-
+  import actionState from '$lib/stores/index.svelte'
+  import { onMount } from 'svelte'
   const { data } = $props()
   const {
     sequence,
     interaction,
+    interactionId,
     interactionState,
     currentInteractionIndex,
     lastExistingInteractionIndex,
   } = $derived(data)
 
+  onMount(() => {
+    actionState.reset()
+  })
+
+  $effect(() => {
+    if (interaction?.userActions?.length > 0) {
+      console.log('setting userActions from DB')
+      actionState.userActions = interaction.userActions
+    }
+  })
+
+  $effect(() => {
+    if (actionState.newSubmit) {
+      console.log('patching userActions!!')
+      fetch('/api/addUserActions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userActions: actionState.filteredUserActions, interactionId }),
+      }).then(r => {
+        actionState.newSubmit = false
+      })
+    }
+  })
+
   let generatedInteraction = $state(null)
+  let generateState = $state(0)
   const interactionContent = $derived(interaction?.content || generatedInteraction)
   const statusQ = useQuery(api.cache.getStatus, {})
-  let generateState = $state(0)
   const shouldGenerate = $derived(
     interactionState.type === 'NEW_INTERACTION' && generateState === 0
   )
@@ -62,6 +90,7 @@
     status: statusQ?.data?.status,
     index: currentInteractionIndex,
     generateState,
+    newSubmit: actionState.newSubmit,
     shouldGenerate,
     isFirstInteraction,
   })
@@ -82,6 +111,7 @@
         <Interaction interactionConfig={interactionContent} />
       {:else}
         <h3 class="text-2xl font-semibold">Generating new interaction...</h3>
+        <h4>Status: {statusQ?.data?.status}</h4>
         <Skeleton class="h-32 w-full" />
       {/if}
     </div>
