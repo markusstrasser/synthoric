@@ -15,8 +15,10 @@ export const omit = (keys: string[], obj) =>
   Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k)))
 
 //@ts-ignore
-export const summarizeInteraction = ({ content, userActions = [], firstSeen }) => {
-  if (!userActions.find(action => action.hasSubmitted)) {
+export const summarizeInteraction = ({ content, userActions = [], firstSeen, systemFeedback }) => {
+  const submitAction = userActions.find(action => action.value === 'submit')
+
+  if (!submitAction) {
     //? unfinished interactions don't count
     return {}
   }
@@ -24,20 +26,21 @@ export const summarizeInteraction = ({ content, userActions = [], firstSeen }) =
   return {
     //TODO: make more robust for non-task
     task: content.task,
-    userInputs: userActions.map(({ type, value, timeStamp }) => {
-      const timeInSeconds = (timeStamp - firstSeen) / 1000
-      return value === 'submit'
-        ? {
-            type,
-            timeUntilSubmitInSeconds: timeInSeconds,
-          }
-        : {
-            type,
-            ...(typeof value === 'object' && value !== null ? value : { value }),
-            timeUntilActionInSeconds: (timeStamp - firstSeen) / 1000,
-          }
-    }),
+    choices: content.choices || 'freeform-input',
+    userInputs: userActions
+      .filter(action => action.value !== 'submit')
+      .map(({ type, value, timeStamp }) => {
+        const timeInSeconds = (timeStamp - firstSeen) / 1000
+        return {
+          type,
+          timeUntilSubmitInSeconds: timeInSeconds,
+          ...(typeof value === 'object' && value !== null ? value : { value }),
+        }
+      }),
+
+    timeUntilActionInSeconds: (submitAction.timeStamp - firstSeen) / 1000,
     taskFirstSeen: RelativefirstSeen,
+    // systemFeedback,
   }
 }
 
@@ -75,7 +78,6 @@ const mockInteraction = {
       },
     },
     {
-      hasSubmitted: true,
       id: '',
       timeStamp: 1721565357958,
       type: 'button-click',

@@ -35,9 +35,6 @@
     q = useQuery(api.sequences.getWithFullInteractions, { index: seqIndex })
   })
 
-  // $effect(() => {
-  //   db.updateLastSeen(interaction._id)
-  // })
   $effect(() => {
     if (!interactionId) {
       return
@@ -46,8 +43,6 @@
   })
 
   $effect(() => {
-    //TODO: could be logic? inside the actionStore
-    //different from hasSubmitted bc
     if (actionState.newSubmit) {
       console.log('patching userActions!!')
       convexClient
@@ -58,6 +53,8 @@
         .then(r => {
           actionState.newSubmit = false
         })
+
+      //TODO: add systemFeedback
     }
   })
   $effect(() => {
