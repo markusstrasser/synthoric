@@ -6,8 +6,6 @@
   const userActions = $derived(actions)
   const debugInfo = $derived(actions.debugInfo)
 
-  $inspect(userActions)
-
   const icons = {
     init: '🚀',
     multipleChoiceAnswer: '🔘',

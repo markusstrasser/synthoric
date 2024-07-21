@@ -1,13 +1,14 @@
 <script lang="ts">
   import Interaction from '$components/Interaction.svelte'
   import { api } from '$convex/_generated/api.js'
-  import { useQuery } from 'convex-svelte'
   import { setDebugInfo } from '$stores/index.svelte.js'
   import { Button } from '$components/ui/button'
   import { Skeleton } from '$components/ui/skeleton'
   import actionState from '$lib/stores/index.svelte'
   import { page } from '$app/stores'
+  import { useConvexClient, useQuery } from 'convex-svelte'
 
+  const convexClient = useConvexClient()
   const seqIndex = $derived(Number($page.params.seqIndex))
   const interactionIndex = $derived(Number($page.params.interactionIndex))
 
@@ -18,6 +19,7 @@
   const statusQ = useQuery(api.cache.getStatus, {})
   const sequence = $derived(q?.data?.sequence)
   const interaction = $derived(q?.data?.interactionsInSeq?.[interactionIndex] ?? null)
+  const interactionId = $derived(interaction?._id)
   const interactionContent = $derived(interaction?.content)
   const interactionCount = $derived(sequence?.interactions?.length ?? 0)
   const lastExistingInteractionIndex = $derived(interactionCount - 1)
@@ -33,23 +35,29 @@
     q = useQuery(api.sequences.getWithFullInteractions, { index: seqIndex })
   })
 
+  // $effect(() => {
+  //   db.updateLastSeen(interaction._id)
+  // })
+  $effect(() => {
+    if (!interactionId) {
+      return
+    }
+    convexClient.mutation(api.interactions.updateLastSeen, { interactionId })
+  })
+
   $effect(() => {
     //TODO: could be logic? inside the actionStore
     //different from hasSubmitted bc
     if (actionState.newSubmit) {
       console.log('patching userActions!!')
-      fetch('/api/addUserActions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      convexClient
+        .mutation(api.interactions.updateUserActions, {
           userActions: actionState.filteredUserActions,
-          interactionId: interaction._id,
-        }),
-      }).then(r => {
-        actionState.newSubmit = false
-      })
+          interactionId,
+        })
+        .then(r => {
+          actionState.newSubmit = false
+        })
     }
   })
   $effect(() => {
@@ -114,7 +122,7 @@
 
 {#if interaction}
   <div class="mx-auto max-w-3xl px-4 py-8 font-serif">
-    <h1>interact: {JSON.stringify(interaction.content)}</h1>
+    <!-- <h1>interact: {JSON.stringify(interaction.content)}</h1> -->
     {#if interactionState.type === 'OK'}
       <div class="prose prose-lg">
         <Interaction interactionConfig={interactionContent} />

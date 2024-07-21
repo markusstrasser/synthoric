@@ -36,7 +36,6 @@ const generateNextInteraction = async (seqIndex: number) => {
     inferences,
     sequence,
   })
-  console.log(contextStr, 'contextPrompt')
 
   const { MultipleChoiceTask, FreeFormTextInputTask } = Tools
   const availableTools = { MultipleChoiceTask, FreeFormTextInputTask } as const
@@ -53,18 +52,22 @@ const generateNextInteraction = async (seqIndex: number) => {
   for (const [index, prompt] of prompts.entries()) {
     updateStatus(`Generating Interaction ${index} of ${prompts.length} with prompt: ${prompt}`)
     //@ts-ignore
-    const interaction = await availableTools[interactionType].execute(
-      `${prompt}.\n${ContentGuidelinePrompt}`
-    )
+    const toolChoice = availableTools[interactionType]
+    console.log(`Generating ${toolChoice.description}`)
+    const interaction = await toolChoice.execute(`${prompt}.\n${ContentGuidelinePrompt}`)
     if (index === 0) {
       nextInteractionContent = interaction
     }
 
     //? adds interaction to .interactions and id to seq.interactions[...id]
-    await convexClient.mutation(api.interactions.insertInteractionAndLinkToSequence, {
-      interactionContent: interaction,
-      seqId: sequence._id,
-    })
+    const interactionId = await convexClient.mutation(
+      api.interactions.insertInteractionAndLinkToSequence,
+      {
+        interactionContent: interaction,
+        seqId: sequence._id,
+      }
+    )
+    console.log('interactionId', interactionId)
   }
 
   updateStatus('Completed Generating Interactions')

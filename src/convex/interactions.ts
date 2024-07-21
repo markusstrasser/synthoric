@@ -49,18 +49,19 @@ export const listScheduledMessages = query({
   },
 })
 
-export const upsertLastVisited = zMutation({
+export const updateLastSeen = zMutation({
   args: {
-    seqIndex: z.number(),
-    interactionIndex: z.number(),
+    interactionId: zid('interactions'),
   },
-  handler: async (ctx, { seqIndex, interactionIndex }) => {
-    const interaction = await getByIndices(ctx, { seqIndex, interactionIndex })
-    const time = 'testtime' // new Date(Date.now())
-    if (!interaction) {
+  handler: async (ctx, { interactionId }) => {
+    if (!interactionId) {
       throw new Error('Interaction not found when trying to upsertLastVisitedTime')
     }
-    return await ctx.db.patch(interaction._id, { lastVisited: time })
+    const interaction = await ctx.db.get(interactionId)
+    const lastSeen = Date.now()
+    const firstSeen = interaction?.firstSeen || lastSeen
+
+    return await ctx.db.patch(interactionId, { firstSeen, lastSeen })
   },
 })
 
@@ -102,7 +103,7 @@ export const getByIndices = query({
   },
 })
 
-export const patchUserActions = zMutation({
+export const updateUserActions = zMutation({
   args: {
     userActions: z.array(z.any()),
     interactionId: zid('interactions'),
@@ -111,7 +112,7 @@ export const patchUserActions = zMutation({
     db.patch(interactionId, { userActions }),
 })
 
-export const patchSystemFeedback = zMutation({
+export const updateSystemFeedback = zMutation({
   args: {
     systemFeedback: SubmissionReview.schema,
     interactionId: zid('interactions'),

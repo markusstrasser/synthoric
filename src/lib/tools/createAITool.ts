@@ -41,7 +41,6 @@ export default <T extends keyof typeof AIToolConfigs>(config: (typeof AIToolConf
     prompt: string,
     options = {}
   ): Promise<z.infer<typeof config.schema>> => {
-    console.log(`Generating ${config.description} with prompt:\n${prompt}`)
     //TODO: make work with arrays, objects, z.string
     const { object } = await generateObject({
       prompt,
