@@ -6,10 +6,10 @@ const identity = i => i
 interface ComponentMapItem {
   component: any
   propMap?: (props: any, interaction?: any) => any
-  shouldHideP?: (state: any) => boolean
+  shouldShow?: boolean
 }
 
-const componentMap: { [key: string]: ComponentMapItem } = {
+const componentMapper = (actions): { [key: string]: unknown } => ({
   // ... existing component map entries
   task: {
     component: Markdown,
@@ -21,18 +21,24 @@ const componentMap: { [key: string]: ComponentMapItem } = {
       choices: props,
       isCorrect: interaction?.isCorrect,
     }),
-    shouldHideP: shouldHide => true,
+    get shouldShow() {
+      return actions.revealedMultipleChoices
+    },
   },
   systemFeedback: {
     component: Markdown,
-    shouldHideP: hasSubmitted => hasSubmitted,
+    get shouldShow() {
+      return !actions.hasSubmitted
+    },
     propMap: identity,
   },
   solution: {
     component: SolutionReview,
-    shouldHideP: hasSubmitted => hasSubmitted,
+    get shouldShow() {
+      return !actions.hasSubmitted
+    },
     propMap: identity,
   },
-}
+})
 
-export default componentMap
+export default componentMapper

@@ -1,13 +1,16 @@
 <script lang="ts">
-  import componentMap from '$lib/componentMap.svelte'
   import actions from '$stores/index.svelte'
   import TextInput from './TextInput.svelte'
   import SubmitButton from './SubmitButton.svelte'
   import { fade } from 'svelte/transition'
+  import { Button } from './ui/button'
+  import componentMapper from '$lib/componentMap.svelte'
 
-  const { interactionConfig } = $props<{ interactionConfig: Record<string, any> }>()
+  const { interactionConfig } = $props<{ interactionConfig: Record<string, unknown> }>()
 
   const displayOrderByType = ['task', 'choices', 'hint', 'solution']
+
+  const componentMap = componentMapper(actions) as Record<string, unknown>
   const interactionContent = $derived(
     Object.entries(interactionConfig)
       .filter(([key, _]) => {
@@ -17,12 +20,13 @@
         // return configItem && (!configItem.shouldHideP || configItem.shouldHideP(actions.hasSubmitted))
       })
       .map(([key, value]) => {
-        const { component, propMap, shouldHideP } = componentMap[key]
+        const { component, propMap, shouldShow } = componentMap[key]
+
         return {
           name: key,
           component,
           props: propMap?.(value, interactionConfig) || value,
-          shouldHide: shouldHideP?.(actions.hasSubmitted),
+          shouldShow: shouldShow ?? true, //? if undefined. if false -> false
         }
       })
       .sort((a, b) => displayOrderByType.indexOf(a.name) - displayOrderByType.indexOf(b.name))
@@ -32,12 +36,15 @@
 </script>
 
 <div class="space-y-8">
-  {#each interactionContent as { name, component, props, shouldHide }, index}
+  {$inspect(actions, 'actions')}
+  {#each interactionContent as { name, component, props, shouldShow }, index}
     <div in:fade={{ delay: index * 100, duration: 300 }}>
-      <!-- {#if !shouldHide} -->
-      {$inspect(props, 'props')}
-      <svelte:component this={component} {...props} />
-      <!-- {/if} -->
+      {$inspect(shouldShow, 'shouldShow', name)}
+      {#if shouldShow}
+        <svelte:component this={component} {...props} />
+      {:else}
+        <Button on:click={() => (actions.revealedMultipleChoices = true)}>Choices</Button>
+      {/if}
     </div>
     {#if name === 'choices'}
       <div class="mt-4">
