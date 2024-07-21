@@ -45,6 +45,7 @@
     "@streamparser/json": "^0.0.21",
     "@threlte/extras": "9.0.0-next.10",
     "@types/three": "^0.165.0",
+    "@upstash/qstash": "^2.6.1",
     "ai": "^3.2.27",
     "bits-ui": "^0.21.12",
     "clsx": "^2.1.1",

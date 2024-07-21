@@ -5,7 +5,9 @@ import type { ConvexHttpClient } from "convex/browser"
 // for information about these interfaces
 declare global {
   namespace App {
-    // interface Error {}
+    interface Error {
+      [key: string]: any
+    }
     interface Locals {
       convexClient: ConvexHttpClient
     }

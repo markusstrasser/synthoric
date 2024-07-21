@@ -23,13 +23,15 @@ const generateSequence = async () => {
 }
 
 export const actions = {
-  default: async ({ locals }) => {
+  generateSequence: async ({ locals }) => {
     try {
       const newSequences = await generateSequence()
+      const sequencesCount = await locals.convexClient.query(api.sequences.getSequencesCount)
 
       await Promise.all(
         newSequences.map(seq => {
-          seq = { ...seq, interactionsIds: [] }
+          const index = sequencesCount === 0 ? 0 : sequencesCount - 1
+          seq = { ...seq, interactionsIds: [], index }
 
           return locals.convexClient.mutation(api.sequences.create, { sequence: seq })
         })

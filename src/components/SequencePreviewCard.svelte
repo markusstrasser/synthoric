@@ -5,10 +5,7 @@
   import { useQuery } from 'convex-svelte'
   import { api } from '$convex/_generated/api'
 
-  let { _id, index, title, tagline, prerequisites }: Doc<'sequences'> = $props()
-  const interactionsCount = useQuery(api.sequences.getInteractionsCount, {
-    id: _id,
-  })
+  let { _id, index, title, tagline, prerequisites, interactionsIds }: Doc<'sequences'> = $props()
 </script>
 
 <Card.Root class="bg-gray-50 transition-transform duration-300 hover:scale-105">
@@ -25,6 +22,8 @@
     </ul>
   </Card.Content>
   <Card.Footer>
-    <Button href={`/seq/${index}/${interactionsCount.data}`} variant="outline">Start Sequence</Button>
+    <Button href={`/seq/${index}/${interactionsIds?.length}`} variant="outline">
+      Start Sequence
+    </Button>
   </Card.Footer>
 </Card.Root>

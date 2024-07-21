@@ -6,7 +6,7 @@
   const userActions = $derived(actions)
   const debugInfo = $derived(actions.debugInfo)
 
-  $inspect(userActions)
+  // $inspect(userActions)
 
   const icons = {
     init: '🚀',

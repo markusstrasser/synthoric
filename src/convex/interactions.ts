@@ -1,31 +1,32 @@
 import { query, mutation } from './_generated/server'
 import { v } from 'convex/values'
-import { z } from 'zod'
-import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
-import { zCustomQuery, zCustomMutation, zid } from 'convex-helpers/server/zod'
-import * as s from '../lib/schemas'
-import { SubmissionReview } from '../lib/tools/AIToolConfigs'
-import { UserAction } from '../lib/schemas'
-// Types based on your schema
-import type { Id } from './_generated/dataModel'
-import type { Doc } from './_generated/dataModel'
+import { Interaction } from './schema'
+// import { z } from 'zod'
+// import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
+// import { zCustomQuery, zCustomMutation, zid } from 'convex-helpers/server/zod'
+// import * as s from '../lib/schemas'
+// import { SubmissionReview } from '../lib/tools/AIToolConfigs'
+// import { UserAction } from '../lib/schemas'
+// // Types based on your schema
+// import type { Id } from './_generated/dataModel'
+// import type { Doc } from './_generated/dataModel'
 
-// Helper functions
-//@ts-ignore
-const getCurrentInteraction = async db => {
-  const [interaction] = await db.query('interactions').order('desc').take(1)
-  return interaction
-}
+// // Helper functions
+// //@ts-ignore
+// const getCurrentInteraction = async db => {
+//   const [interaction] = await db.query('interactions').order('desc').take(1)
+//   return interaction
+// }
 
-const zodQuery = zCustomQuery(query, NoOp)
+// const zodQuery = zCustomQuery(query, NoOp)
 
-const zMutation = zCustomMutation(
-  mutation,
-  customCtx(async ({ db }) => {
-    const lastInteraction = await getCurrentInteraction(db)
-    return { lastInteractionId: lastInteraction?._id, db }
-  })
-)
+// const zMutation = zCustomMutation(
+//   mutation,
+//   customCtx(async ({ db }) => {
+//     const lastInteraction = await getCurrentInteraction(db)
+//     return { lastInteractionId: lastInteraction?._id, db }
+//   })
+// )
 
 export const getContext = query({
   args: { seqIndex: v.number() },
@@ -42,114 +43,133 @@ export const getContext = query({
   },
 })
 
-export const listScheduledMessages = query({
-  args: {},
-  handler: async (ctx, args) => {
-    return await ctx.db.system.query('_scheduled_functions').collect()
-  },
-})
-
-export const upsertLastVisited = zMutation({
+export const updateInteraction = mutation({
   args: {
-    seqIndex: z.number(),
-    interactionIndex: z.number(),
+    id: v.id('interactions'),
+    interaction: Interaction,
   },
-  handler: async (ctx, { seqIndex, interactionIndex }) => {
-    const interaction = await getByIndices(ctx, { seqIndex, interactionIndex })
-    const time = 'testtime' // new Date(Date.now())
-    if (!interaction) {
-      throw new Error('Interaction not found when trying to upsertLastVisitedTime')
-    }
-    return await ctx.db.patch(interaction._id, { lastVisited: time })
+  handler: async ({ db }, { id, interaction }) => {
+    return await db.patch(id, interaction)
   },
 })
 
-export const insertInteractionAndLinkToSequence = mutation({
-  args: {
-    interactionContent: v.any(),
-    seqId: v.id('sequences'),
-  },
-  handler: async (ctx, { interactionContent, seqId }) => {
-    const interactionId = await ctx.db.insert('interactions', {
-      content: interactionContent,
-    })
+// export const listScheduledMessages = query({
+//   args: {},
+//   handler: async (ctx, args) => {
+//     return await ctx.db.system.query('_scheduled_functions').collect()
+//   },
+// })
 
-    const seq = await ctx.db.get(seqId)
-    seq.interactions.push(interactionId)
-    seq.lastUpdated = Date.now()
+// export const upsertLastVisited = zMutation({
+//   args: {
+//     seqIndex: z.number(),
+//     interactionIndex: z.number(),
+//   },
+//   handler: async (ctx, { seqIndex, interactionIndex }) => {
+//     const interaction = await getByIndices(ctx, { seqIndex, interactionIndex })
+//     const time = 'testtime' // new Date(Date.now())
+//     if (!interaction) {
+//       throw new Error('Interaction not found when trying to upsertLastVisitedTime')
+//     }
+//     return await ctx.db.patch(interaction._id, { lastVisited: time })
+//   },
+// })
 
-    await ctx.db.patch(seqId, seq)
+// export const insertInteractionAndLinkToSequence = mutation({
+//   args: {
+//     interactionContent: v.any(),
+//     seqId: v.id('sequences'),
+//   },
+//   handler: async (ctx, { interactionContent, seqId }) => {
+//     const interactionId = await ctx.db.insert('interactions', {
+//       content: interactionContent,
+//     })
 
-    return interactionId
-  },
-})
+//     const seq = await ctx.db.get(seqId)
+//     seq.interactions.push(interactionId)
+//     seq.lastUpdated = Date.now()
 
-export const getByIndices = query({
-  args: { seqIndex: v.number(), interactionIndex: v.number() },
-  handler: async (ctx, { seqIndex, interactionIndex }): Promise<Doc['interactions'] | null> => {
-    const seq = await ctx.db
-      .query('sequences')
-      .filter(q => q.eq(q.field('index'), seqIndex))
-      .first()
+//     await ctx.db.patch(seqId, seq)
 
-    const interactionId = seq.interactions[interactionIndex]
-    return await ctx.db.get(interactionId)
-  },
-})
+//     return interactionId
+//   },
+// })
 
-export const patchUserActions = zMutation({
-  args: {
-    userActions: z.array(UserAction),
-    interactionId: zid('interactions'),
-  },
-  handler: async ({ db }, { userActions, interactionId }) =>
-    db.patch(interactionId, { userActions }),
-})
+// export const getByIndices = query({
+//   args: { seqIndex: v.number(), interactionIndex: v.number() },
+//   handler: async (ctx, { seqIndex, interactionIndex }): Promise<Doc['interactions'] | null> => {
+//     const seq = await ctx.db
+//       .query('sequences')
+//       .filter(q => q.eq(q.field('index'), seqIndex))
+//       .first()
 
-export const patchSystemFeedback = zMutation({
-  args: {
-    systemFeedback: SubmissionReview.schema,
-    interactionId: zid('interactions'),
-  },
-  handler: async ({ db }, { systemFeedback, interactionId }) =>
-    db.patch(interactionId, { systemFeedback }),
-})
+//     const interactionId = seq.interactions[interactionIndex]
+//     return await ctx.db.get(interactionId)
+//   },
+// })
 
-// Queries
-export const getSince = zodQuery({
-  args: { timeStamp: z.number() },
-  handler: async ({ db }, { timeStamp }) =>
-    db
-      .query('interactions')
-      .filter(q => q.gte(q.field('timeStamp'), timeStamp))
-      .collect(),
-})
+// export const patchUserActions = zMutation({
+//   args: {
+//     userActions: z.array(UserAction),
+//     interactionId: zid('interactions'),
+//   },
+//   handler: async ({ db }, { userActions, interactionId }) =>
+//     db.patch(interactionId, { userActions }),
+// })
 
-export const getBySeqId = zodQuery({
-  args: { seqId: z.string() },
-  handler: async ({ db }, { seqId }) =>
-    db
-      .query('interactions')
-      .filter(q => q.eq(q.field('seqId'), seqId))
-      .collect(),
-})
+// export const patchSystemFeedback = zMutation({
+//   args: {
+//     systemFeedback: SubmissionReview.schema,
+//     interactionId: zid('interactions'),
+//   },
+//   handler: async ({ db }, { systemFeedback, interactionId }) =>
+//     db.patch(interactionId, { systemFeedback }),
+// })
 
-export const getById = zodQuery({
-  args: { id: zid('interactions') },
+// // Queries
+// export const getSince = zodQuery({
+//   args: { timeStamp: z.number() },
+//   handler: async ({ db }, { timeStamp }) =>
+//     db
+//       .query('interactions')
+//       .filter(q => q.gte(q.field('timeStamp'), timeStamp))
+//       .collect(),
+// })
+
+// export const getBySeqId = zodQuery({
+//   args: { seqId: z.string() },
+//   handler: async ({ db }, { seqId }) =>
+//     db
+//       .query('interactions')
+//       .filter(q => q.eq(q.field('seqId'), seqId))
+//       .collect(),
+// })
+
+export const getById = query({
+  args: { id: v.id('interactions') },
   handler: async ({ db }, { id }) => db.get(id),
 })
 
-export const getLast = zodQuery({
-  args: {},
-  handler: getCurrentInteraction,
+export const create = mutation({
+  args: {
+    interaction: Interaction,
+  },
+  handler: async ({ db }, { interaction }) => {
+    return await db.insert('interactions', { ...interaction })
+  },
 })
 
-export const getAll = zodQuery({
-  args: {},
-  handler: async ({ db }) => db.query('interactions').order('desc').collect(),
-})
+// export const getLast = zodQuery({
+//   args: {},
+//   handler: getCurrentInteraction,
+// })
 
-export const get = zodQuery({
-  args: { test: z.string().optional() },
-  handler: async ({ db }) => db.query('interactions').collect(),
-})
+// export const getAll = zodQuery({
+//   args: {},
+//   handler: async ({ db }) => db.query('interactions').order('desc').collect(),
+// })
+
+// export const get = zodQuery({
+//   args: { test: z.string().optional() },
+//   handler: async ({ db }) => db.query('interactions').collect(),
+// })

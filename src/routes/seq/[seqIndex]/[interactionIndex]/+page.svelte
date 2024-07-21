@@ -7,17 +7,10 @@
   import { Skeleton } from '$components/ui/skeleton'
 
   const { data } = $props()
-  const {
-    sequence,
-    interaction,
-    interactionState,
-    currentInteractionIndex,
-    lastExistingInteractionIndex,
-  } = $derived(data)
+  const { sequence, interaction, interactionState, currentInteractionIndex } = $derived(data)
 
   let generatedInteraction = $state(null)
   const interactionContent = $derived(generatedInteraction || interaction?.content)
-  const statusQ = useQuery(api.cache.getStatus, {})
   let generateState = $state(0)
   const shouldGenerate = $derived(
     interactionState.type === 'NEW_INTERACTION' && generateState === 0
@@ -27,39 +20,38 @@
   const previousPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex - 1}`)
   const isFirstInteraction = $derived(currentInteractionIndex === 0)
 
-  $effect(() => {
-    if (shouldGenerate) {
-      generateState = 1
-      fetch('/api/generateNextInteraction', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sequenceIndex: sequence?.index,
-          interactionIndex: currentInteractionIndex,
-        }),
-      })
-        .then(response => response.json())
-        .then(nextInteraction => {
-          // Handle the response data here if needed
+  // $effect(() => {
+  //   if (shouldGenerate) {
+  //     generateState = 1
+  //     fetch('/api/generateNextInteraction', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         sequenceIndex: sequence?.index,
+  //         interactionIndex: currentInteractionIndex,
+  //       }),
+  //     })
+  //       .then(response => response.json())
+  //       .then(nextInteraction => {
+  //         // Handle the response data here if needed
 
-          console.log('Generation complete:', nextInteraction)
+  //         console.log('Generation complete:', nextInteraction)
 
-          generatedInteraction = nextInteraction
-          generateState = 2
-        })
-        .catch(error => {
-          console.error('Error generating next interaction:', error)
-        })
-    }
-  })
+  //         generatedInteraction = nextInteraction
+  //         generateState = 2
+  //       })
+  //       .catch(error => {
+  //         console.error('Error generating next interaction:', error)
+  //       })
+  //   }
+  // })
 
-  $inspect(interactionContent, 'interactionContent')
+  // $inspect(interactionContent, 'interactionContent')
 
   const debugInfo = $derived({
     state: interactionState.type,
-    status: statusQ?.data?.status,
     index: currentInteractionIndex,
     generateState,
     shouldGenerate,
@@ -70,7 +62,7 @@
     setDebugInfo(debugInfo)
   })
 </script>
-
+<!-- 
 <div class="mx-auto max-w-3xl px-4 py-8 font-serif">
   {#if interactionState.type === 'OK'}
     <div class="prose prose-lg">
@@ -84,29 +76,6 @@
         <h3 class="text-2xl font-semibold">Generating new interaction...</h3>
         <Skeleton class="h-32 w-full" />
       {/if}
-    </div>
-  {:else if interactionState.type === 'SEQUENCE_NOT_FOUND'}
-    <div class="py-12 text-center">
-      <h2 class="mb-4 text-3xl font-bold">Sequence Not Found</h2>
-      <Button variant="outline">
-        <a href="/">Go back home</a>
-      </Button>
-    </div>
-  {:else if interactionState.type === 'INTERACTION_OUT_OF_BOUNDS'}
-    <div class="py-12 text-center">
-      <h2 class="mb-4 text-3xl font-bold">Interaction Out of Bounds</h2>
-      <Button variant="outline">
-        <a href="/seq/{sequence?.index}/{Math.max(lastExistingInteractionIndex, 0)}">
-          Go to latest interaction
-        </a>
-      </Button>
-    </div>
-  {:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
-    <div class="py-12 text-center">
-      <h2 class="mb-4 text-3xl font-bold">Interaction Not Found</h2>
-      <Button variant="outline">
-        <a href="/">Go back home</a>
-      </Button>
     </div>
   {/if}
 
@@ -125,4 +94,4 @@
       </Button>
     {/if}
   </div>
-</div>
+</div> -->

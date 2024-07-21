@@ -1,19 +1,9 @@
-import { error, redirect } from '@sveltejs/kit'
-import type { PageServerLoad, Actions } from './$types'
-import { fail } from '@sveltejs/kit'
+import { dev } from '$app/environment'
 import { api } from '$convex/_generated/api'
-import { convexClient } from '$lib/providers'
-const mockPosts = [
-  { slug: '0', title: 'Post 0', content: 'hello' },
-  { slug: '1', title: 'Post 1', content: 'hello' },
-  { slug: '2', title: 'Post 2', content: 'hello' },
-]
-
-const mockDB = async (seqIndex: number, interactionIndex: number) => {
-  // Simulate async DB call
-  await new Promise(resolve => setTimeout(resolve, 10))
-  return mockPosts.find(post => post.slug === interactionIndex.toString())
-}
+import type { Doc } from '$convex/_generated/dataModel'
+import { DEV_TUNNEL_URL } from '$env/static/private'
+import { qstashClient } from '$lib/server/upstash'
+import { error } from '@sveltejs/kit'
 
 type InteractionState =
   | { type: 'OK' }
@@ -22,49 +12,118 @@ type InteractionState =
   | { type: 'NEW_INTERACTION' }
   | { type: 'INTERACTION_NOT_FOUND' }
 
-export const load: PageServerLoad = async ({ params }) => {
-  const seqIndex = Number.parseInt(params.seqIndex)
-  const interactionIndex = Number.parseInt(params.interactionIndex)
+const getInteractionIdByIndex = async (interactionIndex: number, sequence: Doc<'sequences'>) => {
+  const interactionIds = sequence.interactionsIds
+  if (!interactionIds) return null
 
-  console.log('seqIndex', seqIndex)
-  console.log('interactionIndex', interactionIndex)
+  const interactionId = interactionIds[interactionIndex]
 
-  //? either will return null if not present
-  const sequence = await convexClient.query(api.sequences.getByIndex, { index: seqIndex })
-  const interactionId = sequence?.interactions[interactionIndex]
-  const interaction =
-    interactionId &&
-    (await convexClient.query(api.interactions.getById, {
-      id: interactionId,
-    }))
+  return interactionId
+}
 
-  console.log(sequence, interaction)
-
-  let interactionState: InteractionState = { type: 'OK' }
-  const interactionCount = sequence?.interactions?.length ?? 0
+const getInteractionState = async (
+  interactionIndex: number,
+  sequence: Doc<'sequences'>
+): Promise<InteractionState> => {
+  const interactionCount = sequence.interactionsIds?.length ?? 0
   const lastExistingInteractionIndex = interactionCount - 1
-  if (!sequence) {
-    interactionState = { type: 'SEQUENCE_NOT_FOUND' }
-  } else {
-    if (interactionIndex > lastExistingInteractionIndex + 1) {
-      interactionState = {
-        type: 'INTERACTION_OUT_OF_BOUNDS',
-        lastAvailable: lastExistingInteractionIndex,
-      }
-    } else if (interactionIndex === lastExistingInteractionIndex + 1) {
-      interactionState = { type: 'NEW_INTERACTION' }
-    } else if (!interaction) {
-      interactionState = { type: 'INTERACTION_NOT_FOUND' }
+
+  if (interactionIndex > lastExistingInteractionIndex + 1) {
+    return {
+      type: 'INTERACTION_OUT_OF_BOUNDS',
+      lastAvailable: lastExistingInteractionIndex,
     }
   }
-  console.log(interactionState, 'interactionState')
+
+  if (interactionIndex === lastExistingInteractionIndex + 1) {
+    return { type: 'NEW_INTERACTION' }
+  }
+
+  return { type: 'OK' }
+}
+
+export const load = async ({ fetch, locals, params, parent, url }) => {
+  const { sequence } = await parent()
+
+  const interactionIndex = Number.parseInt(params.interactionIndex)
+
+  const interactionId = await getInteractionIdByIndex(interactionIndex, sequence)
+  let interaction: Doc<'interactions'> | null = null
+
+  if (interactionId)
+    interaction = await locals.convexClient.query(api.interactions.getById, {
+      id: interactionId,
+    })
+
+  const interactionState = await getInteractionState(interactionIndex, sequence)
+  console.log('interactionState', interactionState)
+
+  if (interactionState.type === 'INTERACTION_OUT_OF_BOUNDS') {
+    error(404, {
+      message: 'Interaction out of bounds',
+      type: interactionState.type,
+    })
+  }
+
+  if (interactionState.type === 'INTERACTION_NOT_FOUND') {
+    error(404, {
+      message: 'Interaction not found',
+      type: interactionState.type,
+    })
+  }
+
+  if (interactionState.type === 'NEW_INTERACTION') {
+    const interactionId = await locals.convexClient.mutation(api.interactions.create, {
+      interaction: {},
+    })
+
+    const { _creationTime, _id, ...rest } = sequence
+    await locals.convexClient.mutation(api.sequences.updateSequence, {
+      id: sequence._id,
+      sequence: {
+        ...rest,
+        interactionsIds: [...(sequence.interactionsIds ?? []), interactionId],
+      },
+    })
+
+    const endpoint = dev
+      ? `${DEV_TUNNEL_URL}/api/interactions/generate`
+      : `${url.origin}/api/interactions/generate`
+
+    console.log('endpoint', endpoint)
+
+    await qstashClient.publishJSON({
+      url: endpoint,
+      body: {
+        interactionId,
+        sequenceIndex: sequence.index,
+      },
+    })
+  }
+
+  // const interactionCount = sequence?.interactions?.length ?? 0
+  // const lastExistingInteractionIndex = interactionCount - 1
+  // if (!sequence) {
+  //   interactionState = { type: 'SEQUENCE_NOT_FOUND' }
+  // } else {
+  //   if (interactionIndex > lastExistingInteractionIndex + 1) {
+  //     interactionState = {
+  //       type: 'INTERACTION_OUT_OF_BOUNDS',
+  //       lastAvailable: lastExistingInteractionIndex,
+  //     }
+  //   } else if (interactionIndex === lastExistingInteractionIndex + 1) {
+  //     interactionState = { type: 'NEW_INTERACTION' }
+  //   } else if (!interaction) {
+  //     interactionState = { type: 'INTERACTION_NOT_FOUND' }
+  //   }
+  // }
+  // console.log(interactionState, 'interactionState')
 
   return {
     sequence,
     interaction,
     interactionState,
     currentInteractionIndex: interactionIndex,
-    lastExistingInteractionIndex,
   }
 }
 
