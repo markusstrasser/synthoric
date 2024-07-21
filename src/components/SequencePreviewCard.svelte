@@ -4,7 +4,7 @@
   import type { z } from 'zod'
 
   type SequencePreview = z.infer<typeof Tools.SequencePreview.schema>
-  const { title, tagline, prerequisites, onClick } = $props<SequencePreview>()
+  const { title, tagline, prerequisites, onClick, interactions } = $props<SequencePreview>()
 </script>
 
 <Card.Root class="bg-gray-50 transition-transform duration-300 hover:scale-105">
@@ -20,7 +20,14 @@
       {/each}
     </ul>
   </Card.Content>
+  <Card.Content>
+    {#if interactions.length > 0}
+      <h4>Interactions: {interactions.length}</h4>
+    {/if}
+  </Card.Content>
   <Card.Footer>
-    <button onclick={onClick} class="btn btn-primary mt-4 w-full"> Start Sequence </button>
+    <button onclick={onClick} class="btn btn-primary mt-4 w-full">
+      {interactions.length > 0 ? 'Continue Sequence' : 'Start Sequence'}
+    </button>
   </Card.Footer>
 </Card.Root>
