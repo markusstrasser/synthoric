@@ -12,6 +12,7 @@ let filteredUserActions = $derived(filterUserActions(userActions))
 const reset = () => {
   newSubmit = false
   userActions = []
+  revealedMultipleChoices = false
   // hasSubmitted = false
 }
 
@@ -26,13 +27,19 @@ export const setDebugInfo = (info: any) => {
   debugInfo = info
 }
 let newSubmit: boolean = $state(false)
+let revealedMultipleChoices: boolean = $state(false)
 
 const actionState = {
   //? if you want to destructure the store in the component use {a,b} = $derived(store) if not store.a ...
   get userActions() {
     return userActions
   },
-
+  get revealedMultipleChoices() {
+    return revealedMultipleChoices
+  },
+  set revealedMultipleChoices(value: boolean) {
+    revealedMultipleChoices = value
+  },
   get newSubmit() {
     return newSubmit
   },
@@ -67,6 +74,9 @@ const actionState = {
 export const addUserAction = (action: UserAction) => {
   if (action.hasSubmitted) {
     actionState.newSubmit = true
+  }
+  if (action.type === 'revealedMultipleChoices') {
+    actionState.revealedMultipleChoices = true
   }
   userActions.push({ ...action, timeStamp: Date.now() })
 }

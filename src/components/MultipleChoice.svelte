@@ -2,8 +2,6 @@
   import { nanoid } from 'nanoid'
   import { addUserAction } from '$stores/index.svelte'
 
-  //TODO: ActionHistory prompt to see on readOnly or do TimeTravel of user interactions with component.
-  //TODO: this then has to sync or bidirectionally bind with the local state....
   const { choices, isCorrect, isReadOnly = false } = $props()
 
   const id = nanoid(4)

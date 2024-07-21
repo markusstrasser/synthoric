@@ -5,11 +5,11 @@
   import SubmitButton from './SubmitButton.svelte'
   import { fade } from 'svelte/transition'
 
-  const { interactionConfig: config } = $props()
+  const { interactionConfig } = $props<{ interactionConfig: Record<string, any> }>()
 
   const displayOrderByType = ['task', 'choices', 'hint', 'solution']
   const interactionContent = $derived(
-    Object.entries(config)
+    Object.entries(interactionConfig)
       .filter(([key, _]) => {
         const configItem = componentMap[key]
         return configItem && (!configItem.condition || configItem.condition(actions.hasSubmitted))
@@ -17,7 +17,7 @@
       .map(([key, value]) => ({
         name: key,
         component: componentMap[key].component,
-        props: componentMap[key].propMap(value, config),
+        props: componentMap[key].propMap(value, interactionConfig),
       }))
       .sort((a, b) => displayOrderByType.indexOf(a.name) - displayOrderByType.indexOf(b.name))
   )

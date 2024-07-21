@@ -3,7 +3,14 @@ import MultipleChoice from '$components/MultipleChoice.svelte'
 import SolutionReview from '$components/SolutionReview.svelte'
 
 const identity = i => i
-export default {
+interface ComponentMapItem {
+  component: any
+  propMap: (props: any, interaction?: any) => any
+  condition?: (revealedMultipleChoice: any) => boolean
+}
+
+const componentMap: { [key: string]: ComponentMapItem } = {
+  // ... existing component map entries
   task: {
     component: Markdown,
     propMap: props => ({ source: props }),
@@ -14,6 +21,7 @@ export default {
       choices: props,
       isCorrect: interaction?.isCorrect,
     }),
+    // condition: reaveledMultipleChoice => reaveledMultipleChoice,
   },
   systemFeedback: {
     component: Markdown,
@@ -26,3 +34,5 @@ export default {
     propMap: identity,
   },
 }
+
+export default componentMap
