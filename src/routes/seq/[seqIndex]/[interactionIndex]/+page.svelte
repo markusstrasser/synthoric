@@ -125,40 +125,47 @@
     {/if}
   </div>
 {/if}
-{#if interactionState.type === 'NEW_INTERACTION'}
-  <div class="space-y-4">
-    <h3 class="text-2xl font-semibold">Generating new interaction...</h3>
-    <h4>Status: {statusQ?.data?.status}</h4>
+{#if q && q.isLoading}
+  <div class="py-12 text-center">
+    <h2 class="mb-4 text-3xl font-bold">Loading...</h2>
     <Skeleton class="h-32 w-full" />
   </div>
 {/if}
-{#if interactionState.type === 'SEQUENCE_NOT_FOUND'}
-  <div class="py-12 text-center">
-    <h2 class="mb-4 text-3xl font-bold">Sequence Not Found</h2>
-    <Button variant="outline">
-      <a href="/">Go back home</a>
-    </Button>
-  </div>
-{:else if interactionState.type === 'INTERACTION_OUT_OF_BOUNDS'}
-  <div class="py-12 text-center">
-    <h2 class="mb-4 text-3xl font-bold">Interaction Out of Bounds</h2>
-    <Button variant="outline">
-      <a href="/seq/{sequence?.index}/{Math.max(lastExistingInteractionIndex, 0)}">
-        Go to latest interaction
-      </a>
-    </Button>
-  </div>
-{:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
-  {#if !q?.isLoading}
+{#if q?.data}
+  {#if interactionState.type === 'NEW_INTERACTION'}
+    <div class="space-y-4">
+      <h3 class="text-2xl font-semibold">Generating new interaction...</h3>
+      <h4>Status: {statusQ?.data?.status}</h4>
+      <Skeleton class="h-32 w-full" />
+    </div>
+  {/if}
+  {#if interactionState.type === 'SEQUENCE_NOT_FOUND'}
     <div class="py-12 text-center">
-      <h2 class="mb-4 text-3xl font-bold">Interaction Not Found</h2>
+      <h2 class="mb-4 text-3xl font-bold">Sequence Not Found</h2>
       <Button variant="outline">
         <a href="/">Go back home</a>
       </Button>
     </div>
+  {:else if interactionState.type === 'INTERACTION_OUT_OF_BOUNDS'}
+    <div class="py-12 text-center">
+      <h2 class="mb-4 text-3xl font-bold">Interaction Out of Bounds</h2>
+      <Button variant="outline">
+        <a href="/seq/{sequence?.index}/{Math.max(lastExistingInteractionIndex, 0)}">
+          Go to latest interaction
+        </a>
+      </Button>
+    </div>
+  {:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
+    {#if !q?.isLoading}
+      <div class="py-12 text-center">
+        <h2 class="mb-4 text-3xl font-bold">Interaction Not Found</h2>
+        <Button variant="outline">
+          <a href="/">Go back home</a>
+        </Button>
+      </div>
+    {/if}
   {/if}
 {/if}
-
 <div class="mt-8 flex justify-between">
   {#if !isFirstInteraction}
     <Button variant="outline">
