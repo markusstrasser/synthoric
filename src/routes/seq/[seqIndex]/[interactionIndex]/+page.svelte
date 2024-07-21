@@ -7,6 +7,7 @@
   import actionState from '$lib/stores/index.svelte'
   import { page } from '$app/stores'
   import { useConvexClient, useQuery } from 'convex-svelte'
+  import SystemFeedback from '$components/SystemFeedback.svelte'
 
   const convexClient = useConvexClient()
   const seqIndex = $derived(Number($page.params.seqIndex))
@@ -44,19 +45,29 @@
 
   $effect(() => {
     if (actionState.newSubmit) {
-      console.log('patching userActions!!')
-      convexClient
-        .mutation(api.interactions.updateUserActions, {
+      async function onSubmit() {
+        console.log('patching userActions!!')
+        await convexClient.mutation(api.interactions.updateUserActions, {
           userActions: actionState.filteredUserActions,
           interactionId,
         })
-        .then(r => {
-          actionState.newSubmit = false
+
+        await fetch('/api/systemFeedback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ interactionId }),
         })
 
-      //TODO: add systemFeedback
+        actionState.newSubmit = false
+
+        //TODO: add systemFeedback
+      }
+      onSubmit()
     }
   })
+
   $effect(() => {
     const pastUserActions = interaction?.userActions ?? null
     actionState.syncUserActions(pastUserActions)
@@ -176,5 +187,8 @@
     <Button variant="outline" disabled={generateState === 1 || !actionState.hasSubmitted}>
       <a href={nextPageUrl}>Next →</a>
     </Button>
+  {/if}
+  {#if interaction?.systemFeedback}
+    <SystemFeedback {...interaction.systemFeedback} />
   {/if}
 </div>

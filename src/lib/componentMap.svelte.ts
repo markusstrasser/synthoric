@@ -1,7 +1,7 @@
 import Markdown from '$components/Markdown.svelte'
 import MultipleChoice from '$components/MultipleChoice.svelte'
 import SolutionReview from '$components/SolutionReview.svelte'
-
+import SystemFeedback from '$components/SystemFeedback.svelte'
 const identity = <T>(i: T): T => i
 
 interface ComponentMapItem {
@@ -35,17 +35,17 @@ const componentMapper = (actions: Readonly<Actions>): ComponentMap => ({
       return actions.revealedMultipleChoices || actions.hasSubmitted
     },
   },
-  systemFeedback: {
-    component: Markdown,
-    get shouldShow() {
-      return !actions.hasSubmitted
-    },
-    propMap: identity,
-  },
+  // systemFeedback: {
+  //   component: SystemFeedback,
+  //   get shouldShow() {
+  //     return actions.hasSubmitted
+  //   },
+  //   propMap: identity,
+  // },
   solution: {
     component: SolutionReview,
     get shouldShow() {
-      return !actions.hasSubmitted
+      return actions.hasSubmitted
     },
     propMap: identity,
   },

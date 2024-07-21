@@ -38,12 +38,17 @@ export default <T extends keyof typeof AIToolConfigs>(config: (typeof AIToolConf
 
   //TODO: add configs or prompt variation / injection methods
   const defaultExecute = async (
-    prompt: string,
+    input: string,
     options = {}
   ): Promise<z.infer<typeof config.schema>> => {
     //TODO: make work with arrays, objects, z.string
+    const composedPrompt = `${config.prompt} 
+    -----
+    ${JSON.stringify(input)}
+    `
+    console.log('prompt in tool', composedPrompt)
     const { object } = await generateObject({
-      prompt,
+      prompt: composedPrompt,
       model: anthropic('claude-3-5-sonnet-20240620'),
       schema: z.object({ content: config.schema as z.ZodType }),
     })

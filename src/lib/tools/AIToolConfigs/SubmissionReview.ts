@@ -21,14 +21,18 @@ export default {
       notes: z
         .string()
         .describe(
-          "Iff the user's answer is wrong: short pointer to what concepts might be good to review/look at"
+          "Iff the user's answer is wrong: short pointer to what misconception generally lead to that error, best if you can specifically point towards a repeting error the user makes (consulting history/context)"
         ),
       rating: z
         .number()
         .min(0)
         .max(3)
         .describe(
-          'A number between 0 and 3. 0 for being absolutely wrong (even wrong units), 1 for being wrong, 2 for being partially correct or the right direction, 3 for the correct answer'
+          `A number between 0 and 3. 
+          * 0 for being absolutely wrong (even wrong units), 
+          * 1 for being wrong, 
+          * 2 for being partially correct or the right direction, 
+          * 3 for the correct answer`
         ),
     })
     .describe("A review of the user's submission"),
