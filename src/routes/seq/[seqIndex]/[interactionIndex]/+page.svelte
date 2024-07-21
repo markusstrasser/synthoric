@@ -62,12 +62,7 @@
   })
   $effect(() => {
     const pastUserActions = interaction?.userActions ?? null
-    if (pastUserActions) {
-      actionState.userActions = pastUserActions
-      actionState.newSubmit = false
-    } else {
-      actionState.reset()
-    }
+    actionState.syncUserActions(pastUserActions)
   })
 
   const interactionState = $derived.by(() => {

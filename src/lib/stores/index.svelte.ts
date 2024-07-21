@@ -42,6 +42,14 @@ const actionState = {
   set userActions(actions: UserAction[]) {
     userActions = actions
   },
+  syncUserActions(userActions: UserAction[]) {
+    if (!userActions) {
+      this.reset()
+      return
+    }
+    this.userActions = userActions
+    this.newSubmit = false
+  },
   get hasSubmitted() {
     return hasSubmitted
   },
