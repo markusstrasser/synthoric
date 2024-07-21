@@ -1,5 +1,6 @@
 import { query, mutation } from './_generated/server'
 import { v } from 'convex/values'
+import { Doc, type Id } from './_generated/dataModel'
 
 export const create = mutation({
   args: {
@@ -16,6 +17,36 @@ export const create = mutation({
     return seq
   },
 })
+
+export const getWithFullInteractions = query({
+  args: {
+    index: v.number(),
+  },
+  handler: async (ctx, { index }) => {
+    const sequence = await ctx.db
+      .query('sequences')
+      .filter(q => q.eq(q.field('index'), index))
+      .first()
+
+    if (!sequence) {
+      return null
+    }
+
+    // Fetch the full interaction data for each interactionId
+    const interactionsInSeq = await Promise.all(
+      sequence.interactions.map(async (interactionId: Id<'interactions'>) => {
+        return await ctx.db.get(interactionId)
+      })
+    )
+
+    // Return the sequence with the full interactions data
+    return {
+      sequence,
+      interactionsInSeq,
+    }
+  },
+})
+
 export const getLatestK = query({
   args: {
     k: v.number(),

@@ -11,24 +11,13 @@
   const seqIndex = $derived(Number($page.params.seqIndex))
   const interactionIndex = $derived(Number($page.params.interactionIndex))
 
-  let interactionQuery = $state()
-  let sequenceQuery = $state()
+  let q = $state<
+    { data?: { sequence?: any; interactionsInSeq?: any[] } | null; isLoading?: boolean } | undefined
+  >()
 
   $effect.pre(() => {
-    sequenceQuery = useQuery(api.sequences.getByIndex, { index: seqIndex })
-    interactionQuery = useQuery(api.interactions.getByIndices, {
-      seqIndex,
-      interactionIndex,
-    })
-  })
-
-  $effect(() => {
-    if (interactionQuery.data?.userActions?.length > 0) {
-      actionState.userActions = interactionQuery.data.userActions
-      actionState.newSubmit = false
-    } else {
-      actionState.reset()
-    }
+    //? ask in the convex discord how to do dynamic page args better
+    q = useQuery(api.sequences.getWithFullInteractions, { index: seqIndex })
   })
 
   $effect(() => {
@@ -50,15 +39,24 @@
       })
     }
   })
+  $effect(() => {
+    const pastUserActions = interaction?.userActions ?? null
+    if (pastUserActions) {
+      actionState.userActions = pastUserActions
+      actionState.newSubmit = false
+    } else {
+      actionState.reset()
+    }
+  })
 
-  const sequence = $derived(sequenceQuery?.data)
-  const interaction = $derived(interactionQuery?.data)
+  const sequence = $derived(q?.data?.sequence)
+  const interaction = $derived(q?.data?.interactionsInSeq?.[interactionIndex] ?? null)
+
   const interactionCount = $derived(sequence?.interactions?.length ?? 0)
   const lastExistingInteractionIndex = $derived(interactionCount - 1)
 
-  $inspect(interaction, 'interactioaaan')
-  let interactionState = $derived.by(() => {
-    if (sequenceQuery?.isLoading || interactionQuery?.isLoading) return { type: 'LOADING' }
+  const interactionState = $derived.by(() => {
+    if (q?.isLoading) return { type: 'LOADING' }
     if (!sequence) return { type: 'SEQUENCE_NOT_FOUND' }
     if (interactionIndex > lastExistingInteractionIndex + 1) {
       return { type: 'INTERACTION_OUT_OF_BOUNDS', lastAvailable: lastExistingInteractionIndex }
@@ -70,11 +68,9 @@
 
   $inspect(interactionState, 'interactionState')
 
-  const choices = $derived(interaction?.data?.content?.choices)
-  let generatedInteraction = $state(null)
   let generateState = $state(0)
 
-  const interactionContent = $derived(interaction?.content || generatedInteraction)
+  const interactionContent = $derived(interaction?.content)
   const statusQ = useQuery(api.cache.getStatus, {})
 
   const shouldGenerate = $derived(
@@ -97,11 +93,7 @@
           sequenceIndex: sequence?.index,
         }),
       })
-        .then(response => response.json())
-        .then(nextInteraction => {
-          console.log('Generation complete:', nextInteraction)
-
-          generatedInteraction = nextInteraction
+        .then(_ => {
           generateState = 2
         })
         .catch(error => {
@@ -110,18 +102,16 @@
     }
   })
 
-  const debugInfo = $derived({
-    state: interactionState.type,
-    status: statusQ?.data?.status,
-    index: interactionIndex,
-    generateState,
-    newSubmit: actionState.newSubmit,
-    shouldGenerate,
-    isFirstInteraction,
-  })
-
   $effect(() => {
-    setDebugInfo(debugInfo)
+    setDebugInfo({
+      state: interactionState.type,
+      status: statusQ?.data?.status,
+      index: interactionIndex,
+      generateState,
+      newSubmit: actionState.newSubmit,
+      shouldGenerate,
+      isFirstInteraction,
+    })
   })
 </script>
 
@@ -159,7 +149,7 @@
     </Button>
   </div>
 {:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
-  {#if !interactionQuery.isLoading}
+  {#if !q?.isLoading}
     <div class="py-12 text-center">
       <h2 class="mb-4 text-3xl font-bold">Interaction Not Found</h2>
       <Button variant="outline">

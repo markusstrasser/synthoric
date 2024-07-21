@@ -17,7 +17,8 @@
     }
   })
 
-  const handleSequenceClick = seq => goto(`/seq/${seq.index}/${seq.interactions.length}`)
+  const handleSequenceClick = seq =>
+    goto(`/seq/${seq.index}/${Math.max(seq.interactions.length - 1, 0)}`)
 
   const handleSubmit = () => {
     isGenerating = true
