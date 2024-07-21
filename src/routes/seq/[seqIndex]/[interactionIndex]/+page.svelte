@@ -16,6 +16,17 @@
   >()
 
   const statusQ = useQuery(api.cache.getStatus, {})
+  const sequence = $derived(q?.data?.sequence)
+  const interaction = $derived(q?.data?.interactionsInSeq?.[interactionIndex] ?? null)
+  const interactionContent = $derived(interaction?.content)
+  const interactionCount = $derived(sequence?.interactions?.length ?? 0)
+  const lastExistingInteractionIndex = $derived(interactionCount - 1)
+  const isFirstInteraction = $derived(interactionIndex === 0)
+
+  const nextPageUrl = $derived(`/seq/${sequence?.index}/${interactionIndex + 1}`)
+  const previousPageUrl = $derived(`/seq/${sequence?.index}/${interactionIndex - 1}`)
+
+  let generateState = $state(0)
 
   $effect.pre(() => {
     //? ask in the convex discord how to do dynamic page args better
@@ -51,12 +62,6 @@
     }
   })
 
-  const sequence = $derived(q?.data?.sequence)
-  const interaction = $derived(q?.data?.interactionsInSeq?.[interactionIndex] ?? null)
-
-  const interactionCount = $derived(sequence?.interactions?.length ?? 0)
-  const lastExistingInteractionIndex = $derived(interactionCount - 1)
-
   const interactionState = $derived.by(() => {
     if (q?.isLoading) return { type: 'LOADING' }
     if (!sequence) return { type: 'SEQUENCE_NOT_FOUND' }
@@ -69,17 +74,9 @@
   })
 
   $inspect(interactionState, 'interactionState')
-
-  let generateState = $state(0)
-
-  const interactionContent = $derived(interaction?.content)
   const shouldGenerate = $derived(
     interactionState.type === 'NEW_INTERACTION' && generateState === 0
   )
-
-  const nextPageUrl = $derived(`/seq/${sequence?.index}/${interactionIndex + 1}`)
-  const previousPageUrl = $derived(`/seq/${sequence?.index}/${interactionIndex - 1}`)
-  const isFirstInteraction = $derived(interactionIndex === 0)
 
   $effect(() => {
     if (shouldGenerate) {
