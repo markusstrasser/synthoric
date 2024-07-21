@@ -1,10 +1,14 @@
 <script lang="ts">
   import * as Card from '$components/ui/card'
-  import type Tools from '$lib/tools'
-  import type { z } from 'zod'
+  import type { Doc } from '$convex/_generated/dataModel'
+  import { Button } from '$components/ui/button'
+  import { useQuery } from 'convex-svelte'
+  import { api } from '$convex/_generated/api'
 
-  type SequencePreview = z.infer<typeof Tools.SequencePreview.schema>
-  const { title, tagline, prerequisites, onClick } = $props<SequencePreview>()
+  let { _id, index, title, tagline, prerequisites }: Doc<'sequences'> = $props()
+  const interactionsCount = useQuery(api.sequences.getInteractionsCount, {
+    id: _id,
+  })
 </script>
 
 <Card.Root class="bg-gray-50 transition-transform duration-300 hover:scale-105">
@@ -21,6 +25,6 @@
     </ul>
   </Card.Content>
   <Card.Footer>
-    <button onclick={onClick} class="btn btn-primary mt-4 w-full"> Start Sequence </button>
+    <Button href={`/seq/${index}/${interactionsCount.data}`} variant="outline">Start Sequence</Button>
   </Card.Footer>
 </Card.Root>

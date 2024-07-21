@@ -17,8 +17,6 @@
     }
   })
 
-  const handleSequenceClick = seq => goto(`/seq/${seq.index}/${seq.interactions.length}`)
-
   const handleSubmit = () => {
     isGenerating = true
     return async ({ update }) => {
@@ -47,7 +45,7 @@
     <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
       {#each query.data as sequence, index}
         <div in:fly={{ y: 20, delay: index * 100 }} class="col-span-1 md:col-span-2">
-          <SequencePreviewCard {...sequence} onClick={() => handleSequenceClick(sequence)} />
+          <SequencePreviewCard {...sequence} />
         </div>
       {/each}
     </div>
@@ -60,7 +58,7 @@
         <p>{form.error}</p>
       </div>
     {/if}
-    <form method="post" use:enhance={handleSubmit}>
+    <form method="post" action="?/generateSequence" use:enhance={handleSubmit}>
       <Button
         variant="outline"
         size="lg"
