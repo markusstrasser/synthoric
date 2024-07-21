@@ -2,27 +2,37 @@ import Markdown from '$components/Markdown.svelte'
 import MultipleChoice from '$components/MultipleChoice.svelte'
 import SolutionReview from '$components/SolutionReview.svelte'
 
-const identity = i => i
+const identity = <T>(i: T): T => i
+
 interface ComponentMapItem {
   component: any
   propMap?: (props: any, interaction?: any) => any
-  shouldShow?: boolean
+  shouldShow?: boolean | (() => boolean)
 }
 
-const componentMapper = (actions): { [key: string]: unknown } => ({
+interface Actions {
+  revealedMultipleChoices: boolean
+  hasSubmitted: boolean
+}
+
+type ComponentMap = {
+  [key: string]: ComponentMapItem
+}
+
+const componentMapper = (actions: Readonly<Actions>): ComponentMap => ({
   // ... existing component map entries
   task: {
     component: Markdown,
-    propMap: text => ({ text }),
+    propMap: (text: string) => ({ text }),
   },
   choices: {
     component: MultipleChoice,
-    propMap: (props, interaction) => ({
+    propMap: (props: any, interaction?: { isCorrect?: boolean }) => ({
       choices: props,
       isCorrect: interaction?.isCorrect,
     }),
     get shouldShow() {
-      return actions.revealedMultipleChoices
+      return actions.revealedMultipleChoices || actions.hasSubmitted
     },
   },
   systemFeedback: {
