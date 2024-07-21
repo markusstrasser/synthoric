@@ -76,7 +76,7 @@
     return { type: 'OK' }
   })
 
-  $inspect(interactionState, 'interactionState')
+  $inspect(interactionState, interaction, 'interactionState')
   const shouldGenerate = $derived(
     interactionState.type === 'NEW_INTERACTION' && generateState === 0
   )

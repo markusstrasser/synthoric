@@ -1,5 +1,5 @@
 <script lang="ts">
-  import componentMap from '$lib/componentMap'
+  import componentMap from '$lib/componentMap.svelte'
   import actions from '$stores/index.svelte'
   import TextInput from './TextInput.svelte'
   import SubmitButton from './SubmitButton.svelte'
@@ -11,14 +11,20 @@
   const interactionContent = $derived(
     Object.entries(interactionConfig)
       .filter(([key, _]) => {
-        const configItem = componentMap[key]
-        return configItem && (!configItem.condition || configItem.condition(actions.hasSubmitted))
+        console.log(key, 'key')
+        return componentMap[key]
+        // const configItem = componentMap[key]
+        // return configItem && (!configItem.shouldHideP || configItem.shouldHideP(actions.hasSubmitted))
       })
-      .map(([key, value]) => ({
-        name: key,
-        component: componentMap[key].component,
-        props: componentMap[key].propMap(value, interactionConfig),
-      }))
+      .map(([key, value]) => {
+        const { component, propMap, shouldHideP } = componentMap[key]
+        return {
+          name: key,
+          component,
+          props: propMap?.(value, interactionConfig) || value,
+          shouldHide: shouldHideP?.(actions.hasSubmitted),
+        }
+      })
       .sort((a, b) => displayOrderByType.indexOf(a.name) - displayOrderByType.indexOf(b.name))
   )
 
@@ -26,9 +32,12 @@
 </script>
 
 <div class="space-y-8">
-  {#each interactionContent as { name, component, props }, index}
+  {#each interactionContent as { name, component, props, shouldHide }, index}
     <div in:fade={{ delay: index * 100, duration: 300 }}>
+      <!-- {#if !shouldHide} -->
+      {$inspect(props, 'props')}
       <svelte:component this={component} {...props} />
+      <!-- {/if} -->
     </div>
     {#if name === 'choices'}
       <div class="mt-4">

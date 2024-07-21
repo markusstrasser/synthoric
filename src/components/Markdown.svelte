@@ -16,3 +16,10 @@ export default function Markdown({ children }) {
     </ReactMarkdown>
   );
 } -->
+<script lang="ts">
+  import Markdown from 'svelte-markdown'
+
+  const { text } = $props()
+</script>
+
+<Markdown source={text} />

@@ -1,19 +1,19 @@
-import Markdown from 'svelte-markdown'
+import Markdown from '$components/Markdown.svelte'
 import MultipleChoice from '$components/MultipleChoice.svelte'
 import SolutionReview from '$components/SolutionReview.svelte'
 
 const identity = i => i
 interface ComponentMapItem {
   component: any
-  propMap: (props: any, interaction?: any) => any
-  condition?: (revealedMultipleChoice: any) => boolean
+  propMap?: (props: any, interaction?: any) => any
+  shouldHideP?: (state: any) => boolean
 }
 
 const componentMap: { [key: string]: ComponentMapItem } = {
   // ... existing component map entries
   task: {
     component: Markdown,
-    propMap: props => ({ source: props }),
+    propMap: text => ({ text }),
   },
   choices: {
     component: MultipleChoice,
@@ -21,16 +21,16 @@ const componentMap: { [key: string]: ComponentMapItem } = {
       choices: props,
       isCorrect: interaction?.isCorrect,
     }),
-    // condition: reaveledMultipleChoice => reaveledMultipleChoice,
+    shouldHideP: shouldHide => true,
   },
   systemFeedback: {
     component: Markdown,
-    propMap: props => ({ source: props }),
-    condition: hasSubmitted => hasSubmitted,
+    shouldHideP: hasSubmitted => hasSubmitted,
+    propMap: identity,
   },
   solution: {
     component: SolutionReview,
-    condition: hasSubmitted => hasSubmitted,
+    shouldHideP: hasSubmitted => hasSubmitted,
     propMap: identity,
   },
 }
