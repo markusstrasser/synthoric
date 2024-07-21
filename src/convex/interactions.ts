@@ -92,8 +92,13 @@ export const getByIndices = query({
       .filter(q => q.eq(q.field('index'), seqIndex))
       .first()
 
-    const interactionId = seq.interactions[interactionIndex]
-    return await ctx.db.get(interactionId)
+    try {
+      const interactionId = seq.interactions[interactionIndex]
+      return await ctx.db.get(interactionId)
+    } catch (e) {
+      console.error(e, 'no interaction found at indices', seqIndex, interactionIndex)
+      return null
+    }
   },
 })
 

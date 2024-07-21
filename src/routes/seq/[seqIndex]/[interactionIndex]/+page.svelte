@@ -6,31 +6,25 @@
   import { Button } from '$components/ui/button'
   import { Skeleton } from '$components/ui/skeleton'
   import actionState from '$lib/stores/index.svelte'
-  import { onMount } from 'svelte'
-  const { data } = $props()
-  const {
-    sequence,
-    interactionId,
-    interactionState,
-    currentInteractionIndex,
-    lastExistingInteractionIndex,
-  } = $derived(data)
+  import { page } from '$app/stores'
 
-  let interaction = $state()
+  const seqIndex = $derived(Number($page.params.seqIndex))
+  const interactionIndex = $derived(Number($page.params.interactionIndex))
 
-  $effect(() => {
-    //TODO: have the query just fetch the entire sequence + interactions ... no need for effects since the query has all seq data reactively
-    //TODO: this would also solve the caching issues
-    interaction = useQuery(api.interactions.getByIndices, {
-      seqIndex: sequence?.index,
-      interactionIndex: currentInteractionIndex,
+  let interactionQuery = $state()
+  let sequenceQuery = $state()
+
+  $effect.pre(() => {
+    sequenceQuery = useQuery(api.sequences.getByIndex, { index: seqIndex })
+    interactionQuery = useQuery(api.interactions.getByIndices, {
+      seqIndex,
+      interactionIndex,
     })
   })
 
   $effect(() => {
-    if (interaction?.data?.userActions?.length > 0) {
-      console.log('setting userActions from DB')
-      actionState.userActions = interaction.data.userActions
+    if (interactionQuery.data?.userActions?.length > 0) {
+      actionState.userActions = interactionQuery.data.userActions
       actionState.newSubmit = false
     } else {
       actionState.reset()
@@ -38,6 +32,7 @@
   })
 
   $effect(() => {
+    //TODO: could be logic? inside the actionStore
     //different from hasSubmitted bc
     if (actionState.newSubmit) {
       console.log('patching userActions!!')
@@ -46,29 +41,49 @@
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userActions: actionState.filteredUserActions, interactionId }),
+        body: JSON.stringify({
+          userActions: actionState.filteredUserActions,
+          interactionId: interaction._id,
+        }),
       }).then(r => {
         actionState.newSubmit = false
       })
     }
   })
 
-  $inspect(interaction, 'interact')
+  const sequence = $derived(sequenceQuery?.data)
+  const interaction = $derived(interactionQuery?.data)
+  const interactionCount = $derived(sequence?.interactions?.length ?? 0)
+  const lastExistingInteractionIndex = $derived(interactionCount - 1)
+
+  $inspect(interaction, 'interactioaaan')
+  let interactionState = $derived.by(() => {
+    if (sequenceQuery?.isLoading || interactionQuery?.isLoading) return { type: 'LOADING' }
+    if (!sequence) return { type: 'SEQUENCE_NOT_FOUND' }
+    if (interactionIndex > lastExistingInteractionIndex + 1) {
+      return { type: 'INTERACTION_OUT_OF_BOUNDS', lastAvailable: lastExistingInteractionIndex }
+    }
+    if (interactionIndex === lastExistingInteractionIndex + 1) return { type: 'NEW_INTERACTION' }
+    if (!interaction) return { type: 'INTERACTION_NOT_FOUND' }
+    return { type: 'OK' }
+  })
+
+  $inspect(interactionState, 'interactionState')
+
   const choices = $derived(interaction?.data?.content?.choices)
-  $inspect(choices, 'choices')
   let generatedInteraction = $state(null)
   let generateState = $state(0)
 
-  const interactionContent = $derived(interaction?.data?.content || generatedInteraction)
+  const interactionContent = $derived(interaction?.content || generatedInteraction)
   const statusQ = useQuery(api.cache.getStatus, {})
 
   const shouldGenerate = $derived(
     interactionState.type === 'NEW_INTERACTION' && generateState === 0
   )
 
-  const nextPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex + 1}`)
-  const previousPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex - 1}`)
-  const isFirstInteraction = $derived(currentInteractionIndex === 0)
+  const nextPageUrl = $derived(`/seq/${sequence?.index}/${interactionIndex + 1}`)
+  const previousPageUrl = $derived(`/seq/${sequence?.index}/${interactionIndex - 1}`)
+  const isFirstInteraction = $derived(interactionIndex === 0)
 
   $effect(() => {
     if (shouldGenerate) {
@@ -80,13 +95,10 @@
         },
         body: JSON.stringify({
           sequenceIndex: sequence?.index,
-          // interactionIndex: currentInteractionIndex,
         }),
       })
         .then(response => response.json())
         .then(nextInteraction => {
-          // Handle the response data here if needed
-
           console.log('Generation complete:', nextInteraction)
 
           generatedInteraction = nextInteraction
@@ -98,12 +110,10 @@
     }
   })
 
-  $inspect(interactionContent, 'interactionContent')
-
   const debugInfo = $derived({
     state: interactionState.type,
     status: statusQ?.data?.status,
-    index: currentInteractionIndex,
+    index: interactionIndex,
     generateState,
     newSubmit: actionState.newSubmit,
     shouldGenerate,
@@ -115,62 +125,62 @@
   })
 </script>
 
-{#if interaction?.data}
+{#if interaction}
   <div class="mx-auto max-w-3xl px-4 py-8 font-serif">
-    <h1>interact: {JSON.stringify(interaction.data.content)}</h1>
+    <h1>interact: {JSON.stringify(interaction.content)}</h1>
     {#if interactionState.type === 'OK'}
       <div class="prose prose-lg">
         <Interaction interactionConfig={interactionContent} />
       </div>
-    {:else if interactionState.type === 'NEW_INTERACTION'}
-      <div class="space-y-4">
-        {#if interactionContent}
-          <Interaction interactionConfig={interactionContent} />
-        {:else}
-          <h3 class="text-2xl font-semibold">Generating new interaction...</h3>
-          <h4>Status: {statusQ?.data?.status}</h4>
-          <Skeleton class="h-32 w-full" />
-        {/if}
-      </div>
-    {:else if interactionState.type === 'SEQUENCE_NOT_FOUND'}
-      <div class="py-12 text-center">
-        <h2 class="mb-4 text-3xl font-bold">Sequence Not Found</h2>
-        <Button variant="outline">
-          <a href="/">Go back home</a>
-        </Button>
-      </div>
-    {:else if interactionState.type === 'INTERACTION_OUT_OF_BOUNDS'}
-      <div class="py-12 text-center">
-        <h2 class="mb-4 text-3xl font-bold">Interaction Out of Bounds</h2>
-        <Button variant="outline">
-          <a href="/seq/{sequence?.index}/{Math.max(lastExistingInteractionIndex, 0)}">
-            Go to latest interaction
-          </a>
-        </Button>
-      </div>
-    {:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
-      <div class="py-12 text-center">
-        <h2 class="mb-4 text-3xl font-bold">Interaction Not Found</h2>
-        <Button variant="outline">
-          <a href="/">Go back home</a>
-        </Button>
-      </div>
     {/if}
-
-    <div class="mt-8 flex justify-between">
-      {#if !isFirstInteraction}
-        <Button variant="outline">
-          <a href={previousPageUrl}>← Previous</a>
-        </Button>
-      {:else}
-        <div></div>
-      {/if}
-
-      {#if interactionContent}
-        <Button variant="outline" disabled={generateState === 1}>
-          <a href={nextPageUrl}>Next →</a>
-        </Button>
-      {/if}
-    </div>
   </div>
 {/if}
+{#if interactionState.type === 'NEW_INTERACTION'}
+  <div class="space-y-4">
+    <h3 class="text-2xl font-semibold">Generating new interaction...</h3>
+    <h4>Status: {statusQ?.data?.status}</h4>
+    <Skeleton class="h-32 w-full" />
+  </div>
+{/if}
+{#if interactionState.type === 'SEQUENCE_NOT_FOUND'}
+  <div class="py-12 text-center">
+    <h2 class="mb-4 text-3xl font-bold">Sequence Not Found</h2>
+    <Button variant="outline">
+      <a href="/">Go back home</a>
+    </Button>
+  </div>
+{:else if interactionState.type === 'INTERACTION_OUT_OF_BOUNDS'}
+  <div class="py-12 text-center">
+    <h2 class="mb-4 text-3xl font-bold">Interaction Out of Bounds</h2>
+    <Button variant="outline">
+      <a href="/seq/{sequence?.index}/{Math.max(lastExistingInteractionIndex, 0)}">
+        Go to latest interaction
+      </a>
+    </Button>
+  </div>
+{:else if interactionState.type === 'INTERACTION_NOT_FOUND'}
+  {#if !interactionQuery.isLoading}
+    <div class="py-12 text-center">
+      <h2 class="mb-4 text-3xl font-bold">Interaction Not Found</h2>
+      <Button variant="outline">
+        <a href="/">Go back home</a>
+      </Button>
+    </div>
+  {/if}
+{/if}
+
+<div class="mt-8 flex justify-between">
+  {#if !isFirstInteraction}
+    <Button variant="outline">
+      <a href={previousPageUrl}>← Previous</a>
+    </Button>
+  {:else}
+    <div></div>
+  {/if}
+
+  {#if interactionContent}
+    <Button variant="outline" disabled={generateState === 1}>
+      <a href={nextPageUrl}>Next →</a>
+    </Button>
+  {/if}
+</div>
