@@ -29,14 +29,14 @@ export const generateInteractionContent = async (seqIndex: number) => {
   })) as { prompts: string[]; interactionType: ToolType }
 
   let nextInteractionContent = null
-  let allInteractions = []
+  // let allInteractions = []
 
   for (const [index, prompt] of prompts.entries()) {
     //@ts-ignore
     const interaction = await availableTools[interactionType].execute(
       `${prompt}.\n${ContentGuidelinePrompt}`
     )
-    allInteractions.push(interaction)
+    // allInteractions.push(interaction)
 
     if (index === 0) {
       nextInteractionContent = interaction
@@ -44,8 +44,6 @@ export const generateInteractionContent = async (seqIndex: number) => {
   }
 
   return {
-    nextInteractionContent,
-    allInteractions,
-    sequenceId: seq?._id,
+    content: nextInteractionContent,
   }
 }

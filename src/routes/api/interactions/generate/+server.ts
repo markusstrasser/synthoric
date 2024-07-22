@@ -14,14 +14,37 @@ export const POST = async ({ request }) => {
   }
 
   // Update the status of the interaction
-  // await convexClient.mutation(api.interactions.updateInteraction, {
-  //   id: interactionId,
-  //   interaction: {
-  //     state: 'started',
-  //   },
-  // })
+  await convexClient.mutation(api.interactions.updateInteraction, {
+    id: interactionId,
+    interaction: {
+      state: 'started',
+    },
+  })
 
-  const content = await generateInteractionContent(sequenceIndex)
+  try {
+    const { content } = await generateInteractionContent(sequenceIndex)
 
-  return new Response()
+    // Update the status of the interaction, and add the content
+    await convexClient.mutation(api.interactions.updateInteraction, {
+      id: interactionId,
+      interaction: {
+        state: 'completed',
+        content,
+      },
+    })
+
+    console.log('interaction generated')
+
+    return new Response('Interaction generated', { status: 200 })
+  } catch (error) {
+    await convexClient.mutation(api.interactions.updateInteraction, {
+      id: interactionId,
+      interaction: {
+        state: 'failed',
+      },
+    })
+
+    console.error('Error generating interaction:', error)
+    return new Response('Error generating interaction', { status: 500 })
+  }
 }
