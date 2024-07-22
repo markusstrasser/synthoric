@@ -101,27 +101,12 @@ export const load = async ({ fetch, locals, params, parent, url }) => {
     })
   }
 
-  // const interactionCount = sequence?.interactions?.length ?? 0
-  // const lastExistingInteractionIndex = interactionCount - 1
-  // if (!sequence) {
-  //   interactionState = { type: 'SEQUENCE_NOT_FOUND' }
-  // } else {
-  //   if (interactionIndex > lastExistingInteractionIndex + 1) {
-  //     interactionState = {
-  //       type: 'INTERACTION_OUT_OF_BOUNDS',
-  //       lastAvailable: lastExistingInteractionIndex,
-  //     }
-  //   } else if (interactionIndex === lastExistingInteractionIndex + 1) {
-  //     interactionState = { type: 'NEW_INTERACTION' }
-  //   } else if (!interaction) {
-  //     interactionState = { type: 'INTERACTION_NOT_FOUND' }
-  //   }
-  // }
-  // console.log(interactionState, 'interactionState')
+  console.log('interactionId', interactionId)
 
   return {
     sequence,
     interaction,
+    interactionId,
     interactionState,
     currentInteractionIndex: interactionIndex,
   }

@@ -1,54 +1,20 @@
 <script lang="ts">
   import Interaction from '$components/Interaction.svelte'
-  import { api } from '$convex/_generated/api.js'
-  import { useQuery } from 'convex-svelte'
   import { setDebugInfo } from '$stores/index.svelte.js'
   import { Button } from '$components/ui/button'
   import { Skeleton } from '$components/ui/skeleton'
 
-  const { data } = $props()
-  const { sequence, interaction, interactionState, currentInteractionIndex } = $derived(data)
+  let { data } = $props()
+  let { sequence, interactionState, currentInteractionIndex, interaction } = $derived(data)
 
-  let generatedInteraction = $state(null)
-  const interactionContent = $derived(generatedInteraction || interaction?.content)
   let generateState = $state(0)
   const shouldGenerate = $derived(
     interactionState.type === 'NEW_INTERACTION' && generateState === 0
   )
 
-  const nextPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex + 1}`)
-  const previousPageUrl = $derived(`/seq/${sequence?.index}/${currentInteractionIndex - 1}`)
+  const nextPageUrl = $derived(`/seq/${sequence.index}/${currentInteractionIndex + 1}`)
+  const previousPageUrl = $derived(`/seq/${sequence.index}/${currentInteractionIndex - 1}`)
   const isFirstInteraction = $derived(currentInteractionIndex === 0)
-
-  // $effect(() => {
-  //   if (shouldGenerate) {
-  //     generateState = 1
-  //     fetch('/api/generateNextInteraction', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         sequenceIndex: sequence?.index,
-  //         interactionIndex: currentInteractionIndex,
-  //       }),
-  //     })
-  //       .then(response => response.json())
-  //       .then(nextInteraction => {
-  //         // Handle the response data here if needed
-
-  //         console.log('Generation complete:', nextInteraction)
-
-  //         generatedInteraction = nextInteraction
-  //         generateState = 2
-  //       })
-  //       .catch(error => {
-  //         console.error('Error generating next interaction:', error)
-  //       })
-  //   }
-  // })
-
-  // $inspect(interactionContent, 'interactionContent')
 
   const debugInfo = $derived({
     state: interactionState.type,
@@ -62,16 +28,18 @@
     setDebugInfo(debugInfo)
   })
 </script>
-<!-- 
+
 <div class="mx-auto max-w-3xl px-4 py-8 font-serif">
-  {#if interactionState.type === 'OK'}
+  {#if interaction?.state === 'completed'}
     <div class="prose prose-lg">
-      <Interaction interactionConfig={interactionContent} />
+      <Interaction interactionConfig={interaction.content} />
     </div>
-  {:else if interactionState.type === 'NEW_INTERACTION'}
+  {/if}
+
+  {#if interaction?.state === 'started'}
     <div class="space-y-4">
-      {#if interactionContent}
-        <Interaction interactionConfig={interactionContent} />
+      {#if interaction.content}
+        <Interaction interactionConfig={interaction.content} />
       {:else}
         <h3 class="text-2xl font-semibold">Generating new interaction...</h3>
         <Skeleton class="h-32 w-full" />
@@ -88,10 +56,10 @@
       <div></div>
     {/if}
 
-    {#if interactionContent}
+    {#if interaction?.content}
       <Button variant="outline" disabled={generateState === 1}>
         <a href={nextPageUrl}>Next →</a>
       </Button>
     {/if}
   </div>
-</div> -->
+</div>
