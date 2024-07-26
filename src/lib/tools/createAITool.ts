@@ -2,7 +2,7 @@ import { z } from 'zod'
 import zodToJsonSchema from 'zod-to-json-schema'
 import type * as AIToolConfigs from './AIToolConfigs'
 import { generateObject } from 'ai'
-import { anthropic } from '../../lib/providers'
+import { anthropic, groq } from '$lib/providers'
 
 const getJsonSchema = (schema: z.ZodType) => {
   const { $schema, ...schemaObject } = zodToJsonSchema(schema)
@@ -49,6 +49,7 @@ export default <T extends keyof typeof AIToolConfigs>(config: (typeof AIToolConf
     console.log('prompt in tool', composedPrompt)
     const { object } = await generateObject({
       prompt: composedPrompt,
+      // model: anthropic('claude-3-5-sonnet-20240620'),
       model: anthropic('claude-3-5-sonnet-20240620'),
       schema: z.object({ content: config.schema as z.ZodType }),
     })

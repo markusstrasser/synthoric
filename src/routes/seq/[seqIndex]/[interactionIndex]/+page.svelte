@@ -16,7 +16,12 @@
   let q = $state<
     { data?: { sequence?: any; interactionsInSeq?: any[] } | null; isLoading?: boolean } | undefined
   >()
+  $effect.pre(() => {
+    //? ask in the convex discord how to do dynamic page args better
+    q = useQuery(api.sequences.getWithFullInteractions, { index: seqIndex })
+  })
 
+  let generateState = $state(0)
   const statusQ = useQuery(api.cache.getStatus, {})
   const sequence = $derived(q?.data?.sequence)
   const interaction = $derived(q?.data?.interactionsInSeq?.[interactionIndex] ?? null)
@@ -28,13 +33,6 @@
 
   const nextPageUrl = $derived(`/seq/${sequence?.index}/${interactionIndex + 1}`)
   const previousPageUrl = $derived(`/seq/${sequence?.index}/${interactionIndex - 1}`)
-
-  let generateState = $state(0)
-
-  $effect.pre(() => {
-    //? ask in the convex discord how to do dynamic page args better
-    q = useQuery(api.sequences.getWithFullInteractions, { index: seqIndex })
-  })
 
   $effect(() => {
     if (!interactionId) {
@@ -185,7 +183,7 @@
 
   {#if interactionContent}
     <Button variant="outline" disabled={generateState === 1 || !actionState.hasSubmitted}>
-      <a href={nextPageUrl}>Next →</a>
+      <a onclick={() => (generateState = 0)} href={nextPageUrl}>Next →</a>
     </Button>
   {/if}
   {#if interaction?.systemFeedback}

@@ -1,7 +1,6 @@
 import * as jsyaml from 'js-yaml'
 import type { z } from 'zod'
 import moment from 'moment'
-import type { UserAction } from '$lib/types'
 
 export const formatRelativeTimeAgo = (timeStamp: number): string => moment(timeStamp).fromNow()
 
@@ -33,12 +32,12 @@ export const summarizeInteraction = ({ content, userActions = [], firstSeen, sys
         const timeInSeconds = (timeStamp - firstSeen) / 1000
         return {
           type,
-          timeUntilSubmitInSeconds: timeInSeconds,
+          timeUntilActionInSeconds: timeInSeconds,
           ...(typeof value === 'object' && value !== null ? value : { value }),
         }
       }),
 
-    timeUntilActionInSeconds: (submitAction.timeStamp - firstSeen) / 1000,
+    timeUntilSubmitInSeconds: (submitAction.timeStamp - firstSeen) / 1000,
     taskFirstSeen: RelativefirstSeen,
     // systemFeedback,
   }

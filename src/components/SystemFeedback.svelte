@@ -9,7 +9,7 @@
   }
 
   export let feedback: string
-  export let notes: string
+  // export let notes: string
   export let rating: number
 </script>
 
@@ -23,16 +23,16 @@
         <h3 class="font-semibold">Comment:</h3>
         <p>{feedback}</p>
       </div>
-      {#if notes}
+      <!-- {#if notes}
         <div>
           <h3 class="font-semibold">Notes:</h3>
           <p>{notes}</p>
         </div>
-      {/if}
+      {/if} -->
       <div>
         <h3 class="font-semibold">Rating:</h3>
         <div class="flex items-center">
-          {#each Array(5) as _, i}
+          {#each Array(3) as _, i}
             <Star
               class={i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
               size={20}

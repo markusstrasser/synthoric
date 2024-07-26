@@ -104,6 +104,9 @@ A: The system includes:
 
 ## TODOs
 
+- [ ] match art to sequence and interaction (pinterest api)
+- [ ] useraction store as class...
+- [ ] pass in createDispatcher(annotation:{}) => dispatchActionEvent as prop curried addUserAction? (add id, displayIndex, name, etc. component only does value and eventType)
 - [ ] Unify /tools to have consistent API. Decide what is a tool (exercise, multipleChoice) and what not (hints, solution?)
 - [ ] Update UI with current progress inside a agentChain (ie. show the task without having to wait for the rest of the task->solution chain to finish)
 - [ ] use Abstractions like https://docs.copilotkit.ai/reference/hooks/useCopilotReadable?

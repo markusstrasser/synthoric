@@ -18,11 +18,11 @@ export default {
         .describe(
           "Quick precise feedback if user submission isn't 100% correct - under 20 words if possible. Remember the student sees the full solution in the UI with this feedback. Give feedback on things/misconceptions not apparent from the solution and taking his/her submission into account. If it's correct (highest rating), just reply: 'correct!'"
         ),
-      notes: z
-        .string()
-        .describe(
-          "Iff the user's answer is wrong: short pointer to what misconception generally lead to that error, best if you can specifically point towards a repeting error the user makes (consulting history/context)"
-        ),
+      // notes: z
+      //   .string()
+      //   .describe(
+      //     "Iff the user's answer is wrong: short pointer to what misconception generally lead to that error, best if you can specifically point towards a repeting error the user makes (consulting history/context)"
+      //   ),
       rating: z
         .number()
         .min(0)

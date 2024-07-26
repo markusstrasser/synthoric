@@ -2,7 +2,7 @@ import { ApplicationExplainer } from '../lib/prompts'
 
 import { generateObject } from 'ai'
 import { z } from 'zod'
-import { anthropic } from './providers'
+import { anthropic, groq } from './providers'
 
 //@ts-ignore
 const generateNextInteractionSpec = async ({ contextStr, availableTools }) => {
@@ -26,8 +26,6 @@ const generateNextInteractionSpec = async ({ contextStr, availableTools }) => {
 
   ${contextStr}
   `
-  // const names = Object.keys(availableTools) ]
-
   const { object } = await generateObject({
     prompt: OrchestratorPrompt,
     schema: z.object({
@@ -48,7 +46,8 @@ const generateNextInteractionSpec = async ({ contextStr, availableTools }) => {
       //     .min(1)
       //     .max(5)
       //     .describe('The number of consequtive interactions to generate'),
-      // }), //TODO: infer from interactionTypes schema ... or types..
+      // }),
+      //TODO: infer from interactionTypes schema ... or types..
     }),
     model: anthropic('claude-3-5-sonnet-20240620'),
   })

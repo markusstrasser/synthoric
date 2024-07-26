@@ -4,6 +4,12 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import { ConvexHttpClient } from 'convex/browser'
 
+export const groq = createOpenAI({
+  // export const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+  baseURL: 'https://api.groq.com/openai/v1',
+  apiKey: process.env.GROQ_API_KEY,
+})
+
 // console.log(process.env, 'env ')
 const convexKey = process.env.PUBLIC_CONVEX_URL || 'nokey'
 
