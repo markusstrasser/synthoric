@@ -1,19 +1,17 @@
 <script lang="ts">
-  import { addUserAction } from '$stores/index.svelte'
+  import { createDispatch } from '$lib/stores/index.svelte'
 
   const { id = '', disabled = false } = $props()
 
-  const handleSubmit = () =>
-    addUserAction({
-      type: 'button-click',
-      id,
-      hasSubmitted: true,
-      value: 'submit',
-    })
+  const dispatch = createDispatch({ type: 'button-click', id })
 </script>
 
 <button
-  onclick={handleSubmit}
+  onclick={() =>
+    dispatch({
+      hasSubmitted: true,
+      value: 'submit',
+    })}
   {disabled}
   class="mt-2 cursor-pointer rounded-md px-4 py-2 transition-colors
     {disabled

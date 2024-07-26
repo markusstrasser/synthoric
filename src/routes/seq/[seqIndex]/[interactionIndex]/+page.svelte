@@ -1,14 +1,14 @@
 <script lang="ts">
   import Interaction from '$components/Interaction.svelte'
   import { api } from '$convex/_generated/api.js'
-  import { setDebugInfo } from '$stores/index.svelte.js'
+  import actionState from '$stores/index.svelte.js'
   import { Button } from '$components/ui/button'
   import { Skeleton } from '$components/ui/skeleton'
-  import actionState from '$lib/stores/index.svelte'
   import { page } from '$app/stores'
   import { useConvexClient, useQuery } from 'convex-svelte'
   import SystemFeedback from '$components/SystemFeedback.svelte'
 
+  console.log(actionState, 'here')
   const convexClient = useConvexClient()
   const seqIndex = $derived(Number($page.params.seqIndex))
   const interactionIndex = $derived(Number($page.params.interactionIndex))
@@ -109,7 +109,8 @@
   })
 
   $effect(() => {
-    setDebugInfo({
+    console.log(actionState, actionState.newSubmit, 'state')
+    actionState.setDebugInfo({
       state: interactionState.type,
       status: statusQ?.data?.status,
       index: interactionIndex,

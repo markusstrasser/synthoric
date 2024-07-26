@@ -1,8 +1,18 @@
 <script lang="ts">
+  import type { UserAction } from '$lib/types'
   import { nanoid } from 'nanoid'
-  import { addUserAction } from '$stores/index.svelte'
 
-  const { choices, isCorrect, isReadOnly = false } = $props()
+  const {
+    choices,
+    isCorrect,
+    isReadOnly = false,
+    dispatch,
+  } = $props<{
+    choices: string[]
+    isCorrect?: boolean[]
+    isReadOnly?: boolean
+    dispatch: (action: UserAction) => void
+  }>()
 
   const id = nanoid(4)
   let selectedIndex = $state<number | null>(null)
@@ -10,7 +20,7 @@
   function handleChoice(index: number) {
     if (isReadOnly) return
     selectedIndex = index
-    addUserAction({
+    dispatch({
       type: 'multipleChoiceAnswer',
       id,
       value: { choice: choices[index], isCorrect: isCorrect?.[index] },

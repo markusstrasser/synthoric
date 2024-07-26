@@ -1,10 +1,11 @@
 <script lang="ts">
-  import actions from '$stores/index.svelte'
+  import actions, { createDispatch } from '$stores/index.svelte'
   import TextInput from './TextInput.svelte'
   import SubmitButton from './SubmitButton.svelte'
   import { fade } from 'svelte/transition'
   import { Button } from './ui/button'
   import componentMapper from '$lib/componentMap.svelte'
+  import type { UserAction } from '$lib/types'
 
   const { interactionConfig } = $props<{ interactionConfig: Record<string, unknown> }>()
 
@@ -33,6 +34,7 @@
   )
 
   const hasChoices = $derived(interactionContent.some(item => item.name === 'choices'))
+  type DispatchUserAction = (action: UserAction) => void
 </script>
 
 <div class="space-y-8">
@@ -41,7 +43,11 @@
     <div in:fade={{ delay: index * 100, duration: 300 }}>
       {$inspect(shouldShow, 'shouldShow', name)}
       {#if shouldShow}
-        <svelte:component this={component} {...props} />
+        <svelte:component
+          this={component}
+          {...props}
+          dispatch={createDispatch() as DispatchUserAction}
+        />
       {:else}
         <Button on:click={() => (actions.revealedMultipleChoices = true)}>Choices</Button>
       {/if}

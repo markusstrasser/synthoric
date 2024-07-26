@@ -11,14 +11,14 @@
 </script>
 
 <div
-  class="flex items-center p-2 bg-white shadow-md rounded-lg"
+  class="flex items-center rounded-lg bg-white p-2 shadow-md"
   class:flex-col={!listStyle}
   class:space-y-2={!listStyle}
   class:space-x-4={listStyle}
 >
   <span class="text-lg">{icons[inference.type]}</span>
   <div class="flex-grow">
-    <h2 class="text-sm font-bold text-gray-800 truncate">
+    <h2 class="truncate text-sm font-bold text-gray-800">
       {inference.description}
     </h2>
     <div class="flex text-xs text-gray-600">

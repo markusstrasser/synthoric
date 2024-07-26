@@ -1,54 +1,34 @@
 import type { UserAction } from '../schemas/index.js'
 
-let userActions = $state([])
+class ActionState {
+  userActions = $state<UserAction[]>([])
+  revealedMultipleChoices = $state(false)
+  newSubmit = $state(false)
+  debugInfo = $state({})
 
-function filterUserActions(actions: UserAction[]): UserAction[] {
-  const grouped = Object.groupBy(actions, action => action.type)
-  //@ts-ignore
-  return Object.values(grouped).map(group => group.sort((a, b) => b.timeStamp - a.timeStamp)[0])
-}
-let hasSubmitted: boolean = $derived(!!userActions.find(action => action.hasSubmitted))
-let filteredUserActions = $derived(filterUserActions(userActions))
-const reset = () => {
-  newSubmit = false
-  userActions = []
-  revealedMultipleChoices = false
-  // hasSubmitted = false
-}
+  hasSubmitted = $derived(!!this.userActions.find(action => action.hasSubmitted))
+  filteredUserActions = $derived(this.filterUserActions(this.userActions))
 
-// Debug store
-let debugInfo = $state({})
+  filterUserActions(actions: UserAction[]): UserAction[] {
+    const grouped = Object.groupBy(actions, action => action.type)
+    //@ts-ignore
+    return Object.values(grouped).map(group => group.sort((a, b) => b.timeStamp - a.timeStamp)[0])
+  }
 
-export const clearDebugInfo = () => {
-  debugInfo = {}
-}
+  reset() {
+    this.newSubmit = false
+    this.userActions = []
+    this.revealedMultipleChoices = false
+  }
 
-export const setDebugInfo = (info: any) => {
-  debugInfo = info
-}
-let newSubmit: boolean = $state(false)
-let revealedMultipleChoices: boolean = $state(false)
+  clearDebugInfo() {
+    this.debugInfo = {}
+  }
 
-const actionState = {
-  //? if you want to destructure the store in the component use {a,b} = $derived(store) if not store.a ...
-  get userActions() {
-    return userActions
-  },
-  get revealedMultipleChoices() {
-    return revealedMultipleChoices
-  },
-  set revealedMultipleChoices(value: boolean) {
-    revealedMultipleChoices = value
-  },
-  get newSubmit() {
-    return newSubmit
-  },
-  set newSubmit(value: boolean) {
-    newSubmit = value
-  },
-  set userActions(actions: UserAction[]) {
-    userActions = actions
-  },
+  setDebugInfo(info: any) {
+    this.debugInfo = info
+  }
+
   syncUserActions(userActions: UserAction[]) {
     if (!userActions) {
       this.reset()
@@ -56,28 +36,22 @@ const actionState = {
     }
     this.userActions = userActions
     this.newSubmit = false
-  },
-  get hasSubmitted() {
-    return hasSubmitted
-  },
-  get filteredUserActions() {
-    return filteredUserActions
-  },
-  reset,
-  // hasSubmitted = false
-  get debugInfo() {
-    return debugInfo
-  },
-  setDebugInfo,
-  clearDebugInfo,
-}
-export const addUserAction = (action: UserAction) => {
-  if (action.hasSubmitted) {
-    actionState.newSubmit = true
   }
-  if (action.type === 'revealedMultipleChoices') {
-    actionState.revealedMultipleChoices = true
-  }
-  userActions.push({ ...action, timeStamp: Date.now() })
 }
+
+const actionState = new ActionState()
+
+export const createDispatch = (config = {}) => {
+  const dispatch = (action: UserAction) => {
+    if (action.hasSubmitted) {
+      actionState.newSubmit = true
+    }
+    if (action.type === 'revealedMultipleChoices') {
+      actionState.revealedMultipleChoices = true
+    }
+    actionState.userActions = [...actionState.userActions, { ...action, timeStamp: Date.now() }]
+  }
+  return dispatch
+}
+
 export default actionState
