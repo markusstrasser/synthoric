@@ -46,7 +46,9 @@ export default <T extends keyof typeof AIToolConfigs>(config: (typeof AIToolConf
     -----
     ${JSON.stringify(input)}
     `
-    console.log('prompt in tool', composedPrompt)
+    console.log('tool description', config.description)
+    console.log(`config.prompt: ${config.prompt}`)
+    console.log(`input prompt: ${input}`)
     const { object } = await generateObject({
       prompt: composedPrompt,
       // model: anthropic('claude-3-5-sonnet-20240620'),

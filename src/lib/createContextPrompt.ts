@@ -3,9 +3,10 @@ import { summarizeInteraction, omit } from '$lib/utils/index'
 import _ from 'lodash'
 //@ts-ignore
 export default ({ interactions, inferences, sequence }) => {
-  const [currentSequenceInteractions, otherSequencesInteractions] = _.partition(interactions, i =>
-    sequence.interactions.includes(i._id)
-  ).map(group => group.map(summarizeInteraction))
+  const [currentSequenceInteractionsStr, otherSequencesInteractionsStr] = _.partition(
+    interactions,
+    i => sequence.interactions.includes(i._id)
+  ).map(group => JSON.stringify(group.map(summarizeInteraction)))
   //'_creationTime'
   const infs = omit(['_id', 'sources'], inferences)
 
@@ -15,7 +16,7 @@ export default ({ interactions, inferences, sequence }) => {
   <context>
   
   You are given the following history and user insights:
-  1. 'tagline': the topic/tagline of the current learning Sequence.
+  1. 'tagline': the topic/tagline of the current learning Sequence. If the topic is exhausted by previous interactions, please branch out to adjacent topics instead of repeating the same questions or exercises.
   2. 'interactions': the previous history of interactions the user engaged with within our App. This includes the actions taken within a dynamic UI component (key 'useractions'), often with additional information (timeElapsed etc.). for you to consider.
   3. 'inferences' : the previous inferences and learning insights another AI System made about the user ie. assumed/inferred knowledge, skills, abilities, etc.)
 
@@ -25,11 +26,11 @@ export default ({ interactions, inferences, sequence }) => {
     </LearningSequenceTopic>
     <interactions>
       <from-current-learning-sequence>
-      ${currentSequenceInteractions}
+      ${currentSequenceInteractionsStr}
       </from-current-learning-sequence>
 
       <from-other-sequences>
-      ${otherSequencesInteractions}
+      ${otherSequencesInteractionsStr}
       </from-other-sequences>
     </interactions>
 

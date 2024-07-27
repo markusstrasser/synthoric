@@ -37,6 +37,8 @@ const generateNextInteraction = async (seqIndex: number) => {
     sequence,
   })
 
+  console.log(contextStr, 'CONTEXTSTR')
+
   const { MultipleChoiceTask, FreeFormTextInputTask } = Tools
   const availableTools = { MultipleChoiceTask, FreeFormTextInputTask } as const
   type ToolType = keyof typeof availableTools
@@ -54,6 +56,7 @@ const generateNextInteraction = async (seqIndex: number) => {
     //@ts-ignore
     const toolChoice = availableTools[interactionType]
     console.log(`Generating ${toolChoice.description}`)
+
     const interaction = await toolChoice.execute(`${prompt}.\n${ContentGuidelinePrompt}`)
     if (index === 0) {
       nextInteractionContent = interaction

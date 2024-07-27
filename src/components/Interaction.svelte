@@ -40,14 +40,11 @@
 <div class="space-y-8">
   {$inspect(actions, 'actions')}
   {#each interactionContent as { name, component, props, shouldShow }, index}
+    {@const dispatch = createDispatch()}
     <div in:fade={{ delay: index * 100, duration: 300 }}>
       {$inspect(shouldShow, 'shouldShow', name)}
       {#if shouldShow}
-        <svelte:component
-          this={component}
-          {...props}
-          dispatch={createDispatch() as DispatchUserAction}
-        />
+        <svelte:component this={component} {...props} {dispatch} />
       {:else}
         <Button on:click={() => (actions.revealedMultipleChoices = true)}>Choices</Button>
       {/if}
@@ -57,9 +54,9 @@
         <SubmitButton disabled={actions.hasSubmitted} />
       </div>
     {/if}
-    {#if name === 'task' && !hasChoices}
+    {#if (name === 'task' || name === 'text') && !hasChoices}
       <div class="space-y-4">
-        <TextInput />
+        <TextInput {dispatch} />
         <SubmitButton disabled={actions.hasSubmitted} />
       </div>
     {/if}

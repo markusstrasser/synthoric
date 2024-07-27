@@ -24,30 +24,35 @@ const generateNextInteractionSpec = async ({ contextStr, availableTools }) => {
   </availableInteractionTypes>
   ${availableTools}
 
+  Consult the previous CONTEXT to generate a fitting, personalized instruction.
   ${contextStr}
+  
+  * You do not have to include the tool description and so on. 
+  The tool has it's own prompt that describes it's type. But you have the context and user history – the tool has no context of the previous interactions or user actions.
+  >> Avoid duplicates and repetition unless if you think the student should be re-exposed to it.
+  Every prompt can include:
+  * what skill/concept to test the user on. 
+  * mentions of user history (context) to best inform the tool AI so it can personalize UI and content.
+  
+  
+  Here's an example output with placeholders {} for the context you can insert:
+  <example outputs>
+  Test the user on the relationship between centripedal force and velocity in circular motion. The task should challenge the user to think about how changing the velocity would affect the centripetal force required to maintain circular motion, both in the case of a roller coaster loop and a satellite orbit. The user previously correctly completed: {...insertRelevantTasks}. The user struggled with {...insertWhatYouThinkAreStrugglepoints}
+  </example outputs>
   `
+
   const { object } = await generateObject({
     prompt: OrchestratorPrompt,
     schema: z.object({
       interactionType: z.enum(names as [string, ...string[]]), //TODO: infer from interactionTypes schema ... or types..
+      //TODO: could be params?
       prompts: z
         .array(
-          //TODO: could be params?
-          z.string().describe(
-            `a specific LLM prompt for the next AI to use. The prompt has to detail the subtopic, what skill/concept should be tested and so on. 
-        * Consult the previous student history to generate a fitting, personalized instruction (interactions and system inferences about the student). Avoid duplicates and repetition unless if you think the student should be re-exposed to it.
-        * In the prompt, list any context (interactions, inferences) to best inform the tool AI so it can personalize UI and interaction.`
-          )
+          z
+            .string()
+            .describe('A specific LLM prompt that will be fed to the tool AI to make sense of')
         )
         .max(3),
-      // runConfig: z.object({
-      //   count: z
-      //     .number()
-      //     .min(1)
-      //     .max(5)
-      //     .describe('The number of consequtive interactions to generate'),
-      // }),
-      //TODO: infer from interactionTypes schema ... or types..
     }),
     model: anthropic('claude-3-5-sonnet-20240620'),
   })

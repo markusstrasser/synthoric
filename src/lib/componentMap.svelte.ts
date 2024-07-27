@@ -25,6 +25,10 @@ const componentMapper = (actions: Readonly<Actions>): ComponentMap => ({
     component: Markdown,
     propMap: (text: string) => ({ text }),
   },
+  text: {
+    component: Markdown,
+    propMap: (text: string) => ({ text }),
+  },
   choices: {
     component: MultipleChoice,
     propMap: (props: any, interaction?: { isCorrect?: boolean }) => ({

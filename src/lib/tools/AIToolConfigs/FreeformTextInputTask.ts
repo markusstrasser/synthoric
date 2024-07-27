@@ -1,10 +1,18 @@
+import { MarkdownFormattingPrompt } from '$prompts'
 import { z } from 'zod'
 
+const description =
+  'A short exercise task that assumes the user can answer with freeform text input (input form UI)'
 export default {
-  description: 'A short task with freeform text input and a corresponding solution',
-  prompt:
-    'Generate a short exercise task for the user. The user can answer with open ended text input (<input /> UI).',
+  description,
+  prompt: `Generate ${description}`,
 
   params: z.any(),
-  schema: z.string(),
+  schema: z.object({
+    text: z
+      .string()
+      .describe(
+        `The full text content of the task presented to the user in Markdown. ${MarkdownFormattingPrompt}`
+      ),
+  }),
 }
