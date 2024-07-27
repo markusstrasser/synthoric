@@ -1,10 +1,11 @@
 <script lang="ts">
   import actions from '$stores/index.svelte'
+  import debug from '$stores/DebugInfo.svelte'
 
   const { showFilteredOnly = true, title = 'Debug View' } = $props()
 
   const userActions = $derived(actions)
-  const debugInfo = $derived(actions.debugInfo)
+  const debugInfo = $derived(debug.info)
 
   const icons = {
     init: '🚀',

@@ -4,7 +4,6 @@ class ActionState {
   userActions = $state<UserAction[]>([])
   revealedMultipleChoices = $state(false)
   newSubmit = $state(false)
-  debugInfo = $state({})
 
   hasSubmitted = $derived(!!this.userActions.find(action => action.hasSubmitted))
   filteredUserActions = $derived(this.filterUserActions(this.userActions))
@@ -19,14 +18,6 @@ class ActionState {
     this.newSubmit = false
     this.userActions = []
     this.revealedMultipleChoices = false
-  }
-
-  clearDebugInfo() {
-    this.debugInfo = {}
-  }
-
-  setDebugInfo(info: any) {
-    this.debugInfo = info
   }
 
   syncUserActions(userActions: UserAction[]) {

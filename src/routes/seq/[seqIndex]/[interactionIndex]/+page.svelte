@@ -1,7 +1,8 @@
 <script lang="ts">
   import Interaction from '$components/Interaction.svelte'
   import { api } from '$convex/_generated/api.js'
-  import actionState from '$stores/index.svelte.js'
+  import actionState from '$stores/index.svelte'
+  import { setDebugInfo } from '$stores/DebugInfo.svelte'
   import { Button } from '$components/ui/button'
   import { Skeleton } from '$components/ui/skeleton'
   import { page } from '$app/stores'
@@ -110,7 +111,7 @@
 
   $effect(() => {
     console.log(actionState, actionState.newSubmit, 'state')
-    actionState.setDebugInfo({
+    setDebugInfo({
       state: interactionState.type,
       status: statusQ?.data?.status,
       index: interactionIndex,
