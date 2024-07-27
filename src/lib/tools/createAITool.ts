@@ -47,7 +47,7 @@ export default <T extends keyof typeof AIToolConfigs>(config: (typeof AIToolConf
     ${JSON.stringify(input)}
     `
     console.log('tool description', config.description)
-    console.log(`config.prompt: ${config.prompt}`)
+    // console.log(`config.prompt: ${config.prompt}`)
     console.log(`input prompt: ${input}`)
     const { object } = await generateObject({
       prompt: composedPrompt,

@@ -37,7 +37,9 @@ const generateNextInteractionSpec = async ({ contextStr, availableTools }) => {
   
   Here's an example output with placeholders {} for the context you can insert:
   <example outputs>
-  Test the user on the relationship between centripedal force and velocity in circular motion. The task should challenge the user to think about how changing the velocity would affect the centripetal force required to maintain circular motion, both in the case of a roller coaster loop and a satellite orbit. The user previously correctly completed: {...insertRelevantTasks}. The user struggled with {...insertWhatYouThinkAreStrugglepoints}
+  * Test the user on the relationship between centripedal force and velocity in circular motion. The task should challenge the user to think about how changing the velocity would affect the centripetal force required to maintain circular motion, both in the case of a roller coaster loop and a satellite orbit. The user previously correctly completed: {...insertRelevantTasks}. The user struggled with {...insertWhatYouThinkAreStrugglepoints}
+
+  * Building on the user's correct understanding of how velocity affects centripetal force, challenge them to apply this knowledge to a real-world scenario. Present a situation where a space agency needs to adjust a satellite's orbit to a higher altitude while maintaining a circular path. Ask the user to explain the steps the agency would need to take in terms of adjusting the satellite's velocity, and how this relates to the centripetal force required for the new orbit. Encourage them to think about the balance between gravitational pull and the satellite's velocity in maintaining a stable, circular orbit at different altitudes.
   </example outputs>
   `
 

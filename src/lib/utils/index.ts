@@ -1,6 +1,8 @@
 import * as jsyaml from 'js-yaml'
 import type { z } from 'zod'
 import moment from 'moment'
+import { api } from '$convex/_generated/api'
+import { convexClient } from '$lib/providers'
 
 export const formatRelativeTimeAgo = (timeStamp: number): string => moment(timeStamp).fromNow()
 
@@ -14,7 +16,13 @@ export const omit = (keys: string[], obj) =>
   Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k)))
 
 //@ts-ignore
-export const summarizeInteraction = ({ content, userActions = [], firstSeen, systemFeedback }) => {
+export const summarizeInteraction = ({
+  content,
+  userActions = [],
+  firstSeen,
+  systemFeedback,
+  _id,
+}) => {
   const submitAction = userActions.find(action => action.value === 'submit')
 
   if (!submitAction) {
@@ -24,7 +32,8 @@ export const summarizeInteraction = ({ content, userActions = [], firstSeen, sys
   const RelativefirstSeen = formatRelativeTimeAgo(firstSeen)
   return {
     //TODO: make more robust for non-task
-    task: content.task,
+    _id,
+    task: content.task || content.text,
     choices: content.choices || 'freeform-input',
     userInputs: userActions
       .filter(action => action.value !== 'submit')
@@ -85,5 +94,11 @@ const mockInteraction = {
   ],
 }
 console.log(summarizeInteraction(mockInteraction))
+// console.log(await convexClient.query(api.interactions.getAll))
+export const updateStatus = async (status: string) => {
+  await convexClient.mutation(api.cache.newStatus, {
+    status,
+  })
+}
 
 // console.log(jsyaml.dump(mockInteractions.map(summarizeInteraction)))

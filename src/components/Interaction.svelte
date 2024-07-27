@@ -6,9 +6,13 @@
   import { Button } from './ui/button'
   import componentMapper from '$lib/componentMap.svelte'
   import type { UserAction } from '$lib/types'
+  import { compile } from 'svelte/compiler'
 
   const { interactionConfig } = $props<{ interactionConfig: Record<string, unknown> }>()
 
+  const result = compile('<div>hello</div>', {})
+
+  console.log(result, 'result')
   const displayOrderByType = ['task', 'choices', 'hint', 'solution']
 
   const componentMap = componentMapper(actions) as Record<string, unknown>

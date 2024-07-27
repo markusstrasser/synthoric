@@ -5,6 +5,7 @@ import createContextPrompt from '$lib/createContextPrompt'
 import Tools from '$lib/tools'
 import generateNextInteractionSpec from '$lib/generateNextInteractionSpec'
 import { ContentGuidelinePrompt } from '$lib/prompts'
+import { updateStatus } from '$utils/index'
 
 const interactionExamples = [
   {
@@ -13,14 +14,6 @@ const interactionExamples = [
     content: [{ question: 'Calculate the trajectory of a projectile...' }],
   },
 ]
-// console.log(await convexClient.query(api.interactions.getAll))
-
-const updateStatus = async (status: string) => {
-  await convexClient.mutation(api.cache.newStatus, {
-    status,
-  })
-}
-
 const generateNextInteraction = async (seqIndex: number) => {
   updateStatus('Gathering Context')
   console.log('seqIndex', seqIndex)
@@ -29,13 +22,9 @@ const generateNextInteraction = async (seqIndex: number) => {
   })
 
   //? right now fetches entire tables from the Database
-  const { interactions, inferences, sequence } = context
+  const { sequence } = context
 
-  const contextStr = createContextPrompt({
-    interactions,
-    inferences,
-    sequence,
-  })
+  const contextStr = createContextPrompt(context)
 
   console.log(contextStr, 'CONTEXTSTR')
 

@@ -42,6 +42,18 @@
     convexClient.mutation(api.interactions.updateLastSeen, { interactionId })
   })
 
+  const generateUserInsights = () => {
+    fetch('/api/generateUserInsights', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        seqIndex,
+      }),
+    })
+  }
+
   $effect(() => {
     if (actionState.newSubmit) {
       async function onSubmit() {
@@ -182,6 +194,8 @@
   {:else}
     <div></div>
   {/if}
+
+  <Button on:click={generateUserInsights} variant="outline">Generate User Insights</Button>
 
   {#if interactionContent}
     <Button variant="outline" disabled={generateState === 1 || !actionState.hasSubmitted}>

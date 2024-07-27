@@ -7,29 +7,29 @@ import { NoOp } from 'convex-helpers/server/customFunctions'
 export const get = query({
   args: {},
   handler: async ({ db }) => {
-    return await db.query('inferences').order('desc').collect()
+    return await db.query('userInsights').order('desc').collect()
   },
 })
 
 export const getWithSourcesMapped = query({
   args: {},
   handler: async ({ db }) => {
-    const inferences = await db.query('inferences').order('desc').collect()
-    for (const inference of inferences) {
-      inference.sources.map(async (source: any) => {
+    const userInsights = await db.query('userInsights').order('desc').collect()
+    for (const userInsight of userInsights) {
+      userInsight.sources.map(async (source: any) => {
         const mappedSource = await db.get(source.id)
         return { ...source, mappedSource }
       })
     }
-    return inferences
+    return userInsights
   },
 })
 
 export const create = mutation({
   args: {
-    inference: v.any(),
+    userInsight: v.any(),
   },
-  handler: async (ctx, { inference }) => {
-    return await ctx.db.insert('inferences', inference)
+  handler: async (ctx, { userInsight }) => {
+    return await ctx.db.insert('userInsights', userInsight)
   },
 })

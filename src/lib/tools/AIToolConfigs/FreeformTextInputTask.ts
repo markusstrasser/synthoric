@@ -1,4 +1,4 @@
-import { MarkdownFormattingPrompt } from '$prompts'
+import { MarkdownFormattingPrompt } from '../../prompts'
 import { z } from 'zod'
 
 const description =
