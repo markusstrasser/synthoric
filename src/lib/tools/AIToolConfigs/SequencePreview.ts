@@ -1,10 +1,14 @@
 import { z } from 'zod'
 import { defaultStudentDescription } from '../../prompts'
-const description = `A concise preview for a focused, 5-20 minute physics learning sequence. The sequence should cover a specific, well-defined topic or concept that can be meaningfully explored in the given time frame. ${defaultStudentDescription}`
+
+const topic = 'physics'
+const description = `A concise preview for a focused, 5-20 minute ${topic} learning sequence. 
+The sequence should cover a theme or a collection of concepts that can be meaningfully explored (holistically) in the given time frame. 
+${defaultStudentDescription}`
 
 export default {
   description,
-  prompt: `Generate ${description}. The preview should highlight a single, clear physics concept or application, suitable for a short interactive learning experience. Consider including a brief, engaging hook or real-world connection in the tagline.`,
+  prompt: `Generate ${description}. The preview should highlight a single, clear physics concept or application, suitable for a short interactive learning experience`,
   schema: z.object({
     title: z
       .string()

@@ -6,8 +6,8 @@ The goal is to make an AI-driven STEM learning platform that adapts content and 
 
 ## Current Stack
 
-- SvelteKit 5
-- Tailwind 4 alpha
+- Svelte 5, Sveltekit
+- Tailwind
 - Vercel ai sdk (after many hours wasted: I'm avoiding bug-ridden ai/rsc and sticking with core)
 - DB: Convex
 - (soon:) Sentry, Posthog, Clerk
@@ -104,9 +104,13 @@ A: The system includes:
 
 ## TODOs
 
+- [ ]
+- [ ] How to model that a freeform task has a solution/no-solution flag? Default: has solution
+- [ ] Do hints even? Or no?
+- [ ] generate Sequences should have context and user goals in mind
+- [x] useraction store as class...
+- [x] pass in createDispatcher(annotation:{}) => dispatchActionEvent as prop curried addUserAction? (add id, displayIndex, name, etc. component only does value and eventType)
 - [ ] match art to sequence and interaction (pinterest api)
-- [ ] useraction store as class...
-- [ ] pass in createDispatcher(annotation:{}) => dispatchActionEvent as prop curried addUserAction? (add id, displayIndex, name, etc. component only does value and eventType)
 - [ ] Unify /tools to have consistent API. Decide what is a tool (exercise, multipleChoice) and what not (hints, solution?)
 - [ ] Update UI with current progress inside a agentChain (ie. show the task without having to wait for the rest of the task->solution chain to finish)
 - [ ] use Abstractions like https://docs.copilotkit.ai/reference/hooks/useCopilotReadable?

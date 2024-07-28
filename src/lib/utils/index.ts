@@ -3,6 +3,7 @@ import type { z } from 'zod'
 import moment from 'moment'
 import { api } from '$convex/_generated/api'
 import { convexClient } from '$lib/providers'
+import type { Doc } from '$convex/_generated/dataModel'
 
 export const formatRelativeTimeAgo = (timeStamp: number): string => moment(timeStamp).fromNow()
 
@@ -59,6 +60,69 @@ export const schema2dict = (zodSchema: z.ZodObject<z.ZodRawShape>) =>
       (value as z.ZodTypeAny).description || 'No description',
     ])
   )
+
+export function combineKnowledgeComponentsAndInsights(
+  knowledgeComponents: Doc['knowledgeComponents'][],
+  insights: Doc['userInsights'][]
+) {
+  // Create a map of knowledge components for quick lookup
+  const kcMap = new Map(
+    knowledgeComponents.map(kc => [
+      kc._id,
+      {
+        id: kc._id,
+        content: kc.content,
+        type: null, // We'll fill this from the insights
+        insights: [],
+      },
+    ])
+  )
+
+  // Process insights and add them to the corresponding knowledge components
+  for (const insight of insights) {
+    const kc = kcMap.get(insight.KCId)
+    if (kc) {
+      // Set the type from the first insight (assuming it doesn't change)
+      if (!kc.type) {
+        kc.type = insight.type
+      }
+
+      //@ts-ignore
+      kc.insights.push({
+        id: insight._id,
+        assumedMasteryLevel: insight.assumedMasteryLevel,
+        systemConfidence: insight.systemConfidence,
+        timeAgo: formatRelativeTimeAgo(insight._creationTime),
+        timestamp: insight._creationTime,
+        sources: insight.sources,
+      })
+    }
+  }
+
+  // Convert the map back to an array and sort by the latest insight timestamp
+  return Array.from(kcMap.values())
+    .filter(kc => kc.insights.length > 0) // Remove KCs without insights
+    .sort((a, b) => {
+      const latestA = Math.max(...a.insights.map(i => i.timestamp))
+      const latestB = Math.max(...b.insights.map(i => i.timestamp))
+      return latestB - latestA // Sort descending (most recent first)
+    })
+}
+export const joinInteractionsWithSequences = (
+  sequences: Doc['sequences'][],
+  interactions: Doc['interactions'][]
+) => {
+  for (const sequence of sequences) {
+    sequence.fullInteractions = []
+    for (const InteractionIds in sequence.interaction) {
+      const interaction = interactions.find(i => i._id === InteractionIds)
+      if (interaction) {
+        sequence.fullInteractions.push(interaction)
+      }
+    }
+  }
+  return sequences
+}
 
 const mockInteraction = {
   _creationTime: 1721565340841.6702,

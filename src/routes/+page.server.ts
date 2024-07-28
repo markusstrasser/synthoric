@@ -1,11 +1,18 @@
 import { api } from '$convex/_generated/api.js'
+import type { Actions } from './$types'
 
 export const load = async ({ locals }) => {}
 
-export const actions = {
-  default: async ({ fetch, locals }) => {
+export const actions: Actions = {
+  default: async ({ request, fetch, locals }) => {
     try {
-      const res = await fetch('/api/sequences')
+      const data = await request.formData()
+      const type = data.get('type')
+      const isInterleaved = type === 'interleaved'
+      const res = await fetch('/api/sequences', {
+        method: 'POST',
+        body: JSON.stringify({ isInterleaved }),
+      })
       const newSequences = await res.json()
       // Store generated sequences in Convex
       await Promise.all(

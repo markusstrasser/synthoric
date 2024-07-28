@@ -78,5 +78,23 @@
         {/if}
       </Button>
     </form>
+    <form method="post" use:enhance={handleSubmit}>
+      <input type="hidden" name="type" value="interleaved" />
+      <Button
+        variant="outline"
+        size="lg"
+        type="submit"
+        disabled={query.isLoading || isGenerating}
+        class="font-serif"
+      >
+        {#if query.isLoading}
+          Loading...
+        {:else if isGenerating}
+          Generating...
+        {:else}
+          Generate context-aware *Interleaved* Sequences
+        {/if}
+      </Button>
+    </form>
   </div>
 </div>
