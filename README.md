@@ -104,16 +104,19 @@ A: The system includes:
 
 ## TODOs
 
-- [ ]
+- [ ] @html render quick ai content: https://claude.ai/share/505e83e3-8b96-4e75-a265-af63e513a236 or multitree select for guidance specification: https://claude.ai/share/8f25c794-7180-47e7-bddf-1861807db5b0
 - [ ] How to model that a freeform task has a solution/no-solution flag? Default: has solution
 - [ ] Do hints even? Or no?
 - [ ] generate Sequences should have context and user goals in mind
+- [ ] Multistep forms
+- [ ] Multistep functionality without implementing multi-X for everything
 - [x] useraction store as class...
 - [x] pass in createDispatcher(annotation:{}) => dispatchActionEvent as prop curried addUserAction? (add id, displayIndex, name, etc. component only does value and eventType)
 - [ ] match art to sequence and interaction (pinterest api)
 - [ ] Unify /tools to have consistent API. Decide what is a tool (exercise, multipleChoice) and what not (hints, solution?)
 - [ ] Update UI with current progress inside a agentChain (ie. show the task without having to wait for the rest of the task->solution chain to finish)
 - [ ] use Abstractions like https://docs.copilotkit.ai/reference/hooks/useCopilotReadable?
+- [ ] use FormSnap (for diagnostics or signup)
 
 ## Thinking about:
 

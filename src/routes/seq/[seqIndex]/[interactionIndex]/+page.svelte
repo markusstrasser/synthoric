@@ -197,6 +197,9 @@
 
   <Button on:click={generateUserInsights} variant="outline">Generate User Insights</Button>
 
+  {#if 'skipsavailabe'}
+    <Button variant="outline">Skip this one</Button>
+  {/if}
   {#if interactionContent}
     <Button variant="outline" disabled={generateState === 1 || !actionState.hasSubmitted}>
       <a onclick={() => (generateState = 0)} href={nextPageUrl}>Next →</a>
@@ -205,4 +208,9 @@
   {#if interaction?.systemFeedback}
     <SystemFeedback {...interaction.systemFeedback} />
   {/if}
+
+  <!-- TODO: show lecture and add "forfeited: asked for material refresher on the concepts" -->
+  <Button variant="default">I need a Refresher</Button>
+  <Button variant="default">A little Help?</Button>
+  <Button variant="default">A lot of Help?</Button>
 </div>
