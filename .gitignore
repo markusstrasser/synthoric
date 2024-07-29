@@ -1,6 +1,7 @@
 node_modules
 
 # Output
+src/components/_generated/*
 .output
 .vercel
 /.svelte-kit
