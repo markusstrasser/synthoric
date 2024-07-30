@@ -1,4 +1,50 @@
 import type { UserAction } from '../schemas/index.js'
+import Tools from '$lib/tools'
+
+const post = async (route: string, payload: object) => {
+  try {
+    const response = await fetch(route, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    return response.json()
+  } catch (error) {
+    console.error('Error:', error)
+    throw error
+  }
+}
+
+export async function handleInteraction(type: string, payload: any) {
+  switch (type) {
+    case 'REQUEST_HINT':
+    // return await Tools.Hint.execute(payload)
+    case 'REQUEST_INSIGHTS':
+      return await Tools.UserInsight.execute(payload)
+    case 'REQUEST_SKIP':
+      // Implement skip logic
+      return { content: 'Skipping to next interaction...' }
+    case 'REQUEST_NEXT':
+      // Implement next interaction logic
+      return { content: 'Moving to next interaction...' }
+    case 'REQUEST_REFRESHER':
+      // Implement refresher content generation
+      return {
+        content: "<h2>Refresher Content</h2><p>Here's a quick refresher on the topic...</p>",
+      }
+    case 'REQUEST_HELP':
+      // Implement help content generation
+      return { content: "<h2>Help Content</h2><p>Here's some help with the current problem...</p>" }
+    default:
+      throw new Error(`Unsupported interaction type: ${type}`)
+  }
+}
+
+export const machine = {}
+
+const state2Components = {
+  REQUEST_HINT: {},
+}
 
 class ActionState {
   userActions = $state<UserAction[]>([])

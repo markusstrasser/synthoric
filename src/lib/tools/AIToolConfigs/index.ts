@@ -5,6 +5,7 @@ import SubmissionReview from './SubmissionReview'
 import Solution from './Solution'
 import SequencePreview from './SequencePreview'
 import UserInsight from './UserInsight'
+import DynamicComponent from './DynamicComponent'
 
 export {
   UserInsight,
@@ -14,4 +15,5 @@ export {
   SubmissionReview,
   Solution,
   SequencePreview,
+  DynamicComponent,
 }

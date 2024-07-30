@@ -1,8 +1,10 @@
 import { createOpenAI } from '@ai-sdk/openai'
 import { createAnthropic } from '@ai-sdk/anthropic'
-import * as dotenv from 'dotenv'
-dotenv.config()
 import { ConvexHttpClient } from 'convex/browser'
+import { GROQ_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY } from '$env/static/private'
+import { PUBLIC_CONVEX_URL } from '$env/static/public'
+// import * as dotenv from 'dotenv'
+// dotenv.config()
 
 export const groq = createOpenAI({
   // export const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
