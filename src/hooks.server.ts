@@ -1,6 +1,7 @@
-// import { convexClient } from '$lib/providers'
+import { convexClient } from '$lib/providers'
 
-// export const handle = async ({ event, resolve }) => {
-//   event.locals.convexClient = convexClient
-//   return await resolve(event)
-// }
+
+export const handle = async ({ event, resolve }) => {
+  event.locals.convexClient = convexClient
+  return await resolve(event)
+}

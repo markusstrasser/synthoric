@@ -3,9 +3,13 @@ import type { RequestHandler } from './$types'
 import { writeFile, mkdir } from 'node:fs/promises'
 import { nanoid } from 'nanoid'
 import path from 'node:path'
-// import Tools from '$lib/tools'
-// import { dynamicComponentStarterMarkup } from '$lib/tools/AIToolConfigs/DynamicComponent'
-const mockComponent = `
+
+export const POST: RequestHandler = async ({ request }) => {
+  try {
+    const { componentName } = await request.json()
+
+    // Your component generation logic here
+    const generatedComponent = `
     <script>
     import SubmitButton from '$components/SubmitButton.svelte'
     let count = $state(0)
@@ -18,20 +22,7 @@ const mockComponent = `
   </button>  
     `
 
-export const POST: RequestHandler = async ({ request }) => {
-  try {
-    const { componentName, action, interactionId } = await request.json()
-
-    // Your component generation logic here
-    console.log('generating markup')
-    // const markup = await Tools.DynamicComponent.execute()
-    // const generatedComponent = `
-    // ${dynamicComponentStarterMarkup}
-    // ${markup}
-    // `
-    const generatedComponent = mockComponent
-    console.log('generatedComponent', generatedComponent)
-    const filename = `Dynamic_${Date.now()}.svelte`
+    const filename = `Dynamic_${nanoid()}.svelte`
 
     try {
       const dirPath = path.join(process.cwd(), 'src', 'components', '_generated')

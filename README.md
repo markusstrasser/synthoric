@@ -104,12 +104,6 @@ A: The system includes:
 
 ## TODOs
 
-- [ ] Schema: Interaction.markup (instead of content). Markup -> dispatch('BIG-WORD-THAT-DOESN'T NEED TO BE IN THE SCHEMA')... only if it changes the conditions (hide,show etc.)
-      --- [ ] componentMarkup: <Grid {...tooloutput1}></Grid>, props: {'[tooloutput1, tooloutput2]'},
-      --- [ ] this way the markup and actions are explicit and the AI can reason about it. Then have reducers that change the state on actions (like "lastIsTrue")
-      ---- [ ] initValue, stateupdate, svelte snippets/fragments
-      ---- [ ] Collection of reducers like ('takelast'). dispatch({action:FINAL-SUBMIT, reducer: 'takelast' | 'increment', reduceFn: (actions)=>actions[actions.length-1]})
-- [ ] Every generated component has {x} dimensions that I can up/down vote (UI preference)
 - [ ] @html render quick ai content: https://claude.ai/share/505e83e3-8b96-4e75-a265-af63e513a236 or multitree select for guidance specification: https://claude.ai/share/8f25c794-7180-47e7-bddf-1861807db5b0
 - [ ] How to model that a freeform task has a solution/no-solution flag? Default: has solution
 - [ ] Do hints even? Or no?

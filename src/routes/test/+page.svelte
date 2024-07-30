@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ComponentType } from 'svelte'
+  import DynamicComponent_uSjb2dXKysbrg6kR3SGvy from '$components/DynamicComponent_uSjb2dXKysbrg6kR3SGvy.svelte'
 
   let componentName = $state('')
   let DynamicComponent = $state<ComponentType | null>(null)
@@ -16,6 +17,7 @@
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ componentName }),
       })
 
       if (!response.ok) {
@@ -73,6 +75,8 @@
 {#if importPath}
   <p>Import path: {importPath}</p>
 {/if}
+
+<DynamicComponent_uSjb2dXKysbrg6kR3SGvy />
 
 {#if DynamicComponent}
   <div>
