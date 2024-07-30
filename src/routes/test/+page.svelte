@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ComponentType } from 'svelte'
-  import DynamicComponent_uSjb2dXKysbrg6kR3SGvy from '$components/DynamicComponent_uSjb2dXKysbrg6kR3SGvy.svelte'
-
+  import actions, { createDispatch } from '$stores/index.svelte'
+  import Dynamic_1722352682135 from '$components/_generated/Dynamic_1722352682135.svelte'
   let componentName = $state('')
   let DynamicComponent = $state<ComponentType | null>(null)
   let error = $state<string | null>(null)
@@ -76,12 +76,12 @@
   <p>Import path: {importPath}</p>
 {/if}
 
-<DynamicComponent_uSjb2dXKysbrg6kR3SGvy />
+<Dynamic_1722352682135 dispatch={createDispatch()} />
 
 {#if DynamicComponent}
   <div>
     <h3>Generated Component:</h3>
-    <svelte:component this={DynamicComponent} />
+    <svelte:component this={DynamicComponent} dispatch={createDispatch()} />
   </div>
 {:else}
   <p>No component loaded yet.</p>
