@@ -5,8 +5,9 @@ import SubmissionReview from './SubmissionReview'
 import Solution from './Solution'
 import SequencePreview from './SequencePreview'
 import UserInsight from './UserInsight'
-
+import DynamicInterface from './DynamicInterface'
 export {
+  DynamicInterface,
   UserInsight,
   MultipleChoiceTask,
   FreeFormTextInputTask,
