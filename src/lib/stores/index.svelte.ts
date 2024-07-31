@@ -40,7 +40,10 @@ export const createDispatch = (config = {}) => {
     if (action.type === 'revealedMultipleChoices') {
       actionState.revealedMultipleChoices = true
     }
-    actionState.userActions = [...actionState.userActions, { ...action, timeStamp: Date.now() }]
+    actionState.userActions = [
+      ...actionState.userActions,
+      { ...config, ...action, timeStamp: Date.now() },
+    ]
   }
   return dispatch
 }

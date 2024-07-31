@@ -5,6 +5,7 @@
   const {
     choices,
     isCorrect,
+    id,
     isReadOnly = false,
     dispatch,
   } = $props<{
@@ -14,7 +15,6 @@
     dispatch: (action: UserAction) => void
   }>()
 
-  const id = nanoid(4)
   let selectedIndex = $state<number | null>(null)
 
   function handleChoice(index: number) {

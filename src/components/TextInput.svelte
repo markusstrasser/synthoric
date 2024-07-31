@@ -1,4 +1,5 @@
 <script lang="ts">
+  //TODO: use shadcn Input instead
   //TODO: derive input value from store1.filteredUserActions?
   let { id = '', placeholder = '', value = '', dispatch } = $props()
 
