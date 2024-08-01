@@ -1,6 +1,6 @@
 import type { UserAction } from '../schemas/index.js'
 
-class ActionState {
+export class ActionState {
   userActions = $state<UserAction[]>([])
   revealedMultipleChoices = $state(false)
   newSubmit = $state(false)

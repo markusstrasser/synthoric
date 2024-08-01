@@ -1,6 +1,13 @@
 <script lang="ts">
-  import { mockInteraction } from '$lib/mocks'
-  import Interaction from '$components/Interaction.svelte'
+  import { ActionState } from '$stores/index.svelte.ts'
+  // import { mockInteraction } from '$lib/mocks'
+  // import Interaction from '$components/Interaction.svelte'
+  import actions from '$stores/index.svelte'
 </script>
 
-<Interaction interactionConfig={mockInteraction} />
+<button on:click={() => (actions.newSubmit = true)}>Submit</button>
+<div>
+  {JSON.stringify(actions)}
+</div>
+<div>submitted: {actions.newSubmit}</div>
+<!-- <Interaction interactionConfig={mockInteraction} /> -->
