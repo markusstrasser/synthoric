@@ -1,4 +1,4 @@
-import fs from 'node:fs/promises'
+import fs from 'node:fs'
 import path from 'node:path'
 import ignore from 'ignore'
 import { findUpSync } from 'find-up'
@@ -67,34 +67,44 @@ export const getProjectRoot = () => {
   return path.dirname(packageJsonPath)
 }
 
-export async function walkDir(
+export function walkDirSync(
   baseDir: string,
   currentDir: string,
   ig: ReturnType<typeof ignore>,
   depth: number
-): Promise<string[]> {
-  const list = await fs.readdir(currentDir)
-  const results = await Promise.all(
-    list.map(async file => {
-      const filePath = path.join(currentDir, file)
-      const relativePath = path.relative(baseDir, filePath)
-      if (ig.ignores(relativePath)) return []
-      const stat = await fs.stat(filePath)
-      return stat.isDirectory() && depth !== 0
-        ? walkDir(baseDir, filePath, ig, depth > 0 ? depth - 1 : -1)
-        : [filePath]
-    })
-  )
-  return results.flat()
+): string[] {
+  const list = fs.readdirSync(currentDir)
+  const results: string[] = []
+
+  for (const file of list) {
+    const filePath = path.join(currentDir, file)
+    const relativePath = path.relative(baseDir, filePath)
+    if (ig.ignores(relativePath)) continue
+
+    const stat = fs.statSync(filePath)
+    if (stat.isDirectory() && depth !== 0) {
+      results.push(...walkDirSync(baseDir, filePath, ig, depth > 0 ? depth - 1 : -1))
+    } else {
+      results.push(filePath)
+    }
+  }
+
+  return results
 }
 
 export const resolveProjectPath = (...segments: string[]) =>
   path.join(getProjectRoot(), ...segments)
-export const createIgnore = async (dir: string) => {
+
+export const createIgnoreSync = (dir: string) => {
   const gitignorePath = path.join(dir, '.gitignore')
-  const gitignorePatterns = await fs
-    .readFile(gitignorePath, 'utf-8')
-    .then(content => content.split('\n').filter(line => line.trim() && !line.startsWith('#')))
-    .catch(() => [])
+  let gitignorePatterns: string[] = []
+
+  try {
+    const content = fs.readFileSync(gitignorePath, 'utf-8')
+    gitignorePatterns = content.split('\n').filter(line => line.trim() && !line.startsWith('#'))
+  } catch {
+    // If .gitignore doesn't exist or can't be read, use an empty array
+  }
+
   return ignore().add([...IGNORE_PATTERNS, ...gitignorePatterns])
 }

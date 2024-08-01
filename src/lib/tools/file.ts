@@ -1,5 +1,5 @@
-import fs from 'node:fs/promises'
-import { createIgnore, getProjectRoot, walkDir } from './fileutils'
+import fs from 'node:fs'
+import { createIgnoreSync, getProjectRoot, walkDirSync } from './fileutils'
 import { execSync } from 'node:child_process'
 import { dirname } from 'node:path'
 import path from 'node:path'
@@ -10,34 +10,39 @@ export function readProjectTree(): string {
     encoding: 'utf-8',
   })
 }
-export async function readFile(filePath: string): Promise<string> {
-  return fs.readFile(filePath, 'utf-8')
-}
-export const makeDirectory = (path: string) => fs.mkdir(path, { recursive: true })
-export const remove = async (path: string): Promise<void> => {
-  await fs.rm(path, { recursive: true, force: true })
-}
-export async function writeFile(filePath: string, content: string): Promise<void> {
-  await makeDirectory(dirname(filePath))
-  await fs.writeFile(filePath, content, 'utf-8')
+
+export function readFile(filePath: string): string {
+  return fs.readFileSync(filePath, 'utf-8')
 }
 
-export async function readFolderContents(target: string, depth: number): Promise<string> {
+export const makeDirectory = (path: string) => fs.mkdirSync(path, { recursive: true })
+
+export const remove = (path: string): void => {
+  fs.rmSync(path, { recursive: true, force: true })
+}
+
+export function writeFile(filePath: string, content: string): void {
+  makeDirectory(dirname(filePath))
+  fs.writeFileSync(filePath, content, 'utf-8')
+}
+
+export function readFolderContents(target: string, depth: number): string {
   const absoluteTarget = path.resolve(target)
-  const ig = await createIgnore(absoluteTarget)
-  const files = await walkDir(absoluteTarget, absoluteTarget, ig, depth)
+  const ig = createIgnoreSync(absoluteTarget)
+  const files = walkDirSync(absoluteTarget, absoluteTarget, ig, depth)
 
-  const content = await Promise.all(
-    files.map(async file => {
-      const stat = await fs.stat(file)
-      const relativePath = path.relative(absoluteTarget, file)
-      const lastModified = stat.mtime.toISOString()
-      const header = `\n/* File: ${relativePath}\n   Absolute path: ${file}\n   Last modified: ${lastModified} */\n\n`
-      return (
-        header +
-        (stat.isDirectory() ? `// Directory: ${relativePath}\n` : await fs.readFile(file, 'utf-8'))
-      )
-    })
-  )
+  const content = files.map(file => {
+    const stat = fs.statSync(file)
+    const relativePath = path.relative(absoluteTarget, file)
+    const lastModified = stat.mtime.toISOString()
+    const header = `\n/* File: ${relativePath}\n   Absolute path: ${file}\n   Last modified: ${lastModified} */\n\n`
+    return (
+      header +
+      (stat.isDirectory() ? `// Directory: ${relativePath}\n` : fs.readFileSync(file, 'utf-8'))
+    )
+  })
+
   return content.join('\n')
 }
+
+console.log(readFolderContents('src/components/ui', 4))
