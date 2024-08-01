@@ -1,10 +1,8 @@
 import { Anthropic } from '@anthropic-ai/sdk'
-import StreamingJSONParser from './StreamingJSONParser'
-import toolDispatcher from '../../../.scratches/markus_TODO/toolDispatcher'
-
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 })
+import StreamingJSONParser from './StreamingJSONParser'
 
 export const streamResponse = async (
   { prefill, promptWithSchema }: { prefill: string; promptWithSchema: string },

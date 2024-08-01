@@ -4,6 +4,7 @@
   // import { mockInteraction } from '$lib/mocks'
   // import Interaction from '$components/Interaction.svelte'
   import actions from '$stores/index.svelte'
+  import { createDispatch } from '$stores/index.svelte'
   import MultipleChoice from '$components/core/MultipleChoice.svelte'
   import * as DropdownMenu from '$components/ui/dropdown-menu'
   import * as Select from '$components/ui/select'

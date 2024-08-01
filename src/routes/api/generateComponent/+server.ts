@@ -4,7 +4,12 @@ import { writeFile, mkdir } from 'node:fs/promises'
 import { nanoid } from 'nanoid'
 import path from 'node:path'
 import Tools from '$lib/tools'
-import { dynamicComponentStarterMarkup } from '$lib/tools/AIToolConfigs/DynamicInterface'
+// import { dynamicComponentStarterMarkup } from '$lib/tools/AIToolConfigs/DynamicInterface'
+import {
+  generateDynamicInterface,
+  dynamicComponentStarterMarkup,
+} from '$lib/tools/AIToolConfigs/DynamicInterface'
+
 const mockComponent = `
     <script>
     import SubmitButton from '$components/SubmitButton.svelte'
@@ -24,7 +29,8 @@ export const POST: RequestHandler = async ({ request }) => {
 
     // Your component generation logic here
     console.log('generating markup')
-    const markup = await Tools.DynamicInterface.execute()
+    // const markup = await Tools.DynamicInterface.execute()
+    const markup = await generateDynamicInterface()
     const generatedComponent = `
     ${dynamicComponentStarterMarkup}
     ${markup}

@@ -3,7 +3,10 @@ import { createAnthropic } from '@ai-sdk/anthropic'
 import * as dotenv from 'dotenv'
 dotenv.config()
 import { ConvexHttpClient } from 'convex/browser'
-
+import { Anthropic } from '@anthropic-ai/sdk'
+export const anthropicClaude = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+})
 export const groq = createOpenAI({
   // export const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
   baseURL: 'https://api.groq.com/openai/v1',

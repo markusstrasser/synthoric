@@ -32,20 +32,30 @@ export class ActionState {
 
 const actionState = new ActionState()
 
-export const createDispatch = (config = {}) => {
-  const dispatch = (action: UserAction) => {
-    if (action.hasSubmitted) {
-      actionState.newSubmit = true
-    }
-    if (action.type === 'revealedMultipleChoices') {
-      actionState.revealedMultipleChoices = true
-    }
-    actionState.userActions = [
-      ...actionState.userActions,
-      { ...config, ...action, timeStamp: Date.now() },
-    ]
+export const dispatch = (type: string, action: UserAction, config: Record<string, any> = {}) => {
+  // Check for keyword clashes between config and action
+  const clashingKeys = Object.keys(config).filter(key => key in action)
+
+  if (clashingKeys.length > 0) {
+    throw new Error(
+      `Keyword clash detected between config and action. Clashing keys: ${clashingKeys.join(', ')}`
+    )
   }
-  return dispatch
+
+  if (action.hasSubmitted) {
+    actionState.newSubmit = true
+  }
+  if (type === 'revealedMultipleChoices') {
+    actionState.revealedMultipleChoices = true
+  }
+  actionState.userActions = [
+    ...actionState.userActions,
+    { type, ...config, ...action, timeStamp: Date.now() },
+  ]
+}
+
+export const createDispatch = (type: string, config: Record<string, any>) => {
+  return (action: UserAction) => dispatch(type, action, config)
 }
 
 export default actionState

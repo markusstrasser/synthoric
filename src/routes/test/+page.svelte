@@ -1,12 +1,11 @@
 <script lang="ts">
   import type { ComponentType } from 'svelte'
   import actions, { createDispatch } from '$stores/index.svelte'
-  import Dynamic_1722352682135 from '$components/_generated/Dynamic_1722352682135.svelte'
+  // import Dynamic_1722352682135 from '$components/_generated/Dynamic_1722533440791.svelte'
   let componentName = $state('')
   let DynamicComponent = $state<ComponentType | null>(null)
   let error = $state<string | null>(null)
   let importPath = $state<string>('')
-
   async function generateComponent() {
     error = null
     DynamicComponent = null
@@ -75,8 +74,6 @@
 {#if importPath}
   <p>Import path: {importPath}</p>
 {/if}
-
-<Dynamic_1722352682135 dispatch={createDispatch()} />
 
 {#if DynamicComponent}
   <div>

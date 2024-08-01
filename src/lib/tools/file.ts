@@ -45,4 +45,6 @@ export function readFolderContents(target: string, depth: number): string {
   return content.join('\n')
 }
 
-console.log(readFolderContents('src/components/ui', 4))
+// console.log(readFolderContents('src/components/ui', 4))
+// console.log(readFolderContents('src/components/core', 4))
+console.log(readFile('src/lib/stores/index.svelte.ts'))
