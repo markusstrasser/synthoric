@@ -54,8 +54,10 @@ export const dispatch = (type: string, action: UserAction, config: Record<string
   ]
 }
 
-export const createDispatch = (type: string, config: Record<string, any>) => {
-  return (action: UserAction) => dispatch(type, action, config)
-}
+export const createDispatch =
+  (type: string, config: Record<string, any> = {}) =>
+  //? curry dispatch
+  (action: UserAction) =>
+    dispatch(type, action, config)
 
 export default actionState

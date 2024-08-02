@@ -3,16 +3,13 @@ import { createIgnoreSync, getProjectRoot, walkDirSync } from './fileutils'
 import { execSync } from 'node:child_process'
 import { dirname } from 'node:path'
 import path from 'node:path'
+import { readFileSync } from 'node:fs'
 
 export function readProjectTree(): string {
   const root = getProjectRoot()
   return execSync(`tree -L 3 -I 'node_modules|.git|.svelte-kit|build|dist' ${root}`, {
     encoding: 'utf-8',
   })
-}
-
-export function readFile(filePath: string): string {
-  return fs.readFileSync(filePath, 'utf-8')
 }
 
 export const makeDirectory = (path: string) => fs.mkdirSync(path, { recursive: true })
@@ -47,4 +44,4 @@ export function readFolderContents(target: string, depth: number): string {
 
 // console.log(readFolderContents('src/components/ui', 4))
 // console.log(readFolderContents('src/components/core', 4))
-console.log(readFile('src/lib/stores/index.svelte.ts'))
+// console.log(readFile('src/lib/stores/index.svelte.ts'))
