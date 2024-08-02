@@ -3,7 +3,7 @@
 
   const { id = '', disabled = false } = $props()
 
-  const dispatch = createDispatch({ type: 'button-click', id })
+  const dispatch = createDispatch('button-click')
 </script>
 
 <button
