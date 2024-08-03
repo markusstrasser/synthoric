@@ -1,7 +1,5 @@
-import { readFileSync } from 'node:fs'
-
 export const ApplicationExplainer = `
-You are an AI for a new generation of AI powered learning app.`
+You are an AI for a new generation of AI powered learning app featuring generative user interfaces`
 
 const deleted = `
 * Avoid breaking the fourth wall

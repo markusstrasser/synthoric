@@ -7,7 +7,8 @@ export default ({ interactions, userInsights, sequence, knowledgeComponents }) =
   const [currentSequenceInteractionsStr, otherSequencesInteractionsStr] = _.partition(
     interactions,
     i => sequence.interactions.includes(i._id)
-  ).map(group => JSON.stringify(group.map(summarizeInteraction)))
+  )
+  //.map(group => JSON.stringify(group.map(summarizeInteraction)))
   //'_creationTime'
   const infs = JSON.stringify(omit(['_id', 'sources'], userInsights))
 
@@ -27,11 +28,11 @@ export default ({ interactions, userInsights, sequence, knowledgeComponents }) =
     </LearningSequenceTopic>
     <interactions>
       <from-current-learning-sequence>
-      ${currentSequenceInteractionsStr}
+      ${JSON.stringify(currentSequenceInteractionsStr)}
       </from-current-learning-sequence>
 
       <from-other-sequences>
-      ${otherSequencesInteractionsStr}
+      ${JSON.stringify(otherSequencesInteractionsStr)}
       </from-other-sequences>
     </interactions>
 

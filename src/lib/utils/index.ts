@@ -38,12 +38,13 @@ export const summarizeInteraction = ({
     choices: content.choices || 'freeform-input',
     userInputs: userActions
       .filter(action => action.value !== 'submit')
-      .map(({ type, value, timeStamp }) => {
+      .map(({ type, timeStamp, ...rest }) => {
         const timeInSeconds = (timeStamp - firstSeen) / 1000
         return {
           type,
           timeUntilActionInSeconds: timeInSeconds,
-          ...(typeof value === 'object' && value !== null ? value : { value }),
+          ...rest,
+          // ...(typeof value === 'object' && value !== null ? value : { value }),
         }
       }),
 

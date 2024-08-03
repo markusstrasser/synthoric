@@ -6,13 +6,12 @@ export class ActionState {
   newSubmit = $state(false)
 
   hasSubmitted = $derived(!!this.userActions.find(action => action.hasSubmitted))
-  filteredUserActions = $derived(this.filterUserActions(this.userActions))
-
-  filterUserActions(actions: UserAction[]): UserAction[] {
-    const grouped = Object.groupBy(actions, action => action.type)
-    //@ts-ignore
-    return Object.values(grouped).map(group => group.sort((a, b) => b.timeStamp - a.timeStamp)[0])
-  }
+  actionsByType = $derived(Object.groupBy(this.userActions, action => action.type))
+  filteredUserActions = $derived(
+    Object.values(this.actionsByType).map(
+      group => group.sort((a, b) => b.timeStamp - a.timeStamp)[0]
+    )
+  )
 
   reset() {
     this.newSubmit = false
@@ -32,32 +31,30 @@ export class ActionState {
 
 const actionState = new ActionState()
 
-export const dispatch = (type: string, action: UserAction, config: Record<string, any> = {}) => {
-  // Check for keyword clashes between config and action
-  const clashingKeys = Object.keys(config).filter(key => key in action)
-
-  if (clashingKeys.length > 0) {
-    throw new Error(
-      `Keyword clash detected between config and action. Clashing keys: ${clashingKeys.join(', ')}`
-    )
-  }
-
-  if (action.hasSubmitted) {
+export const dispatch = (type: string, action: any, metaData: Record<string, any> = {}) => {
+  if (action?.hasSubmitted) {
     actionState.newSubmit = true
   }
   if (type === 'revealedMultipleChoices') {
     actionState.revealedMultipleChoices = true
   }
-  actionState.userActions = [
-    ...actionState.userActions,
-    { type, ...config, ...action, timeStamp: Date.now() },
-  ]
+  actionState.userActions.push({ type, ...action, metaData, timeStamp: Date.now() })
 }
 
 export const createDispatch =
-  (type: string, config: Record<string, any> = {}) =>
+  (type: string, metaData: Record<string, any> = {}) =>
   //? curry dispatch
-  (action: UserAction) =>
-    dispatch(type, action, config)
+  (action: any) => {
+    // Check for keyword clashes between config and action
+    const clashingKeys = Object.keys(metaData).filter(key => key in action)
+
+    if (clashingKeys.length > 0) {
+      throw new Error(
+        `Keyword clash detected between config and action. Clashing keys: ${clashingKeys.join(', ')}`
+      )
+    }
+
+    return dispatch(type, action, metaData)
+  }
 
 export default actionState

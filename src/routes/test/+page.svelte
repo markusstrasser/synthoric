@@ -1,11 +1,14 @@
 <script lang="ts">
   import type { ComponentType } from 'svelte'
+  import Markdown from '$components/core/Markdown.svelte'
   import actions, { createDispatch } from '$stores/index.svelte'
-  // import Dynamic_1722352682135 from '$components/_generated/Dynamic_1722533440791.svelte'
+  import DynamicTest from '$components/_generated/Dynamic_1722706444944.svelte'
   let componentName = $state('')
   let DynamicComponent = $state<ComponentType | null>(null)
   let error = $state<string | null>(null)
   let importPath = $state<string>('')
+  let InteractionSpecDebug = $state<string>('')
+
   async function generateComponent() {
     error = null
     DynamicComponent = null
@@ -29,6 +32,7 @@
         // importPath = `../../components/${result.filename}`
         importPath = `${result.filePath}`
         console.log('Attempting to import from:', importPath)
+        InteractionSpecDebug = result.debug
 
         try {
           const module = await import(/* @vite-ignore */ importPath)
@@ -67,6 +71,7 @@
   <button type="submit">Generate Component</button>
 </form>
 
+<Markdown content={InteractionSpecDebug} />
 {#if error}
   <p style="color: red;">{error}</p>
 {/if}
@@ -78,8 +83,10 @@
 {#if DynamicComponent}
   <div>
     <h3>Generated Component:</h3>
-    <svelte:component this={DynamicComponent} dispatch={createDispatch()} />
+    <svelte:component this={DynamicComponent} />
   </div>
 {:else}
   <p>No component loaded yet.</p>
 {/if}
+
+<DynamicTest />

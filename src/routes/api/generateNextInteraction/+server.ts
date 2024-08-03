@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
 import { api } from '$convex/_generated/api.js'
 import { convexClient } from '$lib/providers'
-import createContextPrompt from '$lib/createContextPrompt'
+import formatContextPrompt from '$lib/formatContextPrompt'
 import Tools from '$lib/tools'
 import generateNextInteractionSpec from '$lib/generateNextInteractionSpec'
 import { ContentGuidelinePrompt } from '$lib/prompts'
@@ -20,13 +20,11 @@ const generateNextInteraction = async (seqIndex: number) => {
   const context = await convexClient.query(api.interactions.getContext, {
     seqIndex,
   })
+  const contextStr = formatContextPrompt(context)
+  console.log(contextStr, 'CONTEXTSTR')
 
   //? right now fetches entire tables from the Database
   const { sequence } = context
-
-  const contextStr = createContextPrompt(context)
-
-  console.log(contextStr, 'CONTEXTSTR')
 
   const { MultipleChoiceTask, FreeFormTextInputTask } = Tools
   const availableTools = { MultipleChoiceTask, FreeFormTextInputTask } as const

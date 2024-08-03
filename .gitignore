@@ -1,5 +1,5 @@
 node_modules
-
+.logs
 # Output
 src/components/_generated/*
 .output

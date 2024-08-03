@@ -1,4 +1,5 @@
 <script lang="ts">
+  import P5Example2 from './../../components/core/P5Example2.svelte'
   import Dropdown from '$components/core/Dropdown.svelte'
   import { ActionState } from '$stores/index.svelte.ts'
   // import { mockInteraction } from '$lib/mocks'
@@ -9,6 +10,17 @@
   import * as DropdownMenu from '$components/ui/dropdown-menu'
   import * as Select from '$components/ui/select'
   import SolutionReview from '$components/core/SolutionReview.svelte'
+
+  import P5Example from '$components/core/P5Example.svelte'
+  import LinePlot from '$components/core/LinePlot.svelte'
+  import * as d3 from 'd3'
+
+  let data = $state(d3.ticks(-2, 2, 200).map(Math.sin))
+
+  function onMousemove(event) {
+    const [x, y] = d3.pointer(event)
+    data = data.slice(-200).concat(Math.atan2(x, y))
+  }
 
   const dispatch = (...args) => console.log(args)
 
@@ -122,5 +134,12 @@
   steps={mockSolutionReviewData.steps}
   onSelect={handleSolutionReviewSelect}
 />
+
+<div onmousemove={onMousemove}>
+  <LinePlot {data} />
+</div>
+
+<P5Example />
+<P5Example2 />
 
 <!-- <Interaction interactionConfig={mockInteraction} /> -->

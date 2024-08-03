@@ -1,14 +1,13 @@
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { writeFile, mkdir } from 'node:fs/promises'
-import { nanoid } from 'nanoid'
+import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import Tools from '$lib/tools'
+import { convexClient } from '$lib/providers'
+import { api } from '$convex/_generated/api'
+import formatContextPrompt from '$lib/formatContextPrompt'
+import generateDynamicInterface from '$lib/generateDynamicInterface'
 // import { dynamicComponentStarterMarkup } from '$lib/tools/AIToolConfigs/DynamicInterface'
-import {
-  generateDynamicInterface,
-  dynamicComponentStarterMarkup,
-} from '$lib/tools/AIToolConfigs/DynamicInterface'
 
 const mockComponent = `
     <script>
@@ -23,20 +22,22 @@ const mockComponent = `
   </button>  
     `
 
+import { writeFile } from '$lib/tools/file'
 export const POST: RequestHandler = async ({ request }) => {
   try {
-    const { componentName, action, interactionId } = await request.json()
-
+    const { componentName, patchPrompt, action, interactionId, seqIndex = 0 } = await request.json()
+    const context = await convexClient.query(api.interactions.getContext, {
+      seqIndex,
+    })
+    const contextStr = formatContextPrompt(context)
+    writeFile('.logs/context.txt', contextStr)
+    const { specficationPrompt, debug } = await Tools.InterfaceSpec.execute(contextStr)
+    console.log('Interaction Spec', specficationPrompt)
+    writeFile('.logs/interactionSpec.txt', specficationPrompt)
     // Your component generation logic here
-    console.log('generating markup')
-    // const markup = await Tools.DynamicInterface.execute()
-    const markup = await generateDynamicInterface()
-    const generatedComponent = `
-    ${dynamicComponentStarterMarkup}
-    ${markup}
-    `
-    // const generatedComponent = mockComponent
-    console.log('generatedComponent', generatedComponent)
+    const svelteCode = await generateDynamicInterface(specficationPrompt)
+    writeFile('.logs/generatedComponent.txt', svelteCode)
+    // console.log('generatedComponent', svelteCode)
     const filename = `Dynamic_${Date.now()}.svelte`
 
     try {
@@ -47,11 +48,12 @@ export const POST: RequestHandler = async ({ request }) => {
       await mkdir(dirPath, { recursive: true })
 
       // Write the file
-      await writeFile(filePath, generatedComponent)
+      await writeFile(filePath, svelteCode)
 
       return json({
         success: true,
         filePath,
+        debug,
       })
     } catch (error) {
       console.error('Error saving component:', error)
