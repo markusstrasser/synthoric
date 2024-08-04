@@ -81,8 +81,12 @@ const ComponentsInfo = `
 <Component-Documentation>
   Here's the info on how to use some of the imported components and utils:
   ${readFolderContents('src/components/core', 4)}
-  ${readFolderContents('src/components/ui/form', 4)}
+
+  Some available Svelte Actions:
+  ${readFileSync('src/lib/prompts/Svelte-Actions.md', 'utf8')}
 </Component-Documentation>`
+
+// ${readFolderContents('src/components/ui/form', 4)}
 
 const createDynamicComponentPrompt = (InteractionSpec: string) => `
 ${ApplicationExplainer}
@@ -126,7 +130,7 @@ export default async (InterfaceSpec: string) => {
   try {
     const response = await anthropicClaude.messages.create({
       model: 'claude-3-5-sonnet-20240620',
-      max_tokens: 2024,
+      max_tokens: 4048,
       system: createDynamicComponentPrompt(InterfaceSpec),
       messages: [
         { role: 'user', content: '<waiting for response>' },

@@ -25,7 +25,7 @@ const mockComponent = `
 import { writeFile } from '$lib/tools/file'
 export const POST: RequestHandler = async ({ request }) => {
   try {
-    const { componentName, patchPrompt, action, interactionId, seqIndex = 0 } = await request.json()
+    const { componentName, patchPrompt, action, interactionId, seqIndex = 2 } = await request.json()
     const context = await convexClient.query(api.interactions.getContext, {
       seqIndex,
     })

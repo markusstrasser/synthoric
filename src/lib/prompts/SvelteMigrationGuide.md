@@ -216,32 +216,45 @@ Retrieves the custom element's `this` reference:
 $host().dispatchEvent(new CustomEvent('greeting', { detail: greeting }))
 ```
 
-## Imports
+## Gotchas
 
-New imports from 'svelte':
+### Derived Values, declaration:
 
-- flushSync
-- mount
-- hydrate
-- unmount
-- untrack
-- createRawSnippet
+THIS DOES NOT WORK
 
-From 'svelte/reactivity':
+```javascript
+//! this is the wrong syntax
+$derived: {
+  //! WRONG DO NOT DECLARE DERIVED VALUES LIKE THIS
+  const leoVelocity = Math.sqrt((G * EARTH_MASS) / leoRadius)
+  const geoVelocity = Math.sqrt((G * EARTH_MASS) / geoRadius)
+  const leoCentripetalForce = (satelliteMass * leoVelocity ** 2) / leoRadius
+}
+```
 
-- SvelteMap, SvelteSet, SvelteDate, SvelteURL
+DO THIS INSTEAD:
 
-From 'svelte/events':
+```javascript
+const leoVelocity = $derived(Math.sqrt((G * EARTH_MASS) / leoRadius))
+const geoVelocity = $derived(Math.sqrt((G * EARTH_MASS) / geoRadius))
+const leoCentripetalForce = $derived((satelliteMass * leoVelocity ** 2) / leoRadius)
+```
 
-- on
+### Event listeners syntax
 
-From 'svelte/server':
+BEFORE:
+on:click
+on:input
+on:change
+on:mouseover
 
-- render
-
-From 'svelte/elements':
-
-- Various DOM types for proper HTML element typing
+AFTER:
+onclick
+oninput
+onmouseover
+onchange
+--
+ie. <button onclick={handleClick}>Click me</button>
 
 ## Benefits of Runes
 
