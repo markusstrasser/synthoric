@@ -1,40 +1,33 @@
 <script lang="ts">
+  import Markdown from '$components/core/Markdown.svelte'
+
   let {
     choices,
     isCorrect,
-    id = crypto.randomUUID(),
     isReadOnly = false,
     onSelect,
     selectedIndex = $bindable<number | null>(null),
   } = $props<{
     choices: string[]
     isCorrect?: boolean[]
-    id?: string
     isReadOnly?: boolean
     onSelect: (choice: string, index: number) => void
   }>()
 
-  // let selectedIndex = $state<number | null>(null)
-
   const selectedChoice = $derived(selectedIndex !== null ? choices[selectedIndex] : null)
-  const isAnswered = $derived(selectedIndex !== null)
 
   $effect(() => {
-    if (selectedIndex !== null) {
-      onSelect(selectedChoice, selectedIndex)
-    }
+    onSelect(selectedChoice, selectedIndex)
   })
 
   function handleChoice(index: number) {
-    if (!isReadOnly) {
-      selectedIndex = index
-    }
+    if (isReadOnly) return
+    selectedIndex = index
   }
 </script>
 
 {#snippet choiceItem(choice: string, index: number)}
   {@const isSelected = selectedIndex === index}
-  {@const isCorrectAnswer = isCorrect?.[index]}
   <label
     class="flex items-center space-x-2 rounded-md p-2 transition-colors"
     class:bg-gray-100={isSelected}
@@ -42,18 +35,17 @@
   >
     <input
       type="radio"
-      {id}
       value={index}
       bind:group={selectedIndex}
       disabled={isReadOnly}
       onclick={() => handleChoice(index)}
     />
-    <span>{choice}</span>
-    {#if isAnswered && isSelected}
+    <Markdown content={choice} />
+    <!-- {#if isAnswered && isSelected}
       <span class:text-green-500={isCorrectAnswer} class:text-red-500={!isCorrectAnswer}>
         {isCorrectAnswer ? '✓' : '✗'}
       </span>
-    {/if}
+    {/if} -->
   </label>
 {/snippet}
 
@@ -61,4 +53,5 @@
   {#each choices as choice, index (choice)}
     {@render choiceItem(choice, index)}
   {/each}
+  <button onclick={() => (selectedIndex = null)}>UnSelect</button>
 </div>

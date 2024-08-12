@@ -77,13 +77,13 @@ Your output should be a CONTINUATION of the starter code provided ie:
 </FormattingInstructions>
 `
 
+// Some available Svelte Actions:
+// ${readFileSync('src/lib/prompts/Svelte-Actions.md', 'utf8')}
 const ComponentsInfo = `
 <Component-Documentation>
   Here's the info on how to use some of the imported components and utils:
   ${readFolderContents('src/components/core', 4)}
 
-  Some available Svelte Actions:
-  ${readFileSync('src/lib/prompts/Svelte-Actions.md', 'utf8')}
 </Component-Documentation>`
 
 // ${readFolderContents('src/components/ui/form', 4)}

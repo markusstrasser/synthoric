@@ -3,6 +3,7 @@
   import Markdown from '$components/core/Markdown.svelte'
   import actions, { createDispatch } from '$stores/index.svelte'
   import DynamicTest from '$components/_generated/Dynamic_1722868406297.svelte'
+  import Showcase from '$components/core/Showcase.svelte'
   let componentName = $state('')
   let DynamicComponent = $state<ComponentType | null>(null)
   let error = $state<string | null>(null)
@@ -90,3 +91,6 @@
 {/if}
 
 <DynamicTest />
+
+<h1>Showcase</h1>
+<Showcase />

@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { Button } from '$components/ui/button'
-  import { Tooltip, TooltipContent, TooltipTrigger } from '$components/ui/tooltip'
-  import SvelteMarkdown from 'svelte-markdown'
+  import { fade } from 'svelte/transition'
 
   interface GridItem {
     id: string
@@ -10,95 +8,74 @@
     col: number
   }
 
-  export let items: GridItem[] = []
-  export let rows: number = 3
-  export let cols: number = 3
-  export let rowLabels: string[] = []
-  export let colLabels: string[] = []
-  export let onSubmit: (selectedIds: string[]) => void = () => {}
+  let {
+    items = [],
+    rows = 3,
+    cols = 3,
+    rowLabels = [],
+    colLabels = [],
+    onSelect = (selectedIds: string[]) => {},
+  } = $props<{
+    items: GridItem[]
+    rows: number
+    cols: number
+    rowLabels: string[]
+    colLabels: string[]
+    onSelect: (selectedIds: string[]) => void
+  }>()
 
-  let selectedItems: string[] = []
+  let selectedItems = $state<string[]>([])
 
-  function toggleItem(id: string) {
+  const toggleItem = (id: string) => {
     selectedItems = selectedItems.includes(id)
       ? selectedItems.filter(itemId => itemId !== id)
       : [...selectedItems, id]
+    onSelect(selectedItems)
   }
 
-  function handleSubmit() {
-    onSubmit(selectedItems)
-  }
+  $inspect(selectedItems)
+  // $effect(() => {
+  //   console.log('Selected items:', selectedItems)
+  // })
 
-  $: selectedCount = selectedItems.length
-  $: grid = Array(rows)
-    .fill(null)
-    .map(() => Array(cols).fill(null))
-
-  $: {
-    for (const item of items) {
-      if (item.row >= 0 && item.row < rows && item.col >= 0 && item.col < cols) {
-        grid[item.row][item.col] = item
-      }
-    }
-  }
+  const getItemAtPosition = (row: number, col: number) =>
+    items.find(item => item.row === row && item.col === col)
 </script>
 
-<div class="mx-auto max-w-4xl p-4">
-  {#if colLabels.length > 0}
-    <div class="mb-4 grid gap-4" style="grid-template-columns: auto repeat({cols}, 1fr)">
-      <div></div>
-      <!-- Empty cell for alignment -->
-      {#each colLabels as label}
-        <div class="text-center font-semibold">{label}</div>
-      {/each}
-    </div>
-  {/if}
+<div class="grid gap-2" style="grid-template-columns: auto repeat({cols}, minmax(100px, 1fr));">
+  <!-- Column labels -->
+  <div></div>
+  {#each colLabels as label}
+    <div class="rounded bg-gray-100 p-2 text-center font-bold">{label}</div>
+  {/each}
 
-  <div class="grid gap-4" style="grid-template-columns: auto repeat({cols}, 1fr)">
-    {#each grid as row, rowIndex}
-      {#if rowLabels[rowIndex]}
-        <div
-          class="writing-vertical-rl flex rotate-180 transform items-center justify-center font-semibold"
+  <!-- Grid items -->
+  {#each Array(rows) as _, rowIndex}
+    <div class="flex items-center justify-end pr-2 font-bold">{rowLabels[rowIndex] || ''}</div>
+    {#each Array(cols) as _, colIndex}
+      {@const item = getItemAtPosition(rowIndex, colIndex)}
+      {#if item}
+        <button
+          class="rounded border p-2 text-sm transition-all duration-200 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          class:bg-blue-200={selectedItems.includes(item.id)}
+          onclick={() => toggleItem(item.id)}
+          transition:fade
         >
-          {rowLabels[rowIndex]}
-        </div>
+          {item.content}
+        </button>
       {:else}
-        <div></div>
+        <div class="rounded border bg-gray-50 p-2"></div>
       {/if}
-      {#each row as cell, colIndex}
-        {#if cell}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant={selectedItems.includes(cell.id) ? 'default' : 'outline'}
-                class="flex h-32 flex-col items-center justify-center overflow-hidden p-2 text-sm"
-                on:click={() => toggleItem(cell.id)}
-              >
-                <div class="max-h-full overflow-hidden">
-                  <SvelteMarkdown source={cell.content} />
-                </div>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <SvelteMarkdown source={cell.content} />
-            </TooltipContent>
-          </Tooltip>
-        {:else}
-          <div class="h-32 rounded-md bg-gray-100"></div>
-        {/if}
-      {/each}
     {/each}
-  </div>
-
-  <div class="mt-4 text-right">
-    <span class="mr-4">Selected: {selectedCount}</span>
-    <Button on:click={handleSubmit}>Submit Selection</Button>
-  </div>
+  {/each}
 </div>
 
-<style lang="postcss">
-  .writing-vertical-rl {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-  }
-</style>
+<div class="mt-4 flex items-center justify-between">
+  <p class="text-sm text-gray-600">Selected: {selectedItems.length}</p>
+  <button
+    class="rounded bg-blue-500 px-4 py-2 text-white transition-colors duration-200 hover:bg-blue-600"
+    onclick={() => onSelect(selectedItems)}
+  >
+    Submit Selection
+  </button>
+</div>
