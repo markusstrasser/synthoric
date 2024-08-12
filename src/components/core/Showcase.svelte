@@ -13,16 +13,61 @@
   const dropdownItems = ['Item 1', 'Item 2', 'Item 3']
 
   // Mock data for GridMultiSelect
-  const gridItems = [
-    { id: '1', content: 'Item 1', row: 0, col: 0 },
-    { id: '2', content: 'Item 2', row: 0, col: 1 },
-    { id: '3', content: 'Item 3', row: 1, col: 0 },
-    { id: '4', content: 'Item 4', row: 1, col: 1 },
+  const physicsProblems = [
+    {
+      id: '1',
+      content: 'Calculate the velocity of a falling object after 5 seconds',
+      row: 0,
+      col: 0,
+    },
+    {
+      id: '2',
+      content: 'Determine the wavelength of a sound wave with frequency 440 Hz',
+      row: 0,
+      col: 1,
+    },
+    {
+      id: '3',
+      content: 'Find the electric field at a point due to two point charges',
+      row: 0,
+      col: 2,
+    },
+    {
+      id: '4',
+      content: 'Solve for the final velocity using conservation of momentum in a collision',
+      row: 1,
+      col: 0,
+    },
+    { id: '5', content: 'Calculate the resonant frequency of an LC circuit', row: 1, col: 1 },
+    {
+      id: '6',
+      content: 'Determine the magnetic force on a moving charged particle',
+      row: 1,
+      col: 2,
+    },
+    {
+      id: '7',
+      content: 'Use the Schrödinger equation to find the energy levels of a particle in a box',
+      row: 2,
+      col: 0,
+    },
+    {
+      id: '8',
+      content: 'Calculate the relativistic mass of a particle moving at 0.8c',
+      row: 2,
+      col: 1,
+    },
+    {
+      id: '9',
+      content: 'Determine the half-life of a radioactive isotope given its decay rate',
+      row: 2,
+      col: 2,
+    },
   ]
-  const gridRows = 2
-  const gridCols = 2
-  const gridRowLabels = ['Row 1', 'Row 2']
-  const gridColLabels = ['Col 1', 'Col 2']
+  const gridRows = 3
+  const gridCols = 3
+  const gridRowLabels = ['Easy', 'Medium', 'Hard']
+  const gridColLabels = ['Mechanics', 'Waves & E&M', 'Modern Physics']
 
   // Mock data for LinePlot
   const plotData = [1, 3, 2, 5, 4, 7, 6, 8, 9]
@@ -79,14 +124,15 @@
   </section>
 
   <section>
-    <h2 class="text-2xl font-bold">GridMultiSelect</h2>
+    <h2 class="text-2xl font-bold">Physics Problem Selector</h2>
+    <p class="mb-2">Select the problems you think you could solve without help:</p>
     <GridMultiSelect
-      items={gridItems}
+      items={physicsProblems}
       rows={gridRows}
       cols={gridCols}
       rowLabels={gridRowLabels}
       colLabels={gridColLabels}
-      onSelect={selectedIds => console.log('Selected:', selectedIds)}
+      onSelect={selectedIds => console.log('Selected problems:', selectedIds)}
     />
   </section>
 
@@ -109,7 +155,7 @@
       bind:selectedIndex={selectedMultipleChoiceIndex}
     />
   </section>
-
+  <!-- 
   <section>
     <h2 class="text-2xl font-bold">P5Example</h2>
     <P5Example />
@@ -118,7 +164,7 @@
   <section>
     <h2 class="text-2xl font-bold">P5Example2</h2>
     <P5Example2 />
-  </section>
+  </section> -->
 
   <section>
     <h2 class="text-2xl font-bold">SolutionReview</h2>
