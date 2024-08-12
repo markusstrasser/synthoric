@@ -63,5 +63,7 @@ import {
   SelectLabel,
 } from '$components/ui/select'
 
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '$components/ui/tabs'
+
 import GridMultiSelect from '$components/core/GridMultiSelect.svelte'
 import MultipleChoice from '$components/core/MultipleChoice.svelte'

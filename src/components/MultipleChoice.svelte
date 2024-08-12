@@ -40,9 +40,9 @@
         disabled={isReadOnly}
       />
       <span>{choice}</span>
-      {#if isCorrect !== undefined && selectedIndex === index}
+      <!-- {#if isCorrect !== undefined && selectedIndex === index}
         <span>{isCorrect[index] ? '✓' : '✗'}</span>
-      {/if}
+      {/if} -->
     </label>
   {/each}
 </div>

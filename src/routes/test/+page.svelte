@@ -2,7 +2,7 @@
   import type { ComponentType } from 'svelte'
   import Markdown from '$components/core/Markdown.svelte'
   import actions, { createDispatch } from '$stores/index.svelte'
-  import DynamicTest from '$components/_generated/Dynamic_1722706444944.svelte'
+  import DynamicTest from '$components/_generated/Dynamic_1722868406297.svelte'
   let componentName = $state('')
   let DynamicComponent = $state<ComponentType | null>(null)
   let error = $state<string | null>(null)

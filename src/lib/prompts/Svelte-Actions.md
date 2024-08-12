@@ -1,30 +1,7 @@
 # Svelte-actions Docs and examples
 
 ```ts
-import { clickOutside, longpress, preventTabClose, shortcut } from 'svelte-actions'
-```
-
-```ts
-
-export function clickOutside(node: HTMLElement, params: {
-	enabled: boolean,
-	callback?: (node?: HTMLElement) => void;
-}): ReturnType<Action>
-
-<script>
-  import {clickOutside} from 'svelte-actions'
-  let open = true;
-</script>
-
-
-<div use:clickOutside={{ enabled: open, callback: () => open = false }}>
-   <button on:click={() => open = true}>Open</button>
-   {#if open}
-    <span>
-      Opened
-    </span>
-  {/if}
-</div>
+import { longpress, preventTabClose, shortcut } from 'svelte-actions'
 ```
 
 ```ts
