@@ -12,7 +12,7 @@ export const streamResponse = async (
   parser.on('keyValuePair', onKeyValuePair)
   console.log(promptWithSchema, 'promptwith schema')
   const stream = anthropic.messages.stream({
-    model: 'claude-3-5-sonnet-20240620',
+    model: 'claude-3-5-sonnet-20241022',
     max_tokens: 1024,
     system: promptWithSchema,
     messages: [

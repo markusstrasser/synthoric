@@ -53,7 +53,7 @@ export default <T extends keyof typeof AIToolConfigs>(config: (typeof AIToolConf
     if (config.prefill) {
       console.log('running claude with prefill')
       const response = anthropicClaude.messages.create({
-        model: 'claude-3-5-sonnet-20240620',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 1024,
         system: config.prompt,
         messages: [
@@ -66,8 +66,8 @@ export default <T extends keyof typeof AIToolConfigs>(config: (typeof AIToolConf
     }
     const { object } = await generateObject({
       prompt: composedPrompt,
-      // model: anthropic('claude-3-5-sonnet-20240620'),
-      model: anthropic('claude-3-5-sonnet-20240620'),
+      // model: anthropic('claude-3-5-sonnet-20241022'),
+      model: anthropic('claude-3-5-sonnet-20241022'),
       schema: z.object({ content: config.schema as z.ZodType }),
     })
     return config.schema.parse(object.content)

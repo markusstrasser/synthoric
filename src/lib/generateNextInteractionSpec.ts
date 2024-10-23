@@ -56,7 +56,7 @@ const generateNextInteractionSpec = async ({ contextStr, availableTools }) => {
         )
         .max(3),
     }),
-    model: anthropic('claude-3-5-sonnet-20240620'),
+    model: anthropic('claude-3-5-sonnet-20241022'),
   })
   return object
 }
