@@ -104,6 +104,7 @@ A: The system includes:
 
 ## TODOs
 
+- [ ] Use [Docling](https://github.com/DS4SD/docling) for universal document parsing
 - [ ] Animotion as an ai tool (https://github.com/animotionjs/animotion)
 - [ ] deserialization isn't that important for now: just interactionSummary. Dynamic Component is the only one that dispatches
 - [ ] @html render quick ai content: https://claude.ai/share/505e83e3-8b96-4e75-a265-af63e513a236 or multitree select for guidance specification: https://claude.ai/share/8f25c794-7180-47e7-bddf-1861807db5b0
