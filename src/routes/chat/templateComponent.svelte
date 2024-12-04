@@ -35,16 +35,30 @@
   import { Carta, Markdown, MarkdownEditor } from 'carta-md'
 
   import { math } from '@cartamd/plugin-math'
+  import { tikz } from '@cartamd/plugin-tikz'
   import DOMPurify from 'isomorphic-dompurify'
 
   const carta = new Carta({
-    sanitizer: DOMPurify.sanitize,
-    extensions: [math()],
+    sanitizer: html => DOMPurify.sanitize(html, { ADD_TAGS: ['div'], ADD_ATTR: ['type'] }),
+    extensions: [math(), tikz({ debug: false, center: true })],
   })
 
   let value = `And then $ a + b = cc $ this plem
    $\n\\int_0^\\infty x^2 dx\n$
   `
+
+  // Use String.raw to avoid escaping backslashes
+  let value2 = String.raw`tikz
+  \usepackage{circuitikz}
+
+\begin{document}
+  \begin{circuitikz} \draw
+    (0,0) to[battery] (0,4)
+    to[ammeter] (4,4) -- (4,0)
+    to[lamp] (0,0)
+    ;
+  \end{circuitikz}
+\end{document}`
 
   //Your code and svelte html/markup + tailwind below ...  ->
 </script>
@@ -53,7 +67,5 @@
   <!-- <MarkdownEditor {carta} /> -->
   <Markdown {carta} {value} />
 
-  <!-- <textarea bind:value={md}></textarea> -->
-  <!-- <Markdown {md} {plugins} /> -->
-  <!-- <Markdown content={'Hello. $ A + B $ = C'} /> -->
+  <Markdown {carta} value={'```' + value2 + '```'} />
 </div>
